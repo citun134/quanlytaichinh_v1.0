@@ -85,12 +85,12 @@ public class GiaoDichDao {
 //        }
 //    }
 //    
-    public void deleteGiaoDich(GiaoDichModel giaoDichModel){
+    public void deleteGiaoDich(int id){
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "DELETE FROM giaodich WHERE gdId = ? ";
+        String sql = "DELETE FROM giaodichthu WHERE thuId = ? ";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, giaoDichModel.getId());
+            preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
             
         } catch (SQLException ex) {

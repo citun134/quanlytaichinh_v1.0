@@ -21,8 +21,8 @@ public class HomeViewController {
         giaoDichDao.addGiaoDich(giaoDichModel);
     }
     
-    public void deletGiaoDich(GiaoDichModel giaoDichModel){
-        giaoDichDao.deleteGiaoDich(giaoDichModel);
+    public void deleteGiaoDich(int user){
+        giaoDichDao.deleteGiaoDich(user);
     }
     
     public void addGiaoDichThu(GiaoDichModel giaoDichModel){

@@ -15,6 +15,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     public HomeViewController homeViewController;
     public GiaoDichDao giaoDichDao;
     public GiaoDichModel giaoDichModel;
+    public DefaultTableModel defaultTableModel;
     private AtomicInteger idGenerator = new AtomicInteger(1);
 
             
@@ -23,7 +24,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         homeViewController = new HomeViewController();
         giaoDichModel = new GiaoDichModel();
         
-        DefaultTableModel defaultTableModel = new DefaultTableModel();
+        defaultTableModel = new DefaultTableModel();
 //        DefaultTableModel defaultTableModelTimKiem = new DefaultTableModel();
         
         DefaultTableModel defaultTableModelThu = (DefaultTableModel) thuTable.getModel();
@@ -48,12 +49,19 @@ public class HomeViewPro extends javax.swing.JFrame {
 //        defaultTableModelTimKiem.addColumn("Ghi Chú");
         
         //Hien thi table
-        List<GiaoDichModel> allGiaoDich = homeViewController.getAllInfor();
+//        List<GiaoDichModel> allGiaoDich = homeViewController.getAllInfor();
+//        for(GiaoDichModel giaoDich: allGiaoDich){
+//            defaultTableModel.addRow(new Object[] {giaoDich.getId(), giaoDich.getDate(), giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu()});
+//        } 
+        setTableData(homeViewController.getAllInfor());
+    }
+    
+    public void setTableData(List<GiaoDichModel> allGiaoDich){
         for(GiaoDichModel giaoDich: allGiaoDich){
             defaultTableModel.addRow(new Object[] {giaoDich.getId(), giaoDich.getDate(), giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu()});
         }
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -371,6 +379,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         });
 
         xoaThuButton.setText("Xóa");
+        xoaThuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xoaThuButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
@@ -853,6 +866,8 @@ public class HomeViewPro extends javax.swing.JFrame {
                     giaoDichModel.setGhiChu(ghiChuTGD);
                     homeViewController.addGiaoDichThu(giaoDichModel);
                     JOptionPane.showMessageDialog(this, "thanh cong");
+                    defaultTableModel.setRowCount(0);
+                    setTableData(homeViewController.getAllInfor());
                 } else {
                     JOptionPane.showMessageDialog(this, "that bai");
                 }
@@ -904,6 +919,22 @@ public class HomeViewPro extends javax.swing.JFrame {
     private void themChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themChiButtonActionPerformed
         themDialog.setVisible(true);
     }//GEN-LAST:event_themChiButtonActionPerformed
+
+    private void xoaThuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaThuButtonActionPerformed
+        // TODO add your handling code here:
+        int row = thuTable.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(HomeViewPro.this, "Vui long chon user truoc", "Loi", JOptionPane.ERROR_MESSAGE);
+        } else {
+            int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Ban chac chan muon xoa khong");
+            if (confirm == JOptionPane.YES_OPTION){
+                int userId = Integer.valueOf(String.valueOf(thuTable.getValueAt(row, 0)));
+                homeViewController.deleteGiaoDich(userId);
+                defaultTableModel.setRowCount(0);
+                setTableData(homeViewController.getAllInfor());
+            }
+        }
+    }//GEN-LAST:event_xoaThuButtonActionPerformed
 
     /**
      * @param args the command line arguments
