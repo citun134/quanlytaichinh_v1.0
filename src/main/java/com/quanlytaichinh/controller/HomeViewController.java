@@ -19,10 +19,6 @@ public class HomeViewController {
         return giaoDichDao.getAllInfor();
     }
     
-    public void addGiaoDich(GiaoDichModel giaoDichModel){
-        giaoDichDao.addGiaoDich(giaoDichModel);
-    }
-    
     public void deleteGiaoDich(int user){
         giaoDichDao.deleteGiaoDich(user);
     }
@@ -38,4 +34,8 @@ public class HomeViewController {
     public ArrayList<GiaoDichModel> searchTenGiaoDich(String ten){
         return giaoDichDao.searchTenGiaoDich(ten);
     }  
+    
+    public ArrayList<GiaoDichModel> searchThoiGianGiaoDich(String tu, String den){
+        return giaoDichDao.searchThoiGianGiaoDich(tu, den);
+    }   
 }
