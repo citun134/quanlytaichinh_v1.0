@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.table.DefaultTableModel;
 
 public class GiaoDichDao {
 //    private GiaoDichModel giaoDichModel;
@@ -67,24 +68,7 @@ public class GiaoDichDao {
             ex.printStackTrace();
         }
     }
-  
-//    
-//    public void addGiaoDich(GiaoDichModel user){
-//        Connection connection = JDBCConnection.getJDBCConecction();
-//        String sql = "INSERT INTO giaodich (mat_hang, thanh_tien, ghi_chu) VALUES (?, ?, ?);";
-//        PreparedStatement preparedStatement;
-//        try {
-//            preparedStatement = connection.prepareStatement(sql);
-//            preparedStatement.setString(1, user.getMatHang());
-//            preparedStatement.setInt(2, user.getThanhTien());
-//            preparedStatement.setString(3, user.getGhiChu());
-//            preparedStatement.executeUpdate();
-//            
-//        } catch (SQLException ex) {
-//            ex.printStackTrace();
-//        }
-//    }
-//    
+    
     public void deleteGiaoDich(int id){
         Connection connection = JDBCConnection.getJDBCConecction();
         String sql = "DELETE FROM giaodichthu WHERE thuId = ? ";
@@ -97,4 +81,84 @@ public class GiaoDichDao {
             ex.printStackTrace();
         }
     }  
+
+    public ArrayList<GiaoDichModel> searchTienGiaoDich(String tu, String den){
+        ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT * FROM giaodichthu WHERE thanhTienThu BETWEEN ? AND ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, tu);
+            preparedStatement.setString(2, den);
+            ResultSet rs = preparedStatement.executeQuery();
+            GiaoDichModel giaoDichModel;
+            while (rs.next()){
+                giaoDichModel = new GiaoDichModel(rs.getInt("thuId"), rs.getString("ngayThu")
+                , rs.getString("matHangThu"), rs.getString("thanhTienThu"), rs.getString("ghiChuThu"));
+                infor.add(giaoDichModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }   
+        return infor;
+    }
+    
+    public ArrayList<GiaoDichModel> searchTenGiaoDich(String ten){
+        ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT * FROM giaodichthu WHERE matHangThu LIKE '"+ten +"'";
+//        String sql = "SELECT * FROM giaodichthu WHERE matHangThu = ?";
+
+        
+        //CONCAT(`thuId`, `ngayThu`, `matHangThu`, `thanhTienThu`, `ghiChuThu`)
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+//            preparedStatement.setString(1, ten);
+            ResultSet rs = preparedStatement.executeQuery();
+            GiaoDichModel giaoDichModel;
+            while (rs.next()){
+//                giaoDichModel = new GiaoDichModel(rs.getInt("thuId"));
+                giaoDichModel = new GiaoDichModel(rs.getInt("thuId"), rs.getString("ngayThu")
+                , rs.getString("matHangThu"), rs.getString("thanhTienThu"), rs.getString("ghiChuThu"));
+//                giaoDichModel.setId(rs.getInt("thuId"));
+//                giaoDichModel.setDate(rs.getString("ngayThu"));
+//                giaoDichModel.setMatHang(rs.getString("matHangThu"));
+//                giaoDichModel.setThanhTien(rs.getString("thanhTienThu"));
+//                giaoDichModel.setGhiChu(rs.getString("ghiChuThu"));
+                infor.add(giaoDichModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }   
+        return infor;
+    }
+    
+//    public List<GiaoDichModel> searchTenGiaoDich(String ten){
+//        List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
+//        Connection connection = JDBCConnection.getJDBCConecction();
+//        String sql = "SELECT * FROM giaodichthu WHERE matHangThu = ?";
+//        try {
+//            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+//            preparedStatement.setString(1, ten);
+//            ResultSet rs = preparedStatement.executeQuery();
+//            while (rs.next()){
+//                int idThu = rs.getInt("thuId");
+//                String ngayThu= rs.getString("ngayThu");
+//                String matHangThu =rs.getString("matHangThu");
+//                String thanhTienThu =rs.getString("thanhTienThu");
+//                String ghiChuThu =rs.getString("ghiChuThu");
+//                
+//                GiaoDichModel giaoDichModel = new GiaoDichModel(idThu, ngayThu, matHangThu, thanhTienThu, ghiChuThu);
+////                giaoDichModel.setId(idThu);
+////                giaoDichModel.setDate(ngayThu);
+////                giaoDichModel.setMatHang(matHangThu);
+////                giaoDichModel.setThanhTien(thanhTienThu);
+////                giaoDichModel.setGhiChu(ghiChuThu);
+//                infor.add(giaoDichModel);
+//            }
+//        } catch (SQLException ex) {
+//            ex.printStackTrace();
+//        }   
+//        return infor;
+//    }
 }

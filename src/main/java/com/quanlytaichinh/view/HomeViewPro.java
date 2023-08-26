@@ -2,13 +2,21 @@ package com.quanlytaichinh.view;
 
 import com.quanlytaichinh.controller.HomeViewController;
 import com.quanlytaichinh.dao.GiaoDichDao;
+import com.quanlytaichinh.dao.JDBCConnection;
 import com.quanlytaichinh.model.GiaoDichModel;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 public class HomeViewPro extends javax.swing.JFrame {
     
@@ -16,31 +24,50 @@ public class HomeViewPro extends javax.swing.JFrame {
     public GiaoDichDao giaoDichDao;
     public GiaoDichModel giaoDichModel;
     public DefaultTableModel defaultTableModel;
-    private AtomicInteger idGenerator = new AtomicInteger(1);
-
+    public DefaultTableModel timKiemTen;
+    public DefaultTableModel timKiemTien;
+    public DefaultTableModel timKiemNgay;
             
     public HomeViewPro() {
         initComponents();
         homeViewController = new HomeViewController();
         giaoDichModel = new GiaoDichModel();
+        findUsers();
+        findMoney();
+        showChiTKTable();
+
         
-        defaultTableModel = new DefaultTableModel();
+//        defaultTableModel = new DefaultTableModel(){
+//            @Override
+//            public boolean isCellEditable(int row, int column){
+//                return false;
+//            }
+//        };
+   
 //        DefaultTableModel defaultTableModelTimKiem = new DefaultTableModel();
         
-        DefaultTableModel defaultTableModelThu = (DefaultTableModel) thuTable.getModel();
+//        DefaultTableModel defaultTableModelThu = (DefaultTableModel) chiTable.getModel();
+//        DefaultTableModel defaultTableModelTKTien = (DefaultTableModel) tienTKTable.getModel();
         
-        tenTKTable.setModel(defaultTableModel);
-        tienTKTable.setModel(defaultTableModel);
-        thoiGianTKTable.setModel(defaultTableModel);
+//        tenTKTable.setModel(defaultTableModel);
+//        tienTKTable.setModel(defaultTableModel);
+//        thoiGianTKTable.setModel(defaultTableModel);
+//        showChiTKTable();
+//        showTenTKTable();
+//        showTienTKTable();
+//        showThoiGianTKTable();
+
         
-        thuTable.setModel(defaultTableModel);
-        chiTable.setModel(defaultTableModel);
+//        chiTable.setModel(defaultTableModel);
+//        tenTKTable.setModel(timKiemTen);
+//        tienTKTable.setModel(timKiemTien);
+//        thoiGianTKTable.setModel(timKiemNgay);
         
-        defaultTableModel.addColumn("ID");
-        defaultTableModel.addColumn("Thời Gian");
-        defaultTableModel.addColumn("Mặt Hàng");
-        defaultTableModel.addColumn("Thành Tiền");
-        defaultTableModel.addColumn("Ghi Chú");
+//        defaultTableModel.addColumn("ID");
+//        defaultTableModel.addColumn("Thời Gian");
+//        defaultTableModel.addColumn("Mặt Hàng");
+//        defaultTableModel.addColumn("Thành Tiền");
+//        defaultTableModel.addColumn("Ghi Chú");
         
 //        defaultTableModelTimKiem.addColumn("ID");
 //        defaultTableModelTimKiem.addColumn("Thời Gian");
@@ -53,13 +80,136 @@ public class HomeViewPro extends javax.swing.JFrame {
 //        for(GiaoDichModel giaoDich: allGiaoDich){
 //            defaultTableModel.addRow(new Object[] {giaoDich.getId(), giaoDich.getDate(), giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu()});
 //        } 
+//        setTableData(homeViewController.getAllInfor());
+    }
+    
+    public void showChiTKTable(){
+        defaultTableModel = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
+        
+        chiTable.setModel(defaultTableModel);
+        defaultTableModel.addColumn("ID");
+        defaultTableModel.addColumn("Thời Gian");
+        defaultTableModel.addColumn("Mặt Hàng");
+        defaultTableModel.addColumn("Thành Tiền");
+        defaultTableModel.addColumn("Ghi Chú");
+        
         setTableData(homeViewController.getAllInfor());
+    }
+    
+    public void showTenTKTable(){
+        DefaultTableModel timKiemTen = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
+        tenTKTable.setModel(timKiemTen);
+        
+        timKiemTen.addColumn("ID");
+        timKiemTen.addColumn("Thời Gian");
+        timKiemTen.addColumn("Mặt Hàng");
+        timKiemTen.addColumn("Thành Tiền");
+        timKiemTen.addColumn("Ghi Chú");
+        
+//        setTableData(homeViewController.getAllInfor());
+    }
+    
+    public void showTienTKTable(){
+        timKiemTien = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
+        tienTKTable.setModel(timKiemTien);
+        
+        timKiemTien.addColumn("ID");
+        timKiemTien.addColumn("Thời Gian");
+        timKiemTien.addColumn("Mặt Hàng");
+        timKiemTien.addColumn("Thành Tiền");
+        timKiemTien.addColumn("Ghi Chú");
+//        setTableData(homeViewController.getAllInfor());
+    }
+    
+    public void showThoiGianTKTable(){
+        timKiemNgay = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
+        thoiGianTKTable.setModel(timKiemNgay);
+        
+        timKiemNgay.addColumn("ID");
+        timKiemNgay.addColumn("Thời Gian");
+        timKiemNgay.addColumn("Mặt Hàng");
+        timKiemNgay.addColumn("Thành Tiền");
+        timKiemNgay.addColumn("Ghi Chú");
     }
     
     public void setTableData(List<GiaoDichModel> allGiaoDich){
         for(GiaoDichModel giaoDich: allGiaoDich){
             defaultTableModel.addRow(new Object[] {giaoDich.getId(), giaoDich.getDate(), giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu()});
         }
+    }
+    
+    public void findUsers()
+    {
+        List<GiaoDichModel> users = homeViewController.searchTenGiaoDich(tenTKTextField.getText());
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi chú"});
+        Object[] row = new Object[5];
+        
+        for(int i = 0; i < users.size(); i++)
+        {
+            row[0] = users.get(i).getId();
+            row[1] = users.get(i).getDate();
+            row[2] = users.get(i).getMatHang();
+            row[3] = users.get(i).getThanhTien();
+            row[4] = users.get(i).getGhiChu();
+            model.addRow(row);
+        }
+       tenTKTable.setModel(model);
+       
+    }
+    
+    public void findMoney()
+    {
+        List<GiaoDichModel> users = homeViewController.searchTienGiaoDich(tuTienTKTextField.getText(), denTienTKTextField.getText());
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi chú"});
+        Object[] row = new Object[5];
+        
+        for(int i = 0; i < users.size(); i++)
+        {
+            row[0] = users.get(i).getId();
+            row[1] = users.get(i).getDate();
+            row[2] = users.get(i).getMatHang();
+            row[3] = users.get(i).getThanhTien();
+            row[4] = users.get(i).getGhiChu();
+            model.addRow(row);
+        }
+       tienTKTable.setModel(model);
+       
+    }
+    
+    public List<GiaoDichModel> setTableSearchTienData(List<GiaoDichModel> allGiaoDich){
+        for(GiaoDichModel giaoDich: allGiaoDich){
+            timKiemTien.addRow(new Object[] {giaoDich.getId(), giaoDich.getDate(), giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu()});
+        }
+        return allGiaoDich;
+    }
+    
+    public List<GiaoDichModel> setTableSearchTenData(List<GiaoDichModel> allGiaoDich){
+        for(GiaoDichModel giaoDich: allGiaoDich){
+            timKiemTen.addRow(new Object[] {giaoDich.getId(), giaoDich.getDate(), giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu()});
+        }
+        return allGiaoDich;
     }
     
     @SuppressWarnings("unchecked")
@@ -96,12 +246,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         mainPanel = new javax.swing.JPanel();
         giaoDichPanel = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel8 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        thuTable = new javax.swing.JTable();
-        jPanel11 = new javax.swing.JPanel();
-        themThuButton = new javax.swing.JButton();
-        xoaThuButton = new javax.swing.JButton();
         jPanel9 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         chiTable = new javax.swing.JTable();
@@ -355,78 +499,6 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
-        thuTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        thuTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        jScrollPane1.setViewportView(thuTable);
-
-        jPanel11.setPreferredSize(new java.awt.Dimension(162, 114));
-
-        themThuButton.setText("Thêm");
-        themThuButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                themThuButtonActionPerformed(evt);
-            }
-        });
-
-        xoaThuButton.setText("Xóa");
-        xoaThuButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                xoaThuButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
-        jPanel11.setLayout(jPanel11Layout);
-        jPanel11Layout.setHorizontalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel11Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(themThuButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(xoaThuButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel11Layout.setVerticalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(themThuButton)
-                    .addComponent(xoaThuButton))
-                .addContainerGap(59, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
-                .addContainerGap())
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE)
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        jTabbedPane1.addTab("MỤC THU", jPanel8);
-
         chiTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -448,6 +520,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         });
 
         xoaChiButton.setText("Xóa");
+        xoaChiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xoaChiButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -517,8 +594,23 @@ public class HomeViewPro extends javax.swing.JFrame {
                 tenTKTextFieldActionPerformed(evt);
             }
         });
+        tenTKTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tenTKTextFieldKeyReleased(evt);
+            }
+        });
 
         tenTKButton.setText("Tìm kiếm");
+        tenTKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tenTKButtonActionPerformed(evt);
+            }
+        });
+        tenTKButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tenTKButtonKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -801,7 +893,6 @@ public class HomeViewPro extends javax.swing.JFrame {
     }//GEN-LAST:event_giaoDichPanelComponentShown
 
     private void giaoDichButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_giaoDichButtonActionPerformed
-        // TODO add your handling code here:
         mainPanel.removeAll();
         mainPanel.add(giaoDichPanel);
         mainPanel.revalidate();
@@ -809,7 +900,6 @@ public class HomeViewPro extends javax.swing.JFrame {
     }//GEN-LAST:event_giaoDichButtonActionPerformed
 
     private void timKiemButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timKiemButtonActionPerformed
-        // TODO add your handling code here:
         mainPanel.removeAll();
         mainPanel.add(timKiemPanel);
         mainPanel.revalidate();
@@ -817,7 +907,6 @@ public class HomeViewPro extends javax.swing.JFrame {
     }//GEN-LAST:event_timKiemButtonActionPerformed
 
     private void thongKeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thongKeButtonActionPerformed
-        // TODO add your handling code here:
         mainPanel.removeAll();
         mainPanel.add(thongKePanel);
         mainPanel.revalidate();
@@ -830,70 +919,29 @@ public class HomeViewPro extends javax.swing.JFrame {
     }//GEN-LAST:event_thoatTGDButtonActionPerformed
 
     private void themTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themTGDButtonActionPerformed
-        // TODO add your handling code here:
-//        try {
-//        String idTGD = idTGDTextField.getText();//String.valueOf(idGenerator.getAndIncrement());
-//        String dateTGD = thoiGianTGDTextField.getText();//formattedDateTime;
-//        String matHangTGD = matHangTGDTextField.getText();
-//        String thanhTienTGD = thanhTienTGDTextField.getText();
-//        String ghiChuTGD = ghiChuTGDTextField.getText();
-//        giaoDichModel.setId(Integer.parseInt(idTGD)); //Integer.parseInt(idTGD)
-//        giaoDichModel.setDate(dateTGD); //dateTGD
-//        giaoDichModel.setMatHang(matHangTGD);
-//        giaoDichModel.setThanhTien(Integer.parseInt(thanhTienTGD));
-//        giaoDichModel.setGhiChu(ghiChuTGD);
-//        homeViewController.addGiaoDich(giaoDichModel);
-//        JOptionPane.showMessageDialog(this, "Thêm thành công!");
-//        } catch(Exception e){
-//            
-//            JOptionPane.showMessageDialog(this, "Looix" + e.getMessage());
-//        }
-//        if(thoiGianTGDTextField.getText().equals("") || thoiGianTGDTextField.getText().equals("") || 
-//            thanhTienTGDTextField.getText().equals("") || ghiChuTGDTextField.getText().equals("")){
-            
-            //String idTGD = idTGDTextField.getText();//String.valueOf(idGenerator.getAndIncrement());
-            String dateTGD = thoiGianTGDTextField.getText();//formattedDateTime;
-            String matHangTGD = matHangTGDTextField.getText();
-            String thanhTienTGD = thanhTienTGDTextField.getText();
-            String ghiChuTGD = ghiChuTGDTextField.getText();
-            
-            //giaoDichModel.setId(Integer.parseInt(idTGD)); //Integer.parseInt(idTGD)
-            try{
-                if(!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty() && !dateTGD.isEmpty()){
-                    giaoDichModel.setDate(dateTGD); //dateTGD
-                    giaoDichModel.setMatHang(matHangTGD);
-                    giaoDichModel.setThanhTien(thanhTienTGD);
-                    giaoDichModel.setGhiChu(ghiChuTGD);
-                    homeViewController.addGiaoDichThu(giaoDichModel);
-                    JOptionPane.showMessageDialog(this, "thanh cong");
-                    defaultTableModel.setRowCount(0);
-                    setTableData(homeViewController.getAllInfor());
-                } else {
-                    JOptionPane.showMessageDialog(this, "that bai");
-                }
-//                thoiGianTGDTextField.setText("");
-//                thoiGianTGDTextField.setText("");
-//                thanhTienTGDTextField.setText(""); 
-//                ghiChuTGDTextField.setText("");
-            }catch(Exception e){
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, e.getMessage());
+        String dateTGD = thoiGianTGDTextField.getText();//formattedDateTime;
+        String matHangTGD = matHangTGDTextField.getText();
+        String thanhTienTGD = thanhTienTGDTextField.getText();
+        String ghiChuTGD = ghiChuTGDTextField.getText();
+
+        //giaoDichModel.setId(Integer.parseInt(idTGD)); //Integer.parseInt(idTGD)
+        try{
+            if(!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty() && !dateTGD.isEmpty()){
+                giaoDichModel.setDate(dateTGD); //dateTGD
+                giaoDichModel.setMatHang(matHangTGD);
+                giaoDichModel.setThanhTien(thanhTienTGD);
+                giaoDichModel.setGhiChu(ghiChuTGD);
+                homeViewController.addGiaoDichThu(giaoDichModel);
+                JOptionPane.showMessageDialog(this, "thanh cong");
+//                    defaultTableModel.setRowCount(0);
+//                    setTableData(homeViewController.getAllInfor());
+            } else {
+                JOptionPane.showMessageDialog(this, "that bai");
             }
-//            
-//        } else {
-//            String[] data = {thoiGianTGDTextField.getText(), thoiGianTGDTextField.getText(), thanhTienTGDTextField.getText(), ghiChuTGDTextField.getText()};
-//            
-//            DefaultTableModel defaultTableModel = (DefaultTableModel) thuTable.getModel();
-//            
-//            defaultTableModel.addRow(data);
-//            
-//            JOptionPane.showMessageDialog(this, "Them thanh cong");
-//            
-//            thoiGianTGDTextField.setText("");
-//            thoiGianTGDTextField.setText("");
-//            thanhTienTGDTextField.setText("");
-//            ghiChuTGDTextField.setText("");
-//        }
+        }catch(Exception e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
     }//GEN-LAST:event_themTGDButtonActionPerformed
 
     private void tenTKTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tenTKTableMouseClicked
@@ -902,40 +950,115 @@ public class HomeViewPro extends javax.swing.JFrame {
 
     private void tenTKTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tenTKTextFieldActionPerformed
         // TODO add your handling code here:
+        TableRowSorter<DefaultTableModel> tableRowSorter = new TableRowSorter<>(defaultTableModel);
+        tenTKTable.setRowSorter(tableRowSorter);
+        tableRowSorter.setRowFilter(RowFilter.regexFilter(tenTKTextField.getText()));
     }//GEN-LAST:event_tenTKTextFieldActionPerformed
 
     private void tienTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tienTKButtonActionPerformed
         // TODO add your handling code here:
+//        String tuTien = tuTienTKTextField.getText();
+//        String denTien = denTienTKTextField.getText();
+////        homeViewController.searchTienGiaoDich(tuTien, denTien);
+//        defaultTableModel.setRowCount(0);
+//        setTableSearchTienData(homeViewController.searchTienGiaoDich(tuTien, denTien));
+        findMoney();
     }//GEN-LAST:event_tienTKButtonActionPerformed
 
     private void denNgayTKTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_denNgayTKTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_denNgayTKTextFieldActionPerformed
 
-    private void themThuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themThuButtonActionPerformed
-        themDialog.setVisible(true);
-    }//GEN-LAST:event_themThuButtonActionPerformed
-
     private void themChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themChiButtonActionPerformed
         themDialog.setVisible(true);
     }//GEN-LAST:event_themChiButtonActionPerformed
 
-    private void xoaThuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaThuButtonActionPerformed
+    private void tenTKTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tenTKTextFieldKeyReleased
         // TODO add your handling code here:
-        int row = thuTable.getSelectedRow();
+//        TableRowSorter<DefaultTableModel> tableRowSorter = new TableRowSorter<>(defaultTableModel);
+//        tenTKTable.setRowSorter(tableRowSorter);
+//        defaultTableModel.setRowCount(0);
+//        tableRowSorter.setRowFilter(RowFilter.regexFilter(tenTKTextField.getText()));
+    }//GEN-LAST:event_tenTKTextFieldKeyReleased
+
+    private void xoaChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaChiButtonActionPerformed
+        // TODO add your handling code here:
+        int row = chiTable.getSelectedRow();
         if(row == -1){
             JOptionPane.showMessageDialog(HomeViewPro.this, "Vui long chon user truoc", "Loi", JOptionPane.ERROR_MESSAGE);
         } else {
             int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Ban chac chan muon xoa khong");
             if (confirm == JOptionPane.YES_OPTION){
-                int userId = Integer.valueOf(String.valueOf(thuTable.getValueAt(row, 0)));
+                int userId = Integer.valueOf(String.valueOf(chiTable.getValueAt(row, 0)));
                 homeViewController.deleteGiaoDich(userId);
                 defaultTableModel.setRowCount(0);
                 setTableData(homeViewController.getAllInfor());
             }
         }
-    }//GEN-LAST:event_xoaThuButtonActionPerformed
+    }//GEN-LAST:event_xoaChiButtonActionPerformed
 
+    private void tenTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tenTKButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+//            String ten = tenTKTextField.getText();
+//            searchTenGiaoDichView(ten);
+//            tenTKTextField.setText("");
+//            showTenTKTable();
+//            setTableSearchTenData(homeViewController.searchTenGiaoDich(ten));
+        findUsers();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }//GEN-LAST:event_tenTKButtonActionPerformed
+
+    private void tenTKButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tenTKButtonKeyReleased
+        // TODO add your handling code here:
+//        TableRowSorter<DefaultTableModel> tableRowSorter = new TableRowSorter<>(defaultTableModel);
+//        chiTable.setRowSorter(tableRowSorter);
+//        tableRowSorter.setRowFilter(RowFilter.regexFilter(tenTKTextField.getText()));
+    }//GEN-LAST:event_tenTKButtonKeyReleased
+
+//    public void inittkTenTable(){
+   
+    public void inittkTenTable(){
+        timKiemTen = new DefaultTableModel(
+                new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi chú"}, 0
+        );
+    }
+    public void searchTenGiaoDichView(String ten){
+        inittkTenTable();
+//        timKiemTen.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi chú"});
+//        ten = "'" + ten + "'";
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT * FROM giaodichthu WHERE matHangThu  LIKE %" + ten + "%";
+        try {
+            DefaultTableModel model = (DefaultTableModel)timKiemTen;
+            
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, ten);
+            
+            ResultSet rs = preparedStatement.executeQuery();
+//            DefaultTableModel model = timKiemTen;
+            while (rs.next()){
+//                GiaoDichModel giaoDichModel = new GiaoDichModel();
+                int idThu = rs.getInt("thuId");
+                String ngayThu= rs.getString("ngayThu");
+                String matHangThu =rs.getString("matHangThu");
+                String thanhTienThu =rs.getString("thanhTienThu");
+                String ghiChuThu =rs.getString("ghiChuThu");
+//                giaoDichModel.setId(idThu);
+//                giaoDichModel.setDate(ngayThu);
+//                giaoDichModel.setMatHang(matHangThu);
+//                giaoDichModel.setThanhTien(thanhTienThu);
+//                giaoDichModel.setGhiChu(ghiChuThu);
+                model.addRow(new Object[] {idThu, ngayThu, matHangThu, thanhTienThu, ghiChuThu});
+            }
+            tenTKTable.setModel(model);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }  
+    }
     /**
      * @param args the command line arguments
      */
@@ -1000,16 +1123,13 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
-    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
@@ -1028,14 +1148,12 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JButton themChiButton;
     private javax.swing.JDialog themDialog;
     private javax.swing.JButton themTGDButton;
-    private javax.swing.JButton themThuButton;
     private javax.swing.JButton thoatHomeButton;
     private javax.swing.JButton thoatTGDButton;
     private javax.swing.JTextField thoiGianTGDTextField;
     private javax.swing.JTable thoiGianTKTable;
     private javax.swing.JButton thongKeButton;
     private javax.swing.JPanel thongKePanel;
-    private javax.swing.JTable thuTable;
     private javax.swing.JButton tienTKButton;
     private javax.swing.JTable tienTKTable;
     private javax.swing.JButton timKiemButton;
@@ -1043,6 +1161,5 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JTextField tuNgayTKTextField;
     private javax.swing.JTextField tuTienTKTextField;
     private javax.swing.JButton xoaChiButton;
-    private javax.swing.JButton xoaThuButton;
     // End of variables declaration//GEN-END:variables
 }
