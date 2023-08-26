@@ -6,12 +6,11 @@ public class GiaoDichModel {
     private String matHang;
     private String thanhTien;
     private String ghiChu;
-   
+    private int accountId;
 
     public GiaoDichModel() {
 //        new GiaoDichModel();
     }
-
     
     public GiaoDichModel(int id, String date, String matHang, String thanhTien, String ghiChu) {
         this.id = id;
@@ -61,4 +60,14 @@ public class GiaoDichModel {
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
     }
+
+    public int getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(int accountId) {
+        this.accountId = accountId;
+    }
+    
+
 }

@@ -265,9 +265,9 @@
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       <Component id="passwordLoginPasswordField" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="dangNhapButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="30" max="32767" attributes="0"/>
+                  <EmptySpace pref="36" max="32767" attributes="0"/>
                   <Component id="jSeparator1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="27" max="32767" attributes="0"/>
                   <Component id="taiKhoanMoiButton" min="-2" max="-2" attributes="0"/>

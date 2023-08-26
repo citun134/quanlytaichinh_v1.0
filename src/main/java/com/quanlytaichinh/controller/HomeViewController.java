@@ -38,4 +38,8 @@ public class HomeViewController {
     public ArrayList<GiaoDichModel> searchThoiGianGiaoDich(String tu, String den){
         return giaoDichDao.searchThoiGianGiaoDich(tu, den);
     }   
+    
+    public List<GiaoDichModel> getAllInforUser(){
+        return giaoDichDao.getAllInforUser();
+    }
 }

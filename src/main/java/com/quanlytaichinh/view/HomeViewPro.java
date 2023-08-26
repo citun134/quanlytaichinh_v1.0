@@ -1,18 +1,11 @@
 package com.quanlytaichinh.view;
 
 import com.quanlytaichinh.controller.HomeViewController;
+import com.quanlytaichinh.controller.LoginController;
 import com.quanlytaichinh.dao.GiaoDichDao;
-import com.quanlytaichinh.dao.JDBCConnection;
 import com.quanlytaichinh.model.GiaoDichModel;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import com.quanlytaichinh.model.LoginModel;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
@@ -22,6 +15,9 @@ public class HomeViewPro extends javax.swing.JFrame {
     
     public HomeViewController homeViewController;
     public GiaoDichDao giaoDichDao;
+    public LoginController loginController;
+    public LoginModel loginModel;
+    public LoginView loginView;
     public GiaoDichModel giaoDichModel;
     public DefaultTableModel defaultTableModel;
     public DefaultTableModel timKiemTen;
@@ -32,6 +28,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         initComponents();
         homeViewController = new HomeViewController();
         giaoDichModel = new GiaoDichModel();
+        loginModel = new LoginModel();
         showChiTKTable();
         findUsers();
         findMoney();
@@ -52,20 +49,27 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableModel.addColumn("Mặt Hàng");
         defaultTableModel.addColumn("Thành Tiền");
         defaultTableModel.addColumn("Ghi Chú");
-        
+//        defaultTableModel.addColumn("UserId");
+//        
         setTableData(homeViewController.getAllInfor());
+//        try{
+//        setTableData(homeViewController.getAllInforUser());
+//        } catch (Exception ex){
+//            JOptionPane.showMessageDialog(this, ex.getMessage());
+//        }
     }
 
     public void setTableData(List<GiaoDichModel> allGiaoDich){
         for(GiaoDichModel giaoDich: allGiaoDich){
-            defaultTableModel.addRow(new Object[] {giaoDich.getId(), giaoDich.getDate(), giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu()});
+            defaultTableModel.addRow(new Object[] {giaoDich.getId(), giaoDich.getDate(),
+                giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu(), giaoDich.getAccountId()});
         }
     }
     
     public void findUsers(){
         List<GiaoDichModel> users = homeViewController.searchTenGiaoDich(tenTKTextField.getText());
         DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi chú"});
+        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
         Object[] row = new Object[5];
         
         for(int i = 0; i < users.size(); i++)
@@ -83,7 +87,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     public void findMoney(){
         List<GiaoDichModel> users = homeViewController.searchTienGiaoDich(tuTienTKTextField.getText(), denTienTKTextField.getText());
         DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi chú"});
+        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
         Object[] row = new Object[5];
         
         for(int i = 0; i < users.size(); i++)
@@ -101,7 +105,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     public void findDate(){
         List<GiaoDichModel> users = homeViewController.searchThoiGianGiaoDich(tuNgayTKTextField.getText(), denNgayTKTextField.getText());
         DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi chú"});
+        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
         Object[] row = new Object[5];
         
         for(int i = 0; i < users.size(); i++)
@@ -829,19 +833,22 @@ public class HomeViewPro extends javax.swing.JFrame {
         String matHangTGD = matHangTGDTextField.getText();
         String thanhTienTGD = thanhTienTGDTextField.getText();
         String ghiChuTGD = ghiChuTGDTextField.getText();
-
+        
+//        if(loginModel.getUser() == loginView.getName() )
         try{
             if(!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty() && !dateTGD.isEmpty()){
                 giaoDichModel.setDate(dateTGD); //dateTGD
-                giaoDichModel.setMatHang(matHangTGD);
+                giaoDichModel.setMatHang(matHangTGD);                                               
                 giaoDichModel.setThanhTien(thanhTienTGD);
                 giaoDichModel.setGhiChu(ghiChuTGD);
+                giaoDichModel.setAccountId(loginModel.getAccount_id());
                 homeViewController.addGiaoDichThu(giaoDichModel);
-                JOptionPane.showMessageDialog(this, "thanh cong");
-                    defaultTableModel.setRowCount(0);
-                    setTableData(homeViewController.getAllInfor());
+                JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                defaultTableModel.setRowCount(0);
+                setTableData(homeViewController.getAllInfor());
+                
             } else {
-                JOptionPane.showMessageDialog(this, "that bai");
+                JOptionPane.showMessageDialog(this, "Thêm Thất Bại!");
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -886,6 +893,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
     private void xoaChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaChiButtonActionPerformed
         // TODO add your handling code here:
+//        if(){};
         int row = chiTable.getSelectedRow();
         if(row == -1){
             JOptionPane.showMessageDialog(HomeViewPro.this, "Vui long chon user truoc", "Loi", JOptionPane.ERROR_MESSAGE);

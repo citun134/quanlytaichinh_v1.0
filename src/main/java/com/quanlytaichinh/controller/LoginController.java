@@ -1,7 +1,10 @@
 package com.quanlytaichinh.controller;
 
 import com.quanlytaichinh.dao.LoginDao;
+import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.LoginModel;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LoginController {
@@ -18,10 +21,4 @@ public class LoginController {
     public void addUser(LoginModel user){
         userDao.addUser(user);
     }
-    
-    public void getUserFromDao(LoginModel user){
-        userDao.getUserFromDao(user);
-    }
-    
-
 }

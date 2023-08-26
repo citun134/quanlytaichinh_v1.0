@@ -3,7 +3,8 @@ package com.quanlytaichinh.model;
 public class LoginModel {
     private String user;
     private String password;
-
+    private int account_id;
+    
     public LoginModel() {
     }
     
@@ -26,5 +27,13 @@ public class LoginModel {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public int getAccount_id() {
+        return account_id;
+    }
+
+    public void setAccount_id(int account_id) {
+        this.account_id = account_id;
     }
 }

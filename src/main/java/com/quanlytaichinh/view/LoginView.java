@@ -1,15 +1,24 @@
 package com.quanlytaichinh.view;
 
 import com.quanlytaichinh.controller.LoginController;
+import com.quanlytaichinh.dao.JDBCConnection;
 import com.quanlytaichinh.dao.LoginDao;
+import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.LoginModel;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 public class LoginView extends javax.swing.JFrame {
     public LoginModel loginModel;
     public LoginController loginController;
     public LoginDao loginDao;
+    public GiaoDichModel giaoDichModel;
     
     public LoginView() {
         try{
@@ -229,9 +238,9 @@ public class LoginView extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel4)
                     .addComponent(passwordLoginPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(dangNhapButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addComponent(taiKhoanMoiButton)
@@ -248,7 +257,8 @@ public class LoginView extends javax.swing.JFrame {
     }//GEN-LAST:event_userLoginTextFieldActionPerformed
 
     private void dangNhapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dangNhapButtonActionPerformed
-        // TODO add your handling code here:
+     
+            // TODO add your handling code here:
 //        SwingUtilities.invokeLater(new Runnable() {
 //            @Override
 //            public void run() {
@@ -257,14 +267,29 @@ public class LoginView extends javax.swing.JFrame {
 //                
 //            }
 //        });
-        try{
+    try {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String user = userLoginTextField.getText();
+        String pass = passwordLoginPasswordField.getText();
+        Statement stm = connection.createStatement();
+        String sql = "SELECT * FROM accounts WHERE username = '" + user + "'" + " AND password = '" +  pass + "'";
+        ResultSet rs = stm.executeQuery(sql);
+        if(rs.next()){
+            loginModel.setAccount_id(rs.getInt("account_id"));
+
+            // Now, set the accountId in your GiaoDichModel
+//            giaoDichModel.setAccountId(loginModel.getAccount_id());
             new HomeViewPro().setVisible(true);
             this.dispose();
-        } catch (Exception e){
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, e.getMessage());
+        } else {
+            JOptionPane.showMessageDialog(this, "Đăng nhập thất bại!");
+            userLoginTextField.setText("");
+            passwordLoginPasswordField.setText("");
         }
-
+        connection.close();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
     }//GEN-LAST:event_dangNhapButtonActionPerformed
 
     private void taiKhoanMoiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taiKhoanMoiButtonActionPerformed
