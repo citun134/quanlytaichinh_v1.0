@@ -2,13 +2,13 @@ package com.quanlytaichinh.controller;
 
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.dao.GiaoDichDao;
+import com.quanlytaichinh.model.LoginModel;
 import java.util.List;
 import java.util.ArrayList;
 
-
-
 public class HomeViewController {  
     private GiaoDichDao giaoDichDao;
+    private LoginModel loginModel;
 //    private GiaoDichModel giaoDichModel;
 
     public HomeViewController() {
@@ -27,19 +27,19 @@ public class HomeViewController {
         giaoDichDao.addGiaoDichThu(giaoDichModel);
     }
     
-    public ArrayList<GiaoDichModel> searchTienGiaoDich(String tu, String den){
-        return giaoDichDao.searchTienGiaoDich(tu, den);
+    public ArrayList<GiaoDichModel> searchTienGiaoDich(String tu, String den, int accountId){
+        return giaoDichDao.searchTienGiaoDich(tu, den, accountId);
     }  
     
-    public ArrayList<GiaoDichModel> searchTenGiaoDich(String ten){
-        return giaoDichDao.searchTenGiaoDich(ten);
+    public ArrayList<GiaoDichModel> searchTenGiaoDich(String ten, int accountId){
+        return giaoDichDao.searchTenGiaoDich(ten, accountId);
     }  
     
-    public ArrayList<GiaoDichModel> searchThoiGianGiaoDich(String tu, String den){
-        return giaoDichDao.searchThoiGianGiaoDich(tu, den);
+    public ArrayList<GiaoDichModel> searchThoiGianGiaoDich(String tu, String den, int accountId){
+        return giaoDichDao.searchThoiGianGiaoDich(tu, den, accountId);
     }   
     
-    public List<GiaoDichModel> getAllInforUser(){
-        return giaoDichDao.getAllInforUser();
+    public List<GiaoDichModel> getAllInforUser(int accountId){
+        return giaoDichDao.getAllInforUser(accountId);
     }
 }

@@ -23,19 +23,24 @@ public class HomeViewPro extends javax.swing.JFrame {
     public DefaultTableModel timKiemTen;
     public DefaultTableModel timKiemTien;
     public DefaultTableModel timKiemNgay;
-            
-    public HomeViewPro() {
+    
+    private int logId;
+     
+    public HomeViewPro(){}
+    public HomeViewPro(LoginModel loginModel) {
         initComponents();
+        this.loginModel = loginModel;
         homeViewController = new HomeViewController();
         giaoDichModel = new GiaoDichModel();
-        loginModel = new LoginModel();
-        showChiTKTable();
-        findUsers();
-        findMoney();
-        findDate();
+        logId = loginModel.getAccount_id();
+        System.out.println("loggoedInAccount id: " + logId);
+        showChiTKTableUser(logId);
+        findUsers(logId);
+        findMoney(logId);
+        findDate(logId);
     }
-    
-    public void showChiTKTable(){
+
+    public void showChiTKTableUser(int accountId){
         defaultTableModel = new DefaultTableModel(){
             @Override
             public boolean isCellEditable(int row, int column){
@@ -51,14 +56,9 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableModel.addColumn("Ghi Chú");
 //        defaultTableModel.addColumn("UserId");
 //        
-        setTableData(homeViewController.getAllInfor());
-//        try{
-//        setTableData(homeViewController.getAllInforUser());
-//        } catch (Exception ex){
-//            JOptionPane.showMessageDialog(this, ex.getMessage());
-//        }
+        setTableData(homeViewController.getAllInforUser(accountId));
     }
-
+    
     public void setTableData(List<GiaoDichModel> allGiaoDich){
         for(GiaoDichModel giaoDich: allGiaoDich){
             defaultTableModel.addRow(new Object[] {giaoDich.getId(), giaoDich.getDate(),
@@ -66,8 +66,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     }
     
-    public void findUsers(){
-        List<GiaoDichModel> users = homeViewController.searchTenGiaoDich(tenTKTextField.getText());
+    public void findUsers(int accountId){
+        List<GiaoDichModel> users = homeViewController.searchTenGiaoDich(tenTKTextField.getText(), accountId);
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
         Object[] row = new Object[5];
@@ -84,8 +84,8 @@ public class HomeViewPro extends javax.swing.JFrame {
        tenTKTable.setModel(model);
     }
     
-    public void findMoney(){
-        List<GiaoDichModel> users = homeViewController.searchTienGiaoDich(tuTienTKTextField.getText(), denTienTKTextField.getText());
+    public void findMoney(int accountId){
+        List<GiaoDichModel> users = homeViewController.searchTienGiaoDich(tuTienTKTextField.getText(), denTienTKTextField.getText(), accountId);
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
         Object[] row = new Object[5];
@@ -102,8 +102,8 @@ public class HomeViewPro extends javax.swing.JFrame {
        tienTKTable.setModel(model);
     }
     
-    public void findDate(){
-        List<GiaoDichModel> users = homeViewController.searchThoiGianGiaoDich(tuNgayTKTextField.getText(), denNgayTKTextField.getText());
+    public void findDate(int accountId){
+        List<GiaoDichModel> users = homeViewController.searchThoiGianGiaoDich(tuNgayTKTextField.getText(), denNgayTKTextField.getText(), accountId);
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
         Object[] row = new Object[5];
@@ -118,6 +118,34 @@ public class HomeViewPro extends javax.swing.JFrame {
             model.addRow(row);
         }
        thoiGianTKTable.setModel(model);
+    }
+    
+    public void themGD(int accountId){
+        String dateTGD = thoiGianTGDTextField.getText();
+        String matHangTGD = matHangTGDTextField.getText();
+        String thanhTienTGD = thanhTienTGDTextField.getText();
+        String ghiChuTGD = ghiChuTGDTextField.getText();
+        
+//        if(loginModel.getUser() == loginView.getName() )
+        try{
+            if(!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty() && !dateTGD.isEmpty()){
+                giaoDichModel.setDate(dateTGD); //dateTGD
+                giaoDichModel.setMatHang(matHangTGD);                                               
+                giaoDichModel.setThanhTien(thanhTienTGD);
+                giaoDichModel.setGhiChu(ghiChuTGD);
+                giaoDichModel.setAccountId(accountId);
+                homeViewController.addGiaoDichThu(giaoDichModel);
+                JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                defaultTableModel.setRowCount(0);
+                setTableData(homeViewController.getAllInforUser(accountId));
+                
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm Thất Bại!");
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
     }
     
     @SuppressWarnings("unchecked")
@@ -829,31 +857,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     }//GEN-LAST:event_thoatTGDButtonActionPerformed
 
     private void themTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themTGDButtonActionPerformed
-        String dateTGD = thoiGianTGDTextField.getText();
-        String matHangTGD = matHangTGDTextField.getText();
-        String thanhTienTGD = thanhTienTGDTextField.getText();
-        String ghiChuTGD = ghiChuTGDTextField.getText();
-        
-//        if(loginModel.getUser() == loginView.getName() )
-        try{
-            if(!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty() && !dateTGD.isEmpty()){
-                giaoDichModel.setDate(dateTGD); //dateTGD
-                giaoDichModel.setMatHang(matHangTGD);                                               
-                giaoDichModel.setThanhTien(thanhTienTGD);
-                giaoDichModel.setGhiChu(ghiChuTGD);
-                giaoDichModel.setAccountId(loginModel.getAccount_id());
-                homeViewController.addGiaoDichThu(giaoDichModel);
-                JOptionPane.showMessageDialog(this, "Thêm thành công!");
-                defaultTableModel.setRowCount(0);
-                setTableData(homeViewController.getAllInfor());
-                
-            } else {
-                JOptionPane.showMessageDialog(this, "Thêm Thất Bại!");
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
+        themGD(logId);
     }//GEN-LAST:event_themTGDButtonActionPerformed
 
     private void tenTKTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tenTKTableMouseClicked
@@ -868,7 +872,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
     private void tienTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tienTKButtonActionPerformed
         try {
-            findMoney();
+            findMoney(logId);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -911,7 +915,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     private void tenTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tenTKButtonActionPerformed
         // TODO add your handling code here:
         try {
-            findUsers();
+            findUsers(logId);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -928,7 +932,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     private void ngayTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ngayTKButtonActionPerformed
         // TODO add your handling code here:
         try {
-            findDate();
+            findDate(logId);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());

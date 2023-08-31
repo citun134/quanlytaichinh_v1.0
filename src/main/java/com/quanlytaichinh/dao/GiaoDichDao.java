@@ -71,14 +71,17 @@ public class GiaoDichDao {
         }
     }  
 
-    public ArrayList<GiaoDichModel> searchTienGiaoDich(String tu, String den){
+    public ArrayList<GiaoDichModel> searchTienGiaoDich(String tu, String den, int accountId){
         ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "SELECT * FROM giaodichthu WHERE thanhTienThu BETWEEN ? AND ?";
+//        String sql = "SELECT * FROM giaodichthu WHERE thanhTienThu BETWEEN ? AND ?";
+        String sql = "SELECT * FROM giaodichthu WHERE thanhTienThu BETWEEN ? AND ? AND account_id = ?";
+
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, tu);
             preparedStatement.setString(2, den);
+            preparedStatement.setInt(3, accountId);
             ResultSet rs = preparedStatement.executeQuery();
             GiaoDichModel giaoDichModel;
             while (rs.next()){
@@ -92,17 +95,20 @@ public class GiaoDichDao {
         return infor;
     }
     
-    public ArrayList<GiaoDichModel> searchTenGiaoDich(String ten){
+    public ArrayList<GiaoDichModel> searchTenGiaoDich(String ten, int accountId){
         ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "SELECT * FROM giaodichthu WHERE matHangThu LIKE '"+ten +"'";
+//        String sql = "SELECT * FROM giaodichthu WHERE matHangThu LIKE '"+ten +"'";
+        String sql = "SELECT * FROM giaodichthu WHERE matHangThu LIKE ? AND account_id = ?";
+
 //        String sql = "SELECT * FROM giaodichthu WHERE matHangThu = ?";
 
         
         //CONCAT(`thuId`, `ngayThu`, `matHangThu`, `thanhTienThu`, `ghiChuThu`)
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-//            preparedStatement.setString(1, ten);
+            preparedStatement.setString(1, ten);
+            preparedStatement.setInt(2, accountId);
             ResultSet rs = preparedStatement.executeQuery();
             GiaoDichModel giaoDichModel;
             while (rs.next()){
@@ -117,14 +123,17 @@ public class GiaoDichDao {
         return infor;
     }
     
-    public ArrayList<GiaoDichModel> searchThoiGianGiaoDich(String tu, String den){
+    public ArrayList<GiaoDichModel> searchThoiGianGiaoDich(String tu, String den, int accountId){
         ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "SELECT * FROM giaodichthu WHERE ngayThu BETWEEN ? AND ?";
+//        String sql = "SELECT * FROM giaodichthu WHERE ngayThu BETWEEN ? AND ?";
+        String sql = "SELECT * FROM giaodichthu WHERE ngayThu BETWEEN ? AND ? AND account_id = ?";
+
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, tu);
             preparedStatement.setString(2, den);
+            preparedStatement.setInt(3, accountId);
             ResultSet rs = preparedStatement.executeQuery();
             GiaoDichModel giaoDichModel;
             while (rs.next()){
@@ -138,15 +147,15 @@ public class GiaoDichDao {
         return infor;
     }
     
-    public List<GiaoDichModel> getAllInforUser(){
+    public List<GiaoDichModel> getAllInforUser(int accountId){
         loginModel = new LoginModel();
         List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
-//        String sql = "SELECT giaodichthu.*, accounts.account_id FROM giaodichthu JOIN accounts ON giaodichthu.account_id = accounts.account_id;";
-//        String sql = "SELECT g.*, a.account_id FROM giaodichthu g JOIN accounts a ON g.account_id = a.account_id";
+//        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
+        String sql = "SELECT * FROM giaodichthu WHERE account_id = ?";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
                 GiaoDichModel giaoDichModel = new GiaoDichModel();

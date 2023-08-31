@@ -3,14 +3,24 @@ package com.quanlytaichinh.model;
 public class LoginModel {
     private String user;
     private String password;
-    private int account_id;
+    public int account_id;
     
-    public LoginModel() {
+    public LoginModel(){
+    }
+    
+    public LoginModel(int account_id) {
+        this.account_id  = account_id;
     }
     
     public LoginModel(String user, String password) {
         this.user = user;
         this.password = password;
+    }
+
+    public LoginModel(String user, String password, int account_id) {
+        this.user = user;
+        this.password = password;
+        this.account_id = account_id;
     }
     
     public String getUser() {

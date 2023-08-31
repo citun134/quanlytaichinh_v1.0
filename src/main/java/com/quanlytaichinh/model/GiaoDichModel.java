@@ -20,6 +20,14 @@ public class GiaoDichModel {
         this.ghiChu = ghiChu;
     }
     
+    public GiaoDichModel(int id, String date, String matHang, String thanhTien, String ghiChu, int accountId) {
+        this.id = id;
+        this.date = date;
+        this.matHang = matHang;
+        this.thanhTien = thanhTien;
+        this.ghiChu = ghiChu;
+        this.accountId = accountId;
+    }    
 
     public int getId() {
         return id;

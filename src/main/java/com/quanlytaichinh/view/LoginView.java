@@ -5,20 +5,20 @@ import com.quanlytaichinh.dao.JDBCConnection;
 import com.quanlytaichinh.dao.LoginDao;
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.LoginModel;
+import com.quanlytaichinh.controller.HomeViewController;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class LoginView extends javax.swing.JFrame {
+    public int loggedInAccountId;
     public LoginModel loginModel;
     public LoginController loginController;
     public LoginDao loginDao;
     public GiaoDichModel giaoDichModel;
+    public HomeViewController homeViewController;
     
     public LoginView() {
         try{
@@ -275,12 +275,17 @@ public class LoginView extends javax.swing.JFrame {
         String sql = "SELECT * FROM accounts WHERE username = '" + user + "'" + " AND password = '" +  pass + "'";
         ResultSet rs = stm.executeQuery(sql);
         if(rs.next()){
-            loginModel.setAccount_id(rs.getInt("account_id"));
-
+            loggedInAccountId = rs.getInt("account_id");
+            loginModel = new LoginModel(user, pass, loggedInAccountId);
+            System.out.println("loggedInAccountId loginview: " + loggedInAccountId);
             // Now, set the accountId in your GiaoDichModel
-//            giaoDichModel.setAccountId(loginModel.getAccount_id());
-            new HomeViewPro().setVisible(true);
+            new HomeViewPro(loginModel).setVisible(true);
             this.dispose();
+//            giaoDichModel.setAccountId(rs.getInt("account_id"));
+            loginModel.setAccount_id(loggedInAccountId);
+            
+//            homeViewController.addGiaoDichThu(giaoDichModel);
+//            giaoDichModel.setAccountId(loggedInAccountId);
         } else {
             JOptionPane.showMessageDialog(this, "Đăng nhập thất bại!");
             userLoginTextField.setText("");
