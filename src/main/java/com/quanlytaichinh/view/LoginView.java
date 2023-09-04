@@ -23,6 +23,9 @@ public class LoginView extends javax.swing.JFrame {
     public LoginView() {
         try{
             initComponents();
+            
+            setLocationRelativeTo(null);
+            
             loginModel = new LoginModel();
             loginController = new LoginController();
             loginDao = new LoginDao();

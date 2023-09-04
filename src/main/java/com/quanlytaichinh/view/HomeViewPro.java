@@ -8,7 +8,6 @@ import com.quanlytaichinh.model.LoginModel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +23,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
         
 public class HomeViewPro extends javax.swing.JFrame {
-    public static Statement sta;
     public HomeViewController homeViewController;
     public GiaoDichDao giaoDichDao;
     public LoginController loginController;
@@ -44,6 +42,9 @@ public class HomeViewPro extends javax.swing.JFrame {
     public HomeViewPro(){}
     public HomeViewPro(LoginModel loginModel) {
         initComponents();
+        
+        setLocationRelativeTo(null);
+        
         this.loginModel = loginModel;
         
         homeViewController = new HomeViewController();
@@ -70,14 +71,16 @@ public class HomeViewPro extends javax.swing.JFrame {
         };
         
         chiTable.setModel(defaultTableModel);
+        tenTKTable.setModel(defaultTableModel);
+        
         defaultTableModel.addColumn("ID");
         defaultTableModel.addColumn("Thời Gian");
         defaultTableModel.addColumn("Mặt Hàng");
         defaultTableModel.addColumn("Thành Tiền");
         defaultTableModel.addColumn("Ghi Chú");
-//        defaultTableModel.addColumn("UserId");
-//        
+    
         setTableData(homeViewController.getAllInforUser(accountId));
+//        setTableDataTien(homeViewController.getAllInforUser(accountId));
     }
     
     public void setTableData(List<GiaoDichModel> allGiaoDich){
@@ -103,6 +106,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             model.addRow(row);
         }
        tenTKTable.setModel(model);
+       tenTKTextField.setText("");
     }
 
     
@@ -122,6 +126,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             model.addRow(row);
         }
        tienTKTable.setModel(model);
+       tuTienTKTextField.setText("");
+       denTienTKTextField.setText("");
     }
     
     public final void findDate(int accountId){
@@ -140,6 +146,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             model.addRow(row);
         }
        thoiGianTKTable.setModel(model);
+       tuNgayTKTextField.setText("");
+       denNgayTKTextField.setText("");
     }
     
     public void themGD(int accountId){
@@ -168,6 +176,11 @@ public class HomeViewPro extends javax.swing.JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
+        
+        thoiGianTGDTextField.setText("");
+        matHangTGDTextField.setText("");
+        thanhTienTGDTextField.setText("");
+        ghiChuTGDTextField.setText("");
     }
     
     public void setDataToChart(JPanel jpanel){
