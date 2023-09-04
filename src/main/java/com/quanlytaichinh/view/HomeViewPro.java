@@ -6,11 +6,16 @@ import com.quanlytaichinh.dao.GiaoDichDao;
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.LoginModel;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.RowFilter;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import org.jfree.chart.ChartFactory;
@@ -30,6 +35,9 @@ public class HomeViewPro extends javax.swing.JFrame {
     public DefaultTableModel timKiemTen;
     public DefaultTableModel timKiemTien;
     public DefaultTableModel timKiemNgay;
+    public Timer t;
+    public SimpleDateFormat simpleDateFormat;
+    
     
     private int logId;
      
@@ -43,6 +51,10 @@ public class HomeViewPro extends javax.swing.JFrame {
         
         logId = loginModel.getAccount_id();
         System.out.println("loggoedInAccount id: " + logId);
+        
+        dateTime();
+        times();
+        
         showChiTKTableUser(logId);
         findUsers(logId);
         findMoney(logId);
@@ -175,6 +187,27 @@ public class HomeViewPro extends javax.swing.JFrame {
         jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
         jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
     }
+    
+    public final void dateTime(){
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String dd = sdf.format(date);
+        showDateLabel.setText(dd);
+    }
+    
+    public final void times(){
+        t = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+//                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            Date date = new Date();
+            simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+            String tt = simpleDateFormat.format(date);
+            showRealTimeLabel.setText(tt);
+            }
+        });
+        t.start();
+    }
         
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -197,8 +230,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         headerPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        showDateLabel = new javax.swing.JLabel();
+        showRealTimeLabel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
@@ -351,13 +384,13 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("User");
+        jLabel1.setText("Date");
 
-        jLabel2.setText("Date");
+        jLabel2.setText("Time");
 
-        jLabel4.setText("showUser");
+        showDateLabel.setText("showUser");
 
-        jLabel5.setText("showDate");
+        showRealTimeLabel.setText("showDate");
 
         jLabel3.setText("QUẢN LÝ TÀI CHÍNH");
 
@@ -392,8 +425,8 @@ public class HomeViewPro extends javax.swing.JFrame {
                             .addComponent(jLabel1))
                         .addGap(18, 18, 18)
                         .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5))
+                            .addComponent(showDateLabel)
+                            .addComponent(showRealTimeLabel))
                         .addGap(6, 6, 6)
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -406,11 +439,11 @@ public class HomeViewPro extends javax.swing.JFrame {
                     .addGroup(headerPanelLayout.createSequentialGroup()
                         .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel4))
+                            .addComponent(showDateLabel))
                         .addGap(24, 24, 24)
                         .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel5)))
+                            .addComponent(showRealTimeLabel)))
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1029,8 +1062,6 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1053,6 +1084,8 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTextField matHangTGDTextField;
     private javax.swing.JButton ngayTKButton;
+    private javax.swing.JLabel showDateLabel;
+    private javax.swing.JLabel showRealTimeLabel;
     private javax.swing.JPanel showTKPanel;
     private javax.swing.JButton tenTKButton;
     private javax.swing.JTable tenTKTable;
