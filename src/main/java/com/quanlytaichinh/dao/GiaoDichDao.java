@@ -172,4 +172,33 @@ public class GiaoDichDao {
         }   
         return infor;
     }
+    
+    public List<GiaoDichModel> getListByMoney(int accountId) {
+        List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT YEAR(ngayThu) AS Year, MONTH(ngayThu) AS Month, " +
+                     "COALESCE(SUM(thanhTienThu), 0) AS TotalMoney " +
+                     "FROM giaoDichThu " +
+                     "WHERE account_id = ? " + // Thêm điều kiện cho accountId
+                     "GROUP BY YEAR(ngayThu), MONTH(ngayThu) " +
+                     "ORDER BY YEAR(ngayThu), MONTH(ngayThu)";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId); // Đặt giá trị cho accountId
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                GiaoDichModel giaoDichModel = new GiaoDichModel();
+                giaoDichModel.setYear(rs.getInt("Year"));
+                giaoDichModel.setMonth(rs.getInt("Month"));
+                giaoDichModel.setTotalMoney(rs.getInt("TotalMoney"));
+                infor.add(giaoDichModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return infor;
+    }
+
+
 }

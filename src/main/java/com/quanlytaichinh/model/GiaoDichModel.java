@@ -7,6 +7,9 @@ public class GiaoDichModel {
     private String thanhTien;
     private String ghiChu;
     private int accountId;
+    private int year;
+    private int month;
+    private int totalMoney;
 
     public GiaoDichModel() {
 //        new GiaoDichModel();
@@ -75,6 +78,30 @@ public class GiaoDichModel {
 
     public void setAccountId(int accountId) {
         this.accountId = accountId;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getTotalMoney() {
+        return totalMoney;
+    }
+
+    public void setTotalMoney(int totalMoney) {
+        this.totalMoney = totalMoney;
     }
     
 

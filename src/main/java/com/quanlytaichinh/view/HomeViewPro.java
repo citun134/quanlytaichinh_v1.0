@@ -5,14 +5,21 @@ import com.quanlytaichinh.controller.LoginController;
 import com.quanlytaichinh.dao.GiaoDichDao;
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.LoginModel;
+import java.awt.BorderLayout;
+import java.sql.Statement;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
+        
 public class HomeViewPro extends javax.swing.JFrame {
-    
+    public static Statement sta;
     public HomeViewController homeViewController;
     public GiaoDichDao giaoDichDao;
     public LoginController loginController;
@@ -30,8 +37,10 @@ public class HomeViewPro extends javax.swing.JFrame {
     public HomeViewPro(LoginModel loginModel) {
         initComponents();
         this.loginModel = loginModel;
+        
         homeViewController = new HomeViewController();
         giaoDichModel = new GiaoDichModel();
+        
         logId = loginModel.getAccount_id();
         System.out.println("loggoedInAccount id: " + logId);
         showChiTKTableUser(logId);
@@ -40,7 +49,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         findDate(logId);
     }
 
-    public void showChiTKTableUser(int accountId){
+    public final void showChiTKTableUser(int accountId){
         defaultTableModel = new DefaultTableModel(){
             @Override
             public boolean isCellEditable(int row, int column){
@@ -66,7 +75,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     }
     
-    public void findUsers(int accountId){
+    public final void findUsers(int accountId){
         List<GiaoDichModel> users = homeViewController.searchTenGiaoDich(tenTKTextField.getText(), accountId);
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
@@ -83,8 +92,9 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
        tenTKTable.setModel(model);
     }
+
     
-    public void findMoney(int accountId){
+    public final void findMoney(int accountId){
         List<GiaoDichModel> users = homeViewController.searchTienGiaoDich(tuTienTKTextField.getText(), denTienTKTextField.getText(), accountId);
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
@@ -102,7 +112,7 @@ public class HomeViewPro extends javax.swing.JFrame {
        tienTKTable.setModel(model);
     }
     
-    public void findDate(int accountId){
+    public final void findDate(int accountId){
         List<GiaoDichModel> users = homeViewController.searchThoiGianGiaoDich(tuNgayTKTextField.getText(), denNgayTKTextField.getText(), accountId);
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
@@ -148,6 +158,24 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     }
     
+    public void setDataToChart(JPanel jpanel){
+        List<GiaoDichModel> listItem = homeViewController.getListByMoney(logId);
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
+                "Tiền", dataset);
+        for(GiaoDichModel item : listItem){
+            dataset.addValue(item.getTotalMoney(), "Số tiền", "Tháng "+item.getMonth());
+        }
+        ChartPanel chartPanel = new ChartPanel(chart);
+
+        // Thêm chartPanel vào JPanel
+        jpanel.removeAll(); // Xóa bất kỳ thành phần hiện có trong JPanel
+        jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
+        jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
+        jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+    }
+        
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -216,7 +244,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         denNgayTKTextField = new javax.swing.JTextField();
         ngayTKButton = new javax.swing.JButton();
         thongKePanel = new javax.swing.JPanel();
-        jTabbedPane3 = new javax.swing.JTabbedPane();
+        showTKPanel = new javax.swing.JPanel();
 
         themDialog.setMinimumSize(new java.awt.Dimension(400, 400));
 
@@ -554,13 +582,12 @@ public class HomeViewPro extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tenTKButton)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tenTKButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -646,17 +673,16 @@ public class HomeViewPro extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel13)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tuTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel14)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tienTKButton)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tuTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tienTKButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
@@ -730,17 +756,16 @@ public class HomeViewPro extends javax.swing.JFrame {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel16)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(ngayTKButton)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ngayTKButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
@@ -797,20 +822,31 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         mainPanel.add(timKiemPanel, "card3");
 
+        javax.swing.GroupLayout showTKPanelLayout = new javax.swing.GroupLayout(showTKPanel);
+        showTKPanel.setLayout(showTKPanelLayout);
+        showTKPanelLayout.setHorizontalGroup(
+            showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 499, Short.MAX_VALUE)
+        );
+        showTKPanelLayout.setVerticalGroup(
+            showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 405, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout thongKePanelLayout = new javax.swing.GroupLayout(thongKePanel);
         thongKePanel.setLayout(thongKePanelLayout);
         thongKePanelLayout.setHorizontalGroup(
             thongKePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, thongKePanelLayout.createSequentialGroup()
+            .addGroup(thongKePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE)
+                .addComponent(showTKPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         thongKePanelLayout.setVerticalGroup(
             thongKePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(thongKePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                .addComponent(showTKPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -823,8 +859,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
     private void thoatHomeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatHomeButtonActionPerformed
         // TODO add your handling code here:
-        HomeViewPro homeViewPro = new HomeViewPro();
-        homeViewPro.setVisible(false);
+        System.exit(0);
     }//GEN-LAST:event_thoatHomeButtonActionPerformed
 
     private void giaoDichPanelComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_giaoDichPanelComponentShown
@@ -842,10 +877,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         mainPanel.removeAll();
         mainPanel.add(timKiemPanel);
         mainPanel.revalidate();
-        mainPanel.repaint();       
+        mainPanel.repaint();  
     }//GEN-LAST:event_timKiemButtonActionPerformed
 
     private void thongKeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thongKeButtonActionPerformed
+        setDataToChart(thongKePanel);
         mainPanel.removeAll();
         mainPanel.add(thongKePanel);
         mainPanel.revalidate();
@@ -904,10 +940,10 @@ public class HomeViewPro extends javax.swing.JFrame {
         } else {
             int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Ban chac chan muon xoa khong");
             if (confirm == JOptionPane.YES_OPTION){
-                int userId = Integer.valueOf(String.valueOf(chiTable.getValueAt(row, 0)));
+                int userId = Integer.parseInt(String.valueOf(chiTable.getValueAt(row, 0)));
                 homeViewController.deleteGiaoDich(userId);
                 defaultTableModel.setRowCount(0);
-                setTableData(homeViewController.getAllInfor());
+                setTableData(homeViewController.getAllInforUser(logId));
             }
         }
     }//GEN-LAST:event_xoaChiButtonActionPerformed
@@ -1014,10 +1050,10 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
-    private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTextField matHangTGDTextField;
     private javax.swing.JButton ngayTKButton;
+    private javax.swing.JPanel showTKPanel;
     private javax.swing.JButton tenTKButton;
     private javax.swing.JTable tenTKTable;
     private javax.swing.JTextField tenTKTextField;

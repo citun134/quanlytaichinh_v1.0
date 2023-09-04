@@ -42,4 +42,7 @@ public class HomeViewController {
     public List<GiaoDichModel> getAllInforUser(int accountId){
         return giaoDichDao.getAllInforUser(accountId);
     }
+    public List<GiaoDichModel> getListByMoney(int accountId){
+        return giaoDichDao.getListByMoney(accountId);
+    }
 }
