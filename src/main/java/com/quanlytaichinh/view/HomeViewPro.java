@@ -8,6 +8,8 @@ import com.quanlytaichinh.model.LoginModel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -159,9 +161,20 @@ public class HomeViewPro extends javax.swing.JFrame {
 //        if(loginModel.getUser() == loginView.getName() )
         try{
             if(!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty() && !dateTGD.isEmpty()){
-                giaoDichModel.setDate(dateTGD); //dateTGD
+                DecimalFormat decimalFormat = new DecimalFormat();
+                decimalFormat.setParseBigDecimal(true);
+                BigDecimal bigDecimal = (BigDecimal) decimalFormat.parse(thanhTienTGD);
+                
+                SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                Date parsedDate = inputDateFormat.parse(dateTGD);
+
+                // Format the parsed date back to the desired format
+                SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String formattedDate = outputDateFormat.format(parsedDate);
+
+                giaoDichModel.setDate(formattedDate); //dateTGD
                 giaoDichModel.setMatHang(matHangTGD);                                               
-                giaoDichModel.setThanhTien(thanhTienTGD);
+                giaoDichModel.setThanhTien(bigDecimal.doubleValue());
                 giaoDichModel.setGhiChu(ghiChuTGD);
                 giaoDichModel.setAccountId(accountId);
                 homeViewController.addGiaoDichThu(giaoDichModel);
@@ -203,7 +216,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     
     public final void dateTime(){
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         String dd = sdf.format(date);
         showDateLabel.setText(dd);
     }
@@ -322,6 +335,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         jLabel10.setText("Thành Tiền");
 
         jLabel11.setText("Ghi Chú");
+
+        thoiGianTGDTextField.setText("yyyy-MM-dd");
 
         themTGDButton.setText("THÊM");
         themTGDButton.addActionListener(new java.awt.event.ActionListener() {

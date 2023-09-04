@@ -15,10 +15,6 @@ public class HomeViewController {
         giaoDichDao = new GiaoDichDao();
     }
     
-    public List<GiaoDichModel> getAllInfor(){
-        return giaoDichDao.getAllInfor();
-    }
-    
     public void deleteGiaoDich(int user){
         giaoDichDao.deleteGiaoDich(user);
     }
