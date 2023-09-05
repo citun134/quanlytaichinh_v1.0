@@ -73,13 +73,8 @@ public class GiaoDichDao {
     public ArrayList<GiaoDichModel> searchTenGiaoDich(String ten, int accountId){
         ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
-//        String sql = "SELECT * FROM giaodichthu WHERE matHangThu LIKE '"+ten +"'";
         String sql = "SELECT * FROM giaodichthu WHERE matHangThu LIKE ? AND account_id = ?";
 
-//        String sql = "SELECT * FROM giaodichthu WHERE matHangThu = ?";
-
-        
-        //CONCAT(`thuId`, `ngayThu`, `matHangThu`, `thanhTienThu`, `ghiChuThu`)
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, ten);

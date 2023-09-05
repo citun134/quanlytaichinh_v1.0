@@ -63,9 +63,18 @@ public class LoginView extends javax.swing.JFrame {
         taiKhoanMoiButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
 
-        dangKyDiaLog.setMinimumSize(new java.awt.Dimension(500, 500));
+        dangKyDiaLog.setMinimumSize(new java.awt.Dimension(400, 400));
         dangKyDiaLog.setModal(true);
+        dangKyDiaLog.setPreferredSize(new java.awt.Dimension(400, 400));
+        dangKyDiaLog.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                dangKyDiaLogComponentShown(evt);
+            }
+        });
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel9.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel9.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Unknown person.png")); // NOI18N
         jLabel9.setText("  ĐĂNG KÝ");
 
@@ -74,9 +83,9 @@ public class LoginView extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(171, Short.MAX_VALUE)
+                .addContainerGap(103, Short.MAX_VALUE)
                 .addComponent(jLabel9)
-                .addContainerGap(171, Short.MAX_VALUE))
+                .addContainerGap(103, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -88,22 +97,42 @@ public class LoginView extends javax.swing.JFrame {
 
         dangKyDiaLog.getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
+        jPanel6.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel5.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel5.setText("Tài khoản");
 
+        jLabel6.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel6.setText("Mật khẩu");
 
+        jLabel7.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel7.setText("Xác nhận mật khẩu");
 
-        jButton3.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Add.png")); // NOI18N
-        jButton3.setText("  ĐĂNG KÝ");
+        userDangKyTextField.setBackground(new java.awt.Color(245, 246, 247));
+        userDangKyTextField.setMargin(new java.awt.Insets(5, 5, 5, 5));
+
+        passwordDangKyPasswordField.setBackground(new java.awt.Color(245, 246, 247));
+        passwordDangKyPasswordField.setMargin(new java.awt.Insets(5, 5, 5, 5));
+
+        conPasswordDangKyPasswordField.setBackground(new java.awt.Color(245, 246, 247));
+        conPasswordDangKyPasswordField.setMargin(new java.awt.Insets(5, 5, 5, 5));
+
+        jButton3.setBackground(new java.awt.Color(0, 164, 0));
+        jButton3.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jButton3.setForeground(new java.awt.Color(255, 255, 255));
+        jButton3.setText("ĐĂNG KÝ");
+        jButton3.setMargin(new java.awt.Insets(10, 20, 10, 20));
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
 
-        thoatButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Delete.png")); // NOI18N
-        thoatButton.setText("  THOÁT");
+        thoatButton.setBackground(new java.awt.Color(255, 0, 51));
+        thoatButton.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        thoatButton.setForeground(new java.awt.Color(255, 255, 255));
+        thoatButton.setText("THOÁT");
+        thoatButton.setMargin(new java.awt.Insets(10, 20, 10, 20));
         thoatButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 thoatButtonActionPerformed(evt);
@@ -117,24 +146,26 @@ public class LoginView extends javax.swing.JFrame {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton3)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(thoatButton))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(userDangKyTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
-                            .addComponent(passwordDangKyPasswordField)
-                            .addComponent(conPasswordDangKyPasswordField))))
+                        .addComponent(jLabel5)
+                        .addGap(70, 70, 70)
+                        .addComponent(userDangKyTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(74, 74, 74)
+                        .addComponent(passwordDangKyPasswordField))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(12, 12, 12)
+                        .addComponent(conPasswordDangKyPasswordField)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton3)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -143,17 +174,17 @@ public class LoginView extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(userDangKyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 37, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(passwordDangKyPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 39, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(conPasswordDangKyPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 39, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addComponent(thoatButton)
                 .addContainerGap())
         );
@@ -161,18 +192,22 @@ public class LoginView extends javax.swing.JFrame {
         dangKyDiaLog.getContentPane().add(jPanel6, java.awt.BorderLayout.CENTER);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(400, 400));
 
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel2.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\User.png")); // NOI18N
-        jLabel2.setText("LOGIN");
+        jLabel2.setText("   LOGIN");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(102, Short.MAX_VALUE)
+                .addContainerGap(83, Short.MAX_VALUE)
                 .addComponent(jLabel2)
-                .addContainerGap(102, Short.MAX_VALUE))
+                .addContainerGap(82, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,31 +219,52 @@ public class LoginView extends javax.swing.JFrame {
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_START);
 
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel3.setText("Tài Khoản");
 
+        jLabel4.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel4.setText("Mật Khẩu");
+        jLabel4.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
 
+        userLoginTextField.setBackground(new java.awt.Color(245, 246, 247));
+        userLoginTextField.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        userLoginTextField.setMargin(new java.awt.Insets(5, 5, 5, 5));
         userLoginTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 userLoginTextFieldActionPerformed(evt);
             }
         });
 
-        dangNhapButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Accept.png")); // NOI18N
-        dangNhapButton.setText("  ĐĂNG NHẬP");
+        passwordLoginPasswordField.setBackground(new java.awt.Color(245, 246, 247));
+        passwordLoginPasswordField.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        passwordLoginPasswordField.setMargin(new java.awt.Insets(5, 5, 5, 5));
+
+        dangNhapButton.setBackground(new java.awt.Color(24, 119, 242));
+        dangNhapButton.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        dangNhapButton.setForeground(new java.awt.Color(255, 255, 255));
+        dangNhapButton.setText("ĐĂNG NHẬP");
+        dangNhapButton.setMargin(new java.awt.Insets(10, 20, 10, 20));
         dangNhapButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dangNhapButtonActionPerformed(evt);
             }
         });
 
-        taiKhoanMoiButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Create.png")); // NOI18N
-        taiKhoanMoiButton.setText("  TẠO TÀI KHOẢN MỚI");
+        taiKhoanMoiButton.setBackground(new java.awt.Color(66, 183, 42));
+        taiKhoanMoiButton.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        taiKhoanMoiButton.setForeground(new java.awt.Color(255, 255, 255));
+        taiKhoanMoiButton.setText("TẠO TÀI KHOẢN MỚI");
+        taiKhoanMoiButton.setMargin(new java.awt.Insets(10, 20, 10, 20));
         taiKhoanMoiButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 taiKhoanMoiButtonActionPerformed(evt);
             }
         });
+
+        jSeparator1.setBackground(new java.awt.Color(218, 221, 225));
+        jSeparator1.setForeground(new java.awt.Color(218, 221, 225));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -219,7 +275,7 @@ public class LoginView extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 38, Short.MAX_VALUE)
+                        .addGap(0, 37, Short.MAX_VALUE)
                         .addComponent(taiKhoanMoiButton)
                         .addGap(0, 37, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -249,12 +305,14 @@ public class LoginView extends javax.swing.JFrame {
                     .addComponent(passwordLoginPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(dangNhapButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                 .addComponent(taiKhoanMoiButton)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
+
+        dangNhapButton.getAccessibleContext().setAccessibleName("ĐĂNG NHẬP");
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
 
@@ -267,15 +325,6 @@ public class LoginView extends javax.swing.JFrame {
 
     private void dangNhapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dangNhapButtonActionPerformed
      
-            // TODO add your handling code here:
-//        SwingUtilities.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                HomeViewPro mainFrame = new HomeViewPro();
-//                mainFrame.setVisible(true);
-//                
-//            }
-//        });
     try {
         Connection connection = JDBCConnection.getJDBCConecction();
         String user = userLoginTextField.getText();
@@ -336,6 +385,10 @@ public class LoginView extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void dangKyDiaLogComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_dangKyDiaLogComponentShown
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dangKyDiaLogComponentShown
 
     /**
      * @param args the command line arguments
