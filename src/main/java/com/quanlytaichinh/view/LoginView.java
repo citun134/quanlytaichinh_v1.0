@@ -378,7 +378,9 @@ public class LoginView extends javax.swing.JFrame {
             loginModel.setPassword(password);
 
             loginController.addUser(loginModel);
-
+            userDangKyTextField.setText("");
+            passwordDangKyPasswordField.setText("");
+            conPasswordDangKyPasswordField.setText("");
             JOptionPane.showMessageDialog(this, "Đăng ký thành công!");
         } else {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin đăng ký.", "Lỗi", JOptionPane.ERROR_MESSAGE);
