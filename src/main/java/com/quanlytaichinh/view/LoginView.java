@@ -65,7 +65,6 @@ public class LoginView extends javax.swing.JFrame {
 
         dangKyDiaLog.setMinimumSize(new java.awt.Dimension(400, 400));
         dangKyDiaLog.setModal(true);
-        dangKyDiaLog.setPreferredSize(new java.awt.Dimension(400, 400));
         dangKyDiaLog.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
                 dangKyDiaLogComponentShown(evt);
@@ -192,7 +191,6 @@ public class LoginView extends javax.swing.JFrame {
         dangKyDiaLog.getContentPane().add(jPanel6, java.awt.BorderLayout.CENTER);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(400, 400));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -312,8 +310,6 @@ public class LoginView extends javax.swing.JFrame {
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
-        dangNhapButton.getAccessibleContext().setAccessibleName("ĐĂNG NHẬP");
-
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
 
         pack();
@@ -357,6 +353,7 @@ public class LoginView extends javax.swing.JFrame {
 
     private void taiKhoanMoiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taiKhoanMoiButtonActionPerformed
         // TODO add your handling code here:
+        dangKyDiaLog.setLocationRelativeTo(null);
         dangKyDiaLog.setVisible(true);
     }//GEN-LAST:event_taiKhoanMoiButtonActionPerformed
 

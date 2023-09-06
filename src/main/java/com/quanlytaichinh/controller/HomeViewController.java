@@ -41,4 +41,8 @@ public class HomeViewController {
     public List<GiaoDichModel> getListByMoney(int accountId){
         return giaoDichDao.getListByMoney(accountId);
     }
+    
+    public List<GiaoDichModel> getListByMoneyYear(int accountId, int year){
+        return giaoDichDao.getListByMoneyYear(accountId, year);
+    }
 }
