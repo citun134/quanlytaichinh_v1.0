@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.table.DefaultTableModel;
 
 public class GiaoDichDao {
 //    private GiaoDichModel giaoDichModel;
@@ -28,7 +27,7 @@ public class GiaoDichDao {
             preparedStatement.setInt(5, giaoDichModel.getAccountId());
             int rs = preparedStatement.executeUpdate();
             System.out.println(rs);
-        } catch (SQLException ex) {
+        } catch (SQLException ex) { 
             ex.printStackTrace();
         }
     }

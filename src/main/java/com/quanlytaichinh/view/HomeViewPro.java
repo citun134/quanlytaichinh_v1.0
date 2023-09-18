@@ -17,10 +17,8 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.RowFilter;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -68,6 +66,15 @@ public class HomeViewPro extends javax.swing.JFrame {
         displayTen(logId);
         displayTien(logId);
         displayNgay(logId);
+        
+        thoiGianTGDTextField.setDateFormatString("yyyy-MM-dd");
+        tuNgayTKTextField.setDateFormatString("yyyy-MM-dd");
+        denNgayTKTextField.setDateFormatString("yyyy-MM-dd");
+        
+        Date date = new Date();
+        thoiGianTGDTextField.setDate(date);
+        tuNgayTKTextField.setDate(date);
+        denNgayTKTextField.setDate(date);
     }
 
     public final void showChiTKTableUser(int accountId){
@@ -136,26 +143,65 @@ public class HomeViewPro extends javax.swing.JFrame {
        tienTKTable.setModel(model);
     }
     
-    public final void findDate(int accountId){
-        List<GiaoDichModel> users = homeViewController.searchThoiGianGiaoDich(tuNgayTKTextField.getText(), denNgayTKTextField.getText(), accountId);
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
-        Object[] row = new Object[5];
-        
-        for(int i = 0; i < users.size(); i++)
-        {
-            row[0] = users.get(i).getId();
-            row[1] = users.get(i).getDate();
-            row[2] = users.get(i).getMatHang();
-            row[3] = users.get(i).getThanhTien();
-            row[4] = users.get(i).getGhiChu();
-            model.addRow(row);
+//    public void findDate(int accountId){
+//        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        String tuNgayTxt = simpleDateFormat.format(tuNgayTKTextField.getDate());
+//        String denNgayTxt = simpleDateFormat.format(denNgayTKTextField.getDate());
+//        
+////        List<GiaoDichModel> users = homeViewController.searchThoiGianGiaoDich(tuNgayTKTextField.getText(), denNgayTKTextField.getText(), accountId);
+//        List<GiaoDichModel> users = homeViewController.searchThoiGianGiaoDich(tuNgayTxt, denNgayTxt, accountId);
+//
+//        DefaultTableModel model = new DefaultTableModel();
+//        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
+//        Object[] row = new Object[5];
+//        
+//        for(int i = 0; i < users.size(); i++)
+//        {
+//            row[0] = users.get(i).getId();
+//            row[1] = users.get(i).getDate();
+//            row[2] = users.get(i).getMatHang();
+//            row[3] = users.get(i).getThanhTien();
+//            row[4] = users.get(i).getGhiChu();
+//            model.addRow(row);
+//        }
+//       thoiGianTKTable.setModel(model);
+//    }
+    
+    public void findDate(int accountId){
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date tuNgayDate = tuNgayTKTextField.getDate();
+        Date denNgayDate = denNgayTKTextField.getDate();
+
+        if (tuNgayDate != null && denNgayDate != null) {
+            String tuNgayTxt = simpleDateFormat.format(tuNgayDate);
+            String denNgayTxt = simpleDateFormat.format(denNgayDate);
+
+            List<GiaoDichModel> users = homeViewController.searchThoiGianGiaoDich(tuNgayTxt, denNgayTxt, accountId);
+
+            DefaultTableModel model = new DefaultTableModel();
+            model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
+            Object[] row = new Object[5];
+
+            for(int i = 0; i < users.size(); i++) {
+                row[0] = users.get(i).getId();
+                row[1] = users.get(i).getDate();
+                row[2] = users.get(i).getMatHang();
+                row[3] = users.get(i).getThanhTien();
+                row[4] = users.get(i).getGhiChu();
+                model.addRow(row);
+            }
+            thoiGianTKTable.setModel(model);
+        } else {
+            // Handle the case where either tuNgayTKTextField or denNgayTKTextField returned null dates
+            // You can display an error message or take appropriate action.
         }
-       thoiGianTKTable.setModel(model);
     }
+
     
     public void themGD(int accountId){
-        String dateTGD = thoiGianTGDTextField.getText();
+//        String dateTGD = thoiGianTGDTextField.getText();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String dateTGD = sdf.format(thoiGianTGDTextField.getDate());
         String matHangTGD = matHangTGDTextField.getText();
         String thanhTienTGD = thanhTienTGDTextField.getText();
         String ghiChuTGD = ghiChuTGDTextField.getText();
@@ -167,14 +213,14 @@ public class HomeViewPro extends javax.swing.JFrame {
                 decimalFormat.setParseBigDecimal(true);
                 BigDecimal bigDecimal = (BigDecimal) decimalFormat.parse(thanhTienTGD);
                 
-                SimpleDateFormat inputDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 inputDateFormat.setLenient(false);
                 Date parsedDate = inputDateFormat.parse(dateTGD);
 
                 // Format the parsed date back to the desired format
                 SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String formattedDate = outputDateFormat.format(parsedDate);
-
+                 
                 giaoDichModel.setDate(formattedDate); //dateTGD
                 giaoDichModel.setMatHang(matHangTGD);                                               
                 giaoDichModel.setThanhTien(bigDecimal.doubleValue());
@@ -193,29 +239,11 @@ public class HomeViewPro extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
         
-        thoiGianTGDTextField.setText("");
+//        thoiGianTGDTextField.setText("");
         matHangTGDTextField.setText("");
         thanhTienTGDTextField.setText("");
         ghiChuTGDTextField.setText("");
     }
-    
-//    public void setDataToChart(JPanel jpanel){
-//        List<GiaoDichModel> listItem = homeViewController.getListByMoney(logId);
-//
-//        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-//        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
-//                "Tiền", dataset);
-//        for(GiaoDichModel item : listItem){
-//            dataset.addValue(item.getTotalMoney(), "Số tiền", item.getMonth()+ "/" + item.getYear());
-//        }
-//        ChartPanel chartPanel = new ChartPanel(chart);
-//
-//        // Thêm chartPanel vào JPanel
-//        jpanel.removeAll(); // Xóa bất kỳ thành phần hiện có trong JPanel
-//        jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
-//        jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
-//        jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
-//    }
 
     public void setDataToChartYear(JPanel jpanel, int year) {
         //Hiển thị 12 columns
@@ -375,12 +403,12 @@ public class HomeViewPro extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        thoiGianTGDTextField = new javax.swing.JTextField();
         matHangTGDTextField = new javax.swing.JTextField();
         thanhTienTGDTextField = new javax.swing.JTextField();
         ghiChuTGDTextField = new javax.swing.JTextField();
         themTGDButton = new javax.swing.JButton();
         thoatTGDButton = new javax.swing.JButton();
+        thoiGianTGDTextField = new com.toedter.calendar.JDateChooser();
         headerPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -426,10 +454,10 @@ public class HomeViewPro extends javax.swing.JFrame {
         thoiGianTKTable = new javax.swing.JTable();
         jPanel7 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
-        tuNgayTKTextField = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
-        denNgayTKTextField = new javax.swing.JTextField();
         ngayTKButton = new javax.swing.JButton();
+        tuNgayTKTextField = new com.toedter.calendar.JDateChooser();
+        denNgayTKTextField = new com.toedter.calendar.JDateChooser();
         thongKePanel = new javax.swing.JPanel();
         showTKPanel = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
@@ -478,8 +506,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         jLabel11.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel11.setText("Ghi Chú");
 
-        thoiGianTGDTextField.setText("dd/MM/yyyy");
-
         themTGDButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         themTGDButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Accept.png")); // NOI18N
         themTGDButton.setText("  THÊM");
@@ -514,10 +540,10 @@ public class HomeViewPro extends javax.swing.JFrame {
                             .addComponent(jLabel11))
                         .addGap(34, 34, 34)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(thoiGianTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-                            .addComponent(matHangTGDTextField)
+                            .addComponent(matHangTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
                             .addComponent(thanhTienTGDTextField)
-                            .addComponent(ghiChuTGDTextField)))
+                            .addComponent(ghiChuTGDTextField)
+                            .addComponent(thoiGianTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(thoatTGDButton))
@@ -531,7 +557,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
                     .addComponent(thoiGianTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
@@ -557,7 +583,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        headerPanel.setBackground(new java.awt.Color(255, 255, 255));
+        headerPanel.setBackground(new java.awt.Color(204, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel1.setText("Date");
@@ -571,7 +597,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         showRealTimeLabel.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         showRealTimeLabel.setText("showDate");
 
-        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel3.setBackground(new java.awt.Color(204, 255, 255));
 
         jLabel3.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel3.setText("QUẢN LÝ TÀI CHÍNH");
@@ -634,12 +660,14 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         getContentPane().add(headerPanel, java.awt.BorderLayout.PAGE_START);
 
+        buttonPanel.setBackground(new java.awt.Color(204, 204, 255));
         buttonPanel.setLayout(new java.awt.GridLayout(4, 0));
 
         giaoDichButton.setBackground(new java.awt.Color(204, 204, 255));
         giaoDichButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         giaoDichButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Task list.png")); // NOI18N
         giaoDichButton.setText("  Giao Dịch");
+        giaoDichButton.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         giaoDichButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 giaoDichButtonActionPerformed(evt);
@@ -682,7 +710,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         getContentPane().add(buttonPanel, java.awt.BorderLayout.LINE_START);
 
-        mainPanel.setBackground(new java.awt.Color(255, 255, 255));
+        mainPanel.setBackground(new java.awt.Color(255, 204, 204));
         mainPanel.setLayout(new java.awt.CardLayout());
 
         giaoDichPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -814,6 +842,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        tenTKButton.setBackground(new java.awt.Color(204, 204, 255));
         tenTKButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         tenTKButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Search.png")); // NOI18N
         tenTKButton.setText("  Tìm kiếm");
@@ -833,12 +862,12 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(99, Short.MAX_VALUE)
                 .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(99, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tenTKButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -955,7 +984,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(83, Short.MAX_VALUE)
                 .addComponent(jLabel13)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tuTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -963,7 +992,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(84, Short.MAX_VALUE))
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tienTKButton)
@@ -1026,32 +1055,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         jLabel15.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel15.setText("Từ");
 
-        tuNgayTKTextField.setText("yyyy/MM/dd");
-        tuNgayTKTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tuNgayTKTextFieldActionPerformed(evt);
-            }
-        });
-        tuNgayTKTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                tuNgayTKTextFieldKeyReleased(evt);
-            }
-        });
-
         jLabel16.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel16.setText("Đến");
-
-        denNgayTKTextField.setText("yyyy/MM/dd");
-        denNgayTKTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                denNgayTKTextFieldActionPerformed(evt);
-            }
-        });
-        denNgayTKTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                denNgayTKTextFieldKeyReleased(evt);
-            }
-        });
 
         ngayTKButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         ngayTKButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Search.png")); // NOI18N
@@ -1073,31 +1078,30 @@ public class HomeViewPro extends javax.swing.JFrame {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel16)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(ngayTKButton)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(17, 17, 17)
+                        .addComponent(jLabel16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ngayTKButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel16)
-                    .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel15))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                    .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(ngayTKButton)
-                .addContainerGap())
+                .addContainerGap(8, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -1292,10 +1296,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_tienTKButtonActionPerformed
 
-    private void denNgayTKTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_denNgayTKTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_denNgayTKTextFieldActionPerformed
-
     private void themChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themChiButtonActionPerformed
         themDialog.setVisible(true);
         themDialog.setLocationRelativeTo(null);
@@ -1370,16 +1370,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         displayTien(logId);
     }//GEN-LAST:event_denTienTKTextFieldKeyReleased
 
-    private void tuNgayTKTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tuNgayTKTextFieldKeyReleased
-        // TODO add your handling code here:
-        displayNgay(logId);
-    }//GEN-LAST:event_tuNgayTKTextFieldKeyReleased
-
-    private void denNgayTKTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_denNgayTKTextFieldKeyReleased
-        // TODO add your handling code here:
-        displayNgay(logId);
-    }//GEN-LAST:event_denNgayTKTextFieldKeyReleased
-
     private void yearTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yearTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_yearTextFieldActionPerformed
@@ -1388,10 +1378,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         String year = yearTextField.getText();
         setDataToChartYear(showTKPanel, Integer.parseInt(year));
     }//GEN-LAST:event_tkYearTKButtonActionPerformed
-
-    private void tuNgayTKTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tuNgayTKTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tuNgayTKTextFieldActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -1430,7 +1416,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JPanel bodyThemGiaoDichPanel;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JTable chiTable;
-    private javax.swing.JTextField denNgayTKTextField;
+    private com.toedter.calendar.JDateChooser denNgayTKTextField;
     private javax.swing.JTextField denTienTKTextField;
     private javax.swing.JTextField ghiChuTGDTextField;
     private javax.swing.JButton giaoDichButton;
@@ -1483,7 +1469,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JButton themTGDButton;
     private javax.swing.JButton thoatHomeButton;
     private javax.swing.JButton thoatTGDButton;
-    private javax.swing.JTextField thoiGianTGDTextField;
+    private com.toedter.calendar.JDateChooser thoiGianTGDTextField;
     private javax.swing.JTable thoiGianTKTable;
     private javax.swing.JButton thongKeButton;
     private javax.swing.JPanel thongKePanel;
@@ -1492,7 +1478,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JButton timKiemButton;
     private javax.swing.JPanel timKiemPanel;
     private javax.swing.JButton tkYearTKButton;
-    private javax.swing.JTextField tuNgayTKTextField;
+    private com.toedter.calendar.JDateChooser tuNgayTKTextField;
     private javax.swing.JTextField tuTienTKTextField;
     private javax.swing.JButton xoaChiButton;
     private javax.swing.JTextField yearTextField;

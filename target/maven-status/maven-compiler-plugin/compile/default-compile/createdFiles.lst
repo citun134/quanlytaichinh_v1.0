@@ -8,7 +8,6 @@ com\quanlytaichinh\view\HomeViewPro$28.class
 com\quanlytaichinh\view\HomeViewPro$3.class
 com\quanlytaichinh\model\run_app$1.class
 com\quanlytaichinh\view\HomeViewPro$20.class
-com\quanlytaichinh\view\HomeViewPro$30.class
 com\quanlytaichinh\controller\LoginController.class
 com\quanlytaichinh\view\HomeViewPro$7.class
 com\quanlytaichinh\view\TestJframe$1.class
@@ -28,7 +27,6 @@ com\quanlytaichinh\model\GiaoDichModel.class
 com\quanlytaichinh\view\TestJframe.class
 com\quanlytaichinh\view\TestJframe$2.class
 com\quanlytaichinh\view\HomeViewPro$12.class
-com\quanlytaichinh\view\HomeViewPro$32.class
 com\quanlytaichinh\view\LoginView$1.class
 com\quanlytaichinh\view\HomeViewPro$22.class
 com\quanlytaichinh\dao\GiaoDichDao.class
@@ -43,11 +41,9 @@ com\quanlytaichinh\view\HomeViewPro$17.class
 com\quanlytaichinh\view\HomeViewPro$5.class
 com\quanlytaichinh\view\HomeViewPro$9.class
 com\quanlytaichinh\view\HomeViewPro$23.class
-com\quanlytaichinh\view\HomeViewPro$31.class
 com\quanlytaichinh\view\HomeViewPro.class
 com\quanlytaichinh\dao\LoginDao.class
 com\quanlytaichinh\view\HomeViewPro$2.class
 com\quanlytaichinh\view\HomeViewPro$26.class
 com\quanlytaichinh\model\LoginModel.class
-com\quanlytaichinh\view\HomeViewPro$29.class
 com\quanlytaichinh\view\HomeViewPro$11.class
