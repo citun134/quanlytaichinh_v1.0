@@ -6,6 +6,8 @@ import com.quanlytaichinh.dao.LoginDao;
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.LoginModel;
 import com.quanlytaichinh.controller.HomeViewController;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,6 +21,7 @@ public class LoginView extends javax.swing.JFrame {
     public LoginDao loginDao;
     public GiaoDichModel giaoDichModel;
     public HomeViewController homeViewController;
+    public int key = 15;
     
     public LoginView() {
         try{
@@ -35,7 +38,31 @@ public class LoginView extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }
+    
+    public static String md5(String input) {
+        try {
+            // Create a MessageDigest object for MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
 
+            // Update the digest with the input bytes
+            md.update(input.getBytes());
+
+            // Generate the MD5 hash as a byte array
+            byte[] md5Bytes = md.digest();
+
+            // Convert the byte array to a hexadecimal string
+            StringBuilder sb = new StringBuilder();
+            for (byte md5Byte : md5Bytes) {
+                sb.append(Integer.toString((md5Byte & 0xff) + 0x100, 16).substring(1));
+            }
+
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            // Handle the NoSuchAlgorithmException (shouldn't happen with "MD5" algorithm)
+            e.printStackTrace();
+            return null;
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -74,7 +101,7 @@ public class LoginView extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel9.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jLabel9.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Unknown person.png")); // NOI18N
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Unknown person.png"))); // NOI18N
         jLabel9.setText("  ĐĂNG KÝ");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -159,12 +186,12 @@ public class LoginView extends javax.swing.JFrame {
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addGap(12, 12, 12)
-                        .addComponent(conPasswordDangKyPasswordField)))
+                        .addComponent(conPasswordDangKyPasswordField))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton3)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -195,7 +222,7 @@ public class LoginView extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jLabel2.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\User.png")); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/User.png"))); // NOI18N
         jLabel2.setText("   LOGIN");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -325,21 +352,20 @@ public class LoginView extends javax.swing.JFrame {
         Connection connection = JDBCConnection.getJDBCConecction();
         String user = userLoginTextField.getText();
         String pass = passwordLoginPasswordField.getText();
+        String passCipher = md5(pass);
+        
+        
         Statement stm = connection.createStatement();
-        String sql = "SELECT * FROM accounts WHERE username = '" + user + "'" + " AND password = '" +  pass + "'";
+        String sql = "SELECT * FROM accounts WHERE username = '" + user + "'" + " AND password = '" +  passCipher + "'";
         ResultSet rs = stm.executeQuery(sql);
         if(rs.next()){
             loggedInAccountId = rs.getInt("account_id");
-            loginModel = new LoginModel(user, pass, loggedInAccountId);
+            loginModel = new LoginModel(user, passCipher, loggedInAccountId);
             System.out.println("loggedInAccountId loginview: " + loggedInAccountId);
-            // Now, set the accountId in your GiaoDichModel
             new HomeViewPro(loginModel).setVisible(true);
             this.dispose();
-//            giaoDichModel.setAccountId(rs.getInt("account_id"));
             loginModel.setAccount_id(loggedInAccountId);
             
-//            homeViewController.addGiaoDichThu(giaoDichModel);
-//            giaoDichModel.setAccountId(loggedInAccountId);
         } else {
             JOptionPane.showMessageDialog(this, "Đăng nhập thất bại!");
             userLoginTextField.setText("");
@@ -368,16 +394,20 @@ public class LoginView extends javax.swing.JFrame {
         String username = userDangKyTextField.getText();
         String password = passwordDangKyPasswordField.getText();
         String conPassword = conPasswordDangKyPasswordField.getText();
+        String passCihper = md5(password);
+        String conPassCipher = md5(conPassword);
         
         if (!username.isEmpty() && !password.isEmpty() 
-            && username.matches("^[a-zA-Z0-9]*$") && password.equals(conPassword)) {
+            && username.matches("^[a-zA-Z0-9]*$") && passCihper.equals(conPassCipher)) {
             loginModel.setUser(username);
-            loginModel.setPassword(password);
+            loginModel.setPassword(passCihper);
 
             loginController.addUser(loginModel);
+            
             userDangKyTextField.setText("");
             passwordDangKyPasswordField.setText("");
             conPasswordDangKyPasswordField.setText("");
+            
             JOptionPane.showMessageDialog(this, "Đăng ký thành công!");
         } else {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin đăng ký.", "Lỗi", JOptionPane.ERROR_MESSAGE);

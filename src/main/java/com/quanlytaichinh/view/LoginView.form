@@ -54,7 +54,7 @@
                   <Font name="Arial" size="18" style="1"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="2" name="C:\Users\x1 gen6\Documents\NetBeansProjects\quanlytaichinh\src\main\java\com\quanlytaichinh\images\Unknown person.png"/>
+                  <Image iconType="3" name="/com/quanlytaichinh/images/Unknown person.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="  &#x110;&#x102;NG K&#xdd;"/>
               </Properties>
@@ -98,13 +98,13 @@
                               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                               <Component id="conPasswordDangKyPasswordField" max="32767" attributes="0"/>
                           </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <Component id="jButton3" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="jButton3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -296,7 +296,7 @@
               <Font name="Arial" size="18" style="1"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\x1 gen6\Documents\NetBeansProjects\quanlytaichinh\src\main\java\com\quanlytaichinh\images\User.png"/>
+              <Image iconType="3" name="/com/quanlytaichinh/images/User.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="   LOGIN"/>
           </Properties>

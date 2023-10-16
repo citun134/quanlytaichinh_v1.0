@@ -17,8 +17,10 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.RowFilter;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -470,7 +472,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         headerThemGiaoDichPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel6.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jLabel6.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Notes.png")); // NOI18N
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Notes.png"))); // NOI18N
         jLabel6.setText("THÊM GIAO DỊCH");
 
         javax.swing.GroupLayout headerThemGiaoDichPanelLayout = new javax.swing.GroupLayout(headerThemGiaoDichPanel);
@@ -507,7 +509,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jLabel11.setText("Ghi Chú");
 
         themTGDButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        themTGDButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Accept.png")); // NOI18N
+        themTGDButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Accept.png"))); // NOI18N
         themTGDButton.setText("  THÊM");
         themTGDButton.setToolTipText("");
         themTGDButton.addActionListener(new java.awt.event.ActionListener() {
@@ -517,7 +519,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         });
 
         thoatTGDButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        thoatTGDButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Delete.png")); // NOI18N
+        thoatTGDButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Delete.png"))); // NOI18N
         thoatTGDButton.setText("THOÁT");
         thoatTGDButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -665,7 +667,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         giaoDichButton.setBackground(new java.awt.Color(204, 204, 255));
         giaoDichButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        giaoDichButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Task list.png")); // NOI18N
+        giaoDichButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/List.png"))); // NOI18N
         giaoDichButton.setText("  Giao Dịch");
         giaoDichButton.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         giaoDichButton.addActionListener(new java.awt.event.ActionListener() {
@@ -677,7 +679,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         timKiemButton.setBackground(new java.awt.Color(204, 204, 255));
         timKiemButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        timKiemButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Search.png")); // NOI18N
+        timKiemButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
         timKiemButton.setText("  Tìm Kiếm ");
         timKiemButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -688,7 +690,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         thongKeButton.setBackground(new java.awt.Color(204, 204, 255));
         thongKeButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        thongKeButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Statistics.png")); // NOI18N
+        thongKeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Statistics.png"))); // NOI18N
         thongKeButton.setText("  Thống Kê");
         thongKeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -699,7 +701,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         thoatHomeButton.setBackground(new java.awt.Color(204, 204, 255));
         thoatHomeButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        thoatHomeButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Log out.png")); // NOI18N
+        thoatHomeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Log out.png"))); // NOI18N
         thoatHomeButton.setText("   Thoát");
         thoatHomeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -740,7 +742,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel10.setBackground(new java.awt.Color(255, 255, 255));
 
         themChiButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        themChiButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Add.png")); // NOI18N
+        themChiButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Add.png"))); // NOI18N
         themChiButton.setText("  Thêm");
         themChiButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -749,7 +751,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         });
 
         xoaChiButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        xoaChiButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Delete.png")); // NOI18N
+        xoaChiButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Delete.png"))); // NOI18N
         xoaChiButton.setText("  Xóa");
         xoaChiButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -840,11 +842,14 @@ public class HomeViewPro extends javax.swing.JFrame {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 tenTKTextFieldKeyReleased(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tenTKTextFieldKeyTyped(evt);
+            }
         });
 
         tenTKButton.setBackground(new java.awt.Color(204, 204, 255));
         tenTKButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        tenTKButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Search.png")); // NOI18N
+        tenTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
         tenTKButton.setText("  Tìm kiếm");
         tenTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -867,7 +872,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(99, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tenTKButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -966,7 +971,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         });
 
         tienTKButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        tienTKButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Search.png")); // NOI18N
+        tienTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
         tienTKButton.setText("  Tìm kiếm");
         tienTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1059,7 +1064,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jLabel16.setText("Đến");
 
         ngayTKButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        ngayTKButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Search.png")); // NOI18N
+        ngayTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
         ngayTKButton.setText("  Tìm kiếm");
         ngayTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1077,17 +1082,18 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap(81, Short.MAX_VALUE)
+                .addComponent(jLabel15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(17, 17, 17)
+                .addComponent(jLabel16)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(81, Short.MAX_VALUE))
+            .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jLabel15)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(17, 17, 17)
-                        .addComponent(jLabel16)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(ngayTKButton))
+                .addComponent(ngayTKButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
@@ -1166,7 +1172,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         });
 
         tkYearTKButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        tkYearTKButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\x1 gen6\\Documents\\NetBeansProjects\\quanlytaichinh\\src\\main\\java\\com\\quanlytaichinh\\images\\Search.png")); // NOI18N
+        tkYearTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
         tkYearTKButton.setText("Tìm kiếm");
         tkYearTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1183,15 +1189,15 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tkYearTKButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(118, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(yearTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 112, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tkYearTKButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1200,9 +1206,9 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(yearTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tkYearTKButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout thongKePanelLayout = new javax.swing.GroupLayout(thongKePanel);
@@ -1303,6 +1309,10 @@ public class HomeViewPro extends javax.swing.JFrame {
 
     private void tenTKTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tenTKTextFieldKeyReleased
         displayTen(logId);
+//        DefaultTableModel obj = (DefaultTableModel) tenTKTable.getModel();
+//        TableRowSorter<DefaultTableModel> tableRS = new TableRowSorter<>(obj);
+//        tenTKTable.setRowSorter(tableRS);
+//        tableRS.setRowFilter(RowFilter.regexFilter(tenTKTextField.getText()));
     }//GEN-LAST:event_tenTKTextFieldKeyReleased
 
     private void xoaChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaChiButtonActionPerformed
@@ -1335,9 +1345,9 @@ public class HomeViewPro extends javax.swing.JFrame {
 
     private void tenTKButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tenTKButtonKeyReleased
         // TODO add your handling code here:
-//        TableRowSorter<DefaultTableModel> tableRowSorter = new TableRowSorter<>(defaultTableModel);
-//        tenTKTable.setRowSorter(tableRowSorter);
-//        tableRowSorter.setRowFilter(RowFilter.regexFilter(tenTKTextField.getText()));
+        TableRowSorter<DefaultTableModel> tableRowSorter = new TableRowSorter<>(defaultTableModel);
+        tenTKTable.setRowSorter(tableRowSorter);
+        tableRowSorter.setRowFilter(RowFilter.regexFilter(tenTKTextField.getText()));
     }//GEN-LAST:event_tenTKButtonKeyReleased
 
     private void ngayTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ngayTKButtonActionPerformed
@@ -1363,11 +1373,19 @@ public class HomeViewPro extends javax.swing.JFrame {
     private void tuTienTKTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tuTienTKTextFieldKeyReleased
         // TODO add your handling code here:
         displayTien(logId);
+//        DefaultTableModel obj = (DefaultTableModel) tienTKTable.getModel();
+//        TableRowSorter<DefaultTableModel> tableRS = new TableRowSorter<>(obj);
+//        tienTKTable.setRowSorter(tableRS);
+//        tableRS.setRowFilter(RowFilter.regexFilter(tuTienTKTextField.getText()));
     }//GEN-LAST:event_tuTienTKTextFieldKeyReleased
 
     private void denTienTKTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_denTienTKTextFieldKeyReleased
         // TODO add your handling code here:
         displayTien(logId);
+//        DefaultTableModel obj = (DefaultTableModel) tienTKTable.getModel();
+//        TableRowSorter<DefaultTableModel> tableRS = new TableRowSorter<>(obj);
+//        tienTKTable.setRowSorter(tableRS);
+//        tableRS.setRowFilter(RowFilter.regexFilter(denTienTKTextField.getText()));
     }//GEN-LAST:event_denTienTKTextFieldKeyReleased
 
     private void yearTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yearTextFieldActionPerformed
@@ -1378,6 +1396,10 @@ public class HomeViewPro extends javax.swing.JFrame {
         String year = yearTextField.getText();
         setDataToChartYear(showTKPanel, Integer.parseInt(year));
     }//GEN-LAST:event_tkYearTKButtonActionPerformed
+
+    private void tenTKTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tenTKTextFieldKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tenTKTextFieldKeyTyped
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
