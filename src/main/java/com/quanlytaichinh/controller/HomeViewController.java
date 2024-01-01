@@ -15,12 +15,19 @@ public class HomeViewController {
         giaoDichDao = new GiaoDichDao();
     }
     
-    public void deleteGiaoDich(int user){
-        giaoDichDao.deleteGiaoDich(user);
+    public void deleteGiaoDichChi(int user){
+        giaoDichDao.deleteGiaoDichChi(user);
     }
     
-    public void addGiaoDichThu(GiaoDichModel giaoDichModel){
-        giaoDichDao.addGiaoDichThu(giaoDichModel);
+    public void deleteAllGiaoDichChi(){
+        giaoDichDao.deleteAllGiaoDichChi();
+    }
+    public void updateGiaoDichChi(GiaoDichModel giaoDichModel) {
+        giaoDichDao.updateGiaoDichChi(giaoDichModel);
+    }
+    
+    public void addGiaoDichChi(GiaoDichModel giaoDichModel){
+        giaoDichDao.addGiaoDichChi(giaoDichModel);
     }
     
     public ArrayList<GiaoDichModel> searchTienGiaoDich(String tu, String den, int accountId){
@@ -38,11 +45,16 @@ public class HomeViewController {
     public List<GiaoDichModel> getAllInforUser(int accountId){
         return giaoDichDao.getAllInforUser(accountId);
     }
+    
     public List<GiaoDichModel> getListByMoney(int accountId){
         return giaoDichDao.getListByMoney(accountId);
     }
     
     public List<GiaoDichModel> getListByMoneyYear(int accountId, int year){
         return giaoDichDao.getListByMoneyYear(accountId, year);
+    }
+    
+    public GiaoDichModel getInforUser(int accountId){
+        return giaoDichDao.getInforUser(accountId);
     }
 }

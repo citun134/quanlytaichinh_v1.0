@@ -44,18 +44,19 @@ public class LoginView extends javax.swing.JFrame {
             // Create a MessageDigest object for MD5
             MessageDigest md = MessageDigest.getInstance("MD5");
 
-            // Update the digest with the input bytes
+            // input thành mảng byte 
             md.update(input.getBytes());
 
-            // Generate the MD5 hash as a byte array
+            // trả về một mảng byte chứa kết quả của quá trình băm
             byte[] md5Bytes = md.digest();
 
-            // Convert the byte array to a hexadecimal string
+            //  duyệt qua từng byte trong mảng 
             StringBuilder sb = new StringBuilder();
+            //huyển đổi byte thành chuỗi số thập lục phân, đảm bảo rằng các giá trị thấp hơn 16 sẽ có một chữ số 0 ở đầu
             for (byte md5Byte : md5Bytes) {
                 sb.append(Integer.toString((md5Byte & 0xff) + 0x100, 16).substring(1));
             }
-
+            //giá trị băm MD5 của chuỗi dữ liệu ban đầu 
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
             // Handle the NoSuchAlgorithmException (shouldn't happen with "MD5" algorithm)
@@ -328,9 +329,9 @@ public class LoginView extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel4)
                     .addComponent(passwordLoginPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(dangNhapButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addComponent(dangNhapButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                 .addComponent(taiKhoanMoiButton)
@@ -362,9 +363,10 @@ public class LoginView extends javax.swing.JFrame {
             loggedInAccountId = rs.getInt("account_id");
             loginModel = new LoginModel(user, passCipher, loggedInAccountId);
             System.out.println("loggedInAccountId loginview: " + loggedInAccountId);
+            
             new HomeViewPro(loginModel).setVisible(true);
             this.dispose();
-            loginModel.setAccount_id(loggedInAccountId);
+//            loginModel.setAccount_id(loggedInAccountId);
             
         } else {
             JOptionPane.showMessageDialog(this, "Đăng nhập thất bại!");

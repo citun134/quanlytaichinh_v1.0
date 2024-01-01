@@ -15,9 +15,9 @@ public class GiaoDichDao {
     public GiaoDichModel giaoDichModel;
     public LoginModel loginModel;
     
-    public void addGiaoDichThu(GiaoDichModel giaoDichModel){
+    public void addGiaoDichChi(GiaoDichModel giaoDichModel){
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "INSERT INTO giaodichThu (ngayThu, matHangThu, thanhTienThu, ghiChuThu, account_id) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO giaodichchi (ngayChi, matHangChi, thanhTienChi, ghiChuChi, hangMuc, account_id) VALUES (?, ?, ?, ?, ?, ?);";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 //            preparedStatement.setInt(1, giaoDichModel.getId());
@@ -25,7 +25,8 @@ public class GiaoDichDao {
             preparedStatement.setString(2, giaoDichModel.getMatHang());
             preparedStatement.setDouble(3, giaoDichModel.getThanhTien());
             preparedStatement.setString(4, giaoDichModel.getGhiChu());
-            preparedStatement.setInt(5, giaoDichModel.getAccountId());
+            preparedStatement.setString(5, giaoDichModel.getHangMuc());
+            preparedStatement.setInt(6, giaoDichModel.getAccountId());
             int rs = preparedStatement.executeUpdate();
             System.out.println(rs);
         } catch (SQLException ex) { 
@@ -33,9 +34,9 @@ public class GiaoDichDao {
         }
     }
     
-    public void deleteGiaoDich(int id){
+    public void deleteGiaoDichChi(int id){
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "DELETE FROM giaodichthu WHERE thuId = ? ";
+        String sql = "DELETE FROM giaodichchi WHERE chiId = ? ";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
@@ -45,12 +46,41 @@ public class GiaoDichDao {
             ex.printStackTrace();
         }
     }  
+    
+    public void deleteAllGiaoDichChi() {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "DELETE FROM giaodichchi";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void updateGiaoDichChi(GiaoDichModel giaoDichModel) {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "UPDATE giaodichchi SET ngaychi = ?, matHangChi = ?, thanhTienChi = ?, ghiChuChi = ?, hangMuc = ? WHERE chiId = ?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, giaoDichModel.getDate());
+            preparedStatement.setString(2, giaoDichModel.getMatHang());
+            preparedStatement.setDouble(3, giaoDichModel.getThanhTien());
+            preparedStatement.setString(4, giaoDichModel.getGhiChu());
+            preparedStatement.setString(5, giaoDichModel.getHangMuc());            
+            preparedStatement.setInt(6,giaoDichModel.getId()); // ID của giao dịch cần cập nhật
+            int rs = preparedStatement.executeUpdate();
+            System.out.println(rs);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 
     public ArrayList<GiaoDichModel> searchTienGiaoDich(String tu, String den, int accountId){
         ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
-//        String sql = "SELECT * FROM giaodichthu WHERE thanhTienThu BETWEEN ? AND ?";
-        String sql = "SELECT * FROM giaodichthu WHERE thanhTienThu BETWEEN ? AND ? AND account_id = ?";
+        String sql = "SELECT * FROM giaodichchi WHERE thanhTienChi BETWEEN ? AND ? AND account_id = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -60,8 +90,9 @@ public class GiaoDichDao {
             ResultSet rs = preparedStatement.executeQuery();
             GiaoDichModel giaoDichModel;
             while (rs.next()){
-                giaoDichModel = new GiaoDichModel(rs.getInt("thuId"), rs.getString("ngayThu")
-                , rs.getString("matHangThu"), rs.getDouble("thanhTienThu"), rs.getString("ghiChuThu"));
+                giaoDichModel = new GiaoDichModel(rs.getInt("chiId"), rs.getString("ngayChi")
+                , rs.getString("matHangChi"), rs.getDouble("thanhTienChi")
+                , rs.getString("ghiChuChi"), rs.getString("hangMuc"));
                 infor.add(giaoDichModel);
             }
         } catch (SQLException ex) {
@@ -73,7 +104,7 @@ public class GiaoDichDao {
     public ArrayList<GiaoDichModel> searchTenGiaoDich(String ten, int accountId){
         ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "SELECT * FROM giaodichthu WHERE matHangThu LIKE ? AND account_id = ?";
+        String sql = "SELECT * FROM giaodichchi WHERE matHangChi LIKE ? AND account_id = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -83,8 +114,9 @@ public class GiaoDichDao {
             GiaoDichModel giaoDichModel;
             while (rs.next()){
 //                giaoDichModel = new GiaoDichModel(rs.getInt("thuId"));
-                giaoDichModel = new GiaoDichModel(rs.getInt("thuId"), rs.getString("ngayThu")
-                , rs.getString("matHangThu"), rs.getDouble("thanhTienThu"), rs.getString("ghiChuThu"));
+                giaoDichModel = new GiaoDichModel(rs.getInt("chiId"), rs.getString("ngayChi")
+                , rs.getString("matHangChi"), rs.getDouble("thanhTienChi")
+                , rs.getString("ghiChuChi"), rs.getString("hangMuc"));
                 infor.add(giaoDichModel);
             }
         } catch (SQLException ex) {
@@ -97,7 +129,7 @@ public class GiaoDichDao {
         ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
 //        String sql = "SELECT * FROM giaodichthu WHERE ngayThu BETWEEN ? AND ?";
-        String sql = "SELECT * FROM giaodichthu WHERE ngayThu BETWEEN ? AND ? AND account_id = ?";
+        String sql = "SELECT * FROM giaodichchi WHERE ngayChi BETWEEN ? AND ? AND account_id = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -107,8 +139,9 @@ public class GiaoDichDao {
             ResultSet rs = preparedStatement.executeQuery();
             GiaoDichModel giaoDichModel;
             while (rs.next()){
-                giaoDichModel = new GiaoDichModel(rs.getInt("thuId"), rs.getString("ngayThu")
-                , rs.getString("matHangThu"), rs.getDouble("thanhTienThu"), rs.getString("ghiChuThu"));
+                giaoDichModel = new GiaoDichModel(rs.getInt("chiId"), rs.getString("ngayChi")
+                , rs.getString("matHangChi"), rs.getDouble("thanhTienChi")
+                , rs.getString("ghiChuChi"), rs.getString("hangMuc"));
                 infor.add(giaoDichModel);
             }
         } catch (SQLException ex) {
@@ -122,18 +155,19 @@ public class GiaoDichDao {
         List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
 //        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
-        String sql = "SELECT * FROM giaodichthu WHERE account_id = ?";
+        String sql = "SELECT * FROM giaodichchi WHERE account_id = ?";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, accountId);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
                 GiaoDichModel giaoDichModel = new GiaoDichModel();
-                giaoDichModel.setId(rs.getInt("thuId"));
-                giaoDichModel.setDate(rs.getString("ngayThu"));
-                giaoDichModel.setMatHang(rs.getString("matHangThu"));
-                giaoDichModel.setThanhTien(rs.getDouble("thanhTienThu"));
-                giaoDichModel.setGhiChu(rs.getString("ghiChuThu"));
+                giaoDichModel.setId(rs.getInt("chiId"));
+                giaoDichModel.setDate(rs.getString("ngayChi"));
+                giaoDichModel.setMatHang(rs.getString("matHangChi"));
+                giaoDichModel.setThanhTien(rs.getDouble("thanhTienChi"));
+                giaoDichModel.setGhiChu(rs.getString("ghiChuChi"));
+                giaoDichModel.setHangMuc(rs.getString("hangMuc"));
                 giaoDichModel.setAccountId(rs.getInt("account_id"));                
                 infor.add(giaoDichModel);
             }
@@ -146,12 +180,12 @@ public class GiaoDichDao {
     public List<GiaoDichModel> getListByMoney(int accountId) {
         List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "SELECT YEAR(ngayThu) AS Year, MONTH(ngayThu) AS Month, " +
-                     "COALESCE(SUM(thanhTienThu), 0) AS TotalMoney " +
-                     "FROM giaoDichThu " +
+        String sql = "SELECT YEAR(ngayChi) AS Year, MONTH(ngayChi) AS Month, " +
+                     "COALESCE(SUM(thanhTienChi), 0) AS TotalMoney " +
+                     "FROM giaoDichChi " +
                      "WHERE account_id = ? " + // Thêm điều kiện cho accountId
-                     "GROUP BY YEAR(ngayThu), MONTH(ngayThu) " +
-                     "ORDER BY YEAR(ngayThu), MONTH(ngayThu)";
+                     "GROUP BY YEAR(ngayChi), MONTH(ngayChi) " +
+                     "ORDER BY YEAR(ngayChi), MONTH(ngayChi)";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -173,12 +207,12 @@ public class GiaoDichDao {
     public List<GiaoDichModel> getListByMoneyYear(int accountId, int year) {
         List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "SELECT YEAR(ngayThu) AS Year, MONTH(ngayThu) AS Month, " +
-                     "COALESCE(SUM(thanhTienThu), 0) AS TotalMoney " +
-                     "FROM giaoDichThu " +
-                     "WHERE account_id = ? AND YEAR(ngayThu) = ? " + // Add condition for the selected year
-                     "GROUP BY YEAR(ngayThu), MONTH(ngayThu) " +
-                     "ORDER BY YEAR(ngayThu), MONTH(ngayThu)";
+        String sql = "SELECT YEAR(ngayChi) AS Year, MONTH(ngayChi) AS Month, " +
+                     "COALESCE(SUM(thanhTienChi), 0) AS TotalMoney " +
+                     "FROM giaoDichChi " +
+                     "WHERE account_id = ? AND YEAR(ngayChi) = ? " + // Add condition for the selected year
+                     "GROUP BY YEAR(ngayChi), MONTH(ngayChi) " +
+                     "ORDER BY YEAR(ngayChi), MONTH(ngayChi)";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -196,6 +230,32 @@ public class GiaoDichDao {
             ex.printStackTrace();
         }
         return infor;
+    }
+    
+    public GiaoDichModel getInforUser(int accountId){
+        Connection connection = JDBCConnection.getJDBCConecction();
+//        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
+        String sql = "SELECT * FROM giaodichchi WHERE chiId = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                GiaoDichModel giaoDichModel = new GiaoDichModel();
+                giaoDichModel.setId(rs.getInt("chiId"));
+                giaoDichModel.setDate(rs.getString("ngayChi"));
+                giaoDichModel.setMatHang(rs.getString("matHangChi"));
+                giaoDichModel.setThanhTien(rs.getDouble("thanhTienChi"));
+                giaoDichModel.setGhiChu(rs.getString("ghiChuChi"));
+                giaoDichModel.setHangMuc(rs.getString("hangMuc"));
+                giaoDichModel.setAccountId(rs.getInt("account_id"));                
+                
+                return giaoDichModel;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }   
+        return null;
     }
 
 }

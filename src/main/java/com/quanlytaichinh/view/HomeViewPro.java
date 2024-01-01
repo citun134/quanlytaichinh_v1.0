@@ -41,7 +41,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     public SimpleDateFormat simpleDateFormat;
     
     
-    private int logId;
+    public int logId;
      
     public HomeViewPro(){}
     public HomeViewPro(LoginModel loginModel) {
@@ -57,14 +57,16 @@ public class HomeViewPro extends javax.swing.JFrame {
         logId = loginModel.getAccount_id();
         System.out.println("loggoedInAccount id: " + logId);
         
+        
         dateTime();
         times();
+        
         
         showChiTKTableUser(logId);
         findUsers(logId);
         findMoney(logId);
         findDate(logId);
-        
+
         displayTen(logId);
         displayTien(logId);
         displayNgay(logId);
@@ -78,12 +80,12 @@ public class HomeViewPro extends javax.swing.JFrame {
         tuNgayTKTextField.setDate(date);
         denNgayTKTextField.setDate(date);
     }
-
-    public final void showChiTKTableUser(int accountId){
+    
+    public void showChiTKTableUser(int accountId){
         defaultTableModel = new DefaultTableModel(){
             @Override
             public boolean isCellEditable(int row, int column){
-                return false;
+                return true;
             }
         };
         
@@ -95,22 +97,25 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableModel.addColumn("Mặt Hàng");
         defaultTableModel.addColumn("Thành Tiền");
         defaultTableModel.addColumn("Ghi Chú");
-    
+        defaultTableModel.addColumn("Hạng Mục");
+
+        defaultTableModel.setRowCount(0);
         setTableData(homeViewController.getAllInforUser(accountId));
-//        setTableDataTien(homeViewController.getAllInforUser(accountId));
     }
+    
     
     public void setTableData(List<GiaoDichModel> allGiaoDich){
         for(GiaoDichModel giaoDich: allGiaoDich){
             defaultTableModel.addRow(new Object[] {giaoDich.getId(), giaoDich.getDate(),
-                giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu(), giaoDich.getAccountId()});
+                giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu(),
+                    giaoDich.getHangMuc(), giaoDich.getAccountId()});
         }
     }
     
     public final void findUsers(int accountId){
         List<GiaoDichModel> users = homeViewController.searchTenGiaoDich(tenTKTextField.getText(), accountId);
         DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
+        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú", "Hạng Mục"});
         Object[] row = new Object[5];
         
         for(int i = 0; i < users.size(); i++)
@@ -120,6 +125,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             row[2] = users.get(i).getMatHang();
             row[3] = users.get(i).getThanhTien();
             row[4] = users.get(i).getGhiChu();
+            row[5] = users.get(i).getHangMuc();
             model.addRow(row);
         }
        tenTKTable.setModel(model);
@@ -130,7 +136,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     public final void findMoney(int accountId){
         List<GiaoDichModel> users = homeViewController.searchTienGiaoDich(tuTienTKTextField.getText(), denTienTKTextField.getText(), accountId);
         DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
+        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú", "Hạng Mục"});
         Object[] row = new Object[5];
         
         for(int i = 0; i < users.size(); i++)
@@ -140,6 +146,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             row[2] = users.get(i).getMatHang();
             row[3] = users.get(i).getThanhTien();
             row[4] = users.get(i).getGhiChu();
+            row[5] = users.get(i).getHangMuc();
             model.addRow(row);
         }
        tienTKTable.setModel(model);
@@ -181,7 +188,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             List<GiaoDichModel> users = homeViewController.searchThoiGianGiaoDich(tuNgayTxt, denNgayTxt, accountId);
 
             DefaultTableModel model = new DefaultTableModel();
-            model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú"});
+            model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú", "Hạng Mục"});
             Object[] row = new Object[5];
 
             for(int i = 0; i < users.size(); i++) {
@@ -190,6 +197,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 row[2] = users.get(i).getMatHang();
                 row[3] = users.get(i).getThanhTien();
                 row[4] = users.get(i).getGhiChu();
+                row[5] = users.get(i).getHangMuc();
                 model.addRow(row);
             }
             thoiGianTKTable.setModel(model);
@@ -209,42 +217,65 @@ public class HomeViewPro extends javax.swing.JFrame {
         String ghiChuTGD = ghiChuTGDTextField.getText();
         
 //        if(loginModel.getUser() == loginView.getName() )
-        try{
-            if(!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty() && !dateTGD.isEmpty()){
-                DecimalFormat decimalFormat = new DecimalFormat();
-                decimalFormat.setParseBigDecimal(true);
-                BigDecimal bigDecimal = (BigDecimal) decimalFormat.parse(thanhTienTGD);
-                
-                SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                inputDateFormat.setLenient(false);
-                Date parsedDate = inputDateFormat.parse(dateTGD);
+        try {
+            if (!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty() && !dateTGD.isEmpty()) {
+                // Kiểm tra xem thanhTienTGD không chứa chữ cái
+                if (!thanhTienTGD.matches(".*[a-zA-Z].*")) {
+                    DecimalFormat decimalFormat = new DecimalFormat();
+                    decimalFormat.setParseBigDecimal(true);
+                    BigDecimal bigDecimal = (BigDecimal) decimalFormat.parse(thanhTienTGD);
 
-                // Format the parsed date back to the desired format
-                SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                String formattedDate = outputDateFormat.format(parsedDate);
-                 
-                giaoDichModel.setDate(formattedDate); //dateTGD
-                giaoDichModel.setMatHang(matHangTGD);                                               
-                giaoDichModel.setThanhTien(bigDecimal.doubleValue());
-                giaoDichModel.setGhiChu(ghiChuTGD);
-                giaoDichModel.setAccountId(accountId);
-                homeViewController.addGiaoDichThu(giaoDichModel);
-                JOptionPane.showMessageDialog(this, "Thêm thành công!");
-                defaultTableModel.setRowCount(0);
-                setTableData(homeViewController.getAllInforUser(accountId));
-                
+                    SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    inputDateFormat.setLenient(false);
+                    Date parsedDate = inputDateFormat.parse(dateTGD);
+
+                    // Format the parsed date back to the desired format
+                    SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    String formattedDate = outputDateFormat.format(parsedDate);
+
+                    giaoDichModel.setDate(formattedDate);
+                    giaoDichModel.setMatHang(matHangTGD);                                               
+                    giaoDichModel.setThanhTien(bigDecimal.doubleValue());
+                    giaoDichModel.setGhiChu(ghiChuTGD);
+                    giaoDichModel.setAccountId(accountId);
+                    
+                    if (anUongRadioButton.isSelected()) {
+                    giaoDichModel.setHangMuc("Ăn Uống");
+                    } else if (quanAoRadioButton.isSelected()) {
+                        giaoDichModel.setHangMuc("Quần Áo");
+                    } else if (dvSinhHoatRadioButton.isSelected()) {
+                        giaoDichModel.setHangMuc("Dịch Vụ Sinh Hoạt");
+                    } else if (khacRadioButton.isSelected()) {
+                        giaoDichModel.setHangMuc("Khác");
+                    }
+                    
+                    homeViewController.addGiaoDichChi(giaoDichModel);
+                    JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                    defaultTableModel.setRowCount(0);
+                    setTableData(homeViewController.getAllInforUser(accountId));
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Thanh Tiền không hợp lệ.");
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Thêm Thất Bại!");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
+
         
 //        thoiGianTGDTextField.setText("");
         matHangTGDTextField.setText("");
         thanhTienTGDTextField.setText("");
         ghiChuTGDTextField.setText("");
+    }
+        
+    public void thayDoiGiaoDich(GiaoDichModel giaoDichModel) {
+        thoiGianTGDTextField.setDateFormatString(giaoDichModel.getDate());
+        matHangTGDTextField.setText(giaoDichModel.getMatHang());
+        thanhTienTGDTextField.setText(String.valueOf(giaoDichModel.getThanhTien()));
+        ghiChuTGDTextField.setText(giaoDichModel.getGhiChu());
     }
 
     public void setDataToChartYear(JPanel jpanel, int year) {
@@ -327,6 +358,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableModelTen.addColumn("Mặt Hàng");
         defaultTableModelTen.addColumn("Thành Tiền");
         defaultTableModelTen.addColumn("Ghi Chú");
+        defaultTableModelTen.addColumn("Hạng Mục");
+
 
         // Get the data from your controller or data source
         List<GiaoDichModel> allGiaoDich = homeViewController.getAllInforUser(accountId);
@@ -334,10 +367,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         // Populate both tables with the data
         for (GiaoDichModel giaoDich : allGiaoDich) {
             defaultTableModelTen.addRow(new Object[]{giaoDich.getId(), giaoDich.getDate(),
-                    giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu()});
+                    giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu(), giaoDich.getHangMuc()});
         }
     }
-   public void displayTien(int accountId) {
+    
+    public void displayTien(int accountId) {
 
     // Create a DefaultTableModel for the second table (tenTKTable)
     DefaultTableModel defaultTableModelTen = new DefaultTableModel() {
@@ -354,6 +388,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableModelTen.addColumn("Mặt Hàng");
         defaultTableModelTen.addColumn("Thành Tiền");
         defaultTableModelTen.addColumn("Ghi Chú");
+        defaultTableModelTen.addColumn("Hạng Mục");
+        
 
         // Get the data from your controller or data source
         List<GiaoDichModel> allGiaoDich = homeViewController.getAllInforUser(accountId);
@@ -361,7 +397,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         // Populate both tables with the data
         for (GiaoDichModel giaoDich : allGiaoDich) {
             defaultTableModelTen.addRow(new Object[]{giaoDich.getId(), giaoDich.getDate(),
-                    giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu()});
+                    giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu(), giaoDich.getHangMuc()});
         }
     }
    
@@ -371,7 +407,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     DefaultTableModel defaultTableModelTen = new DefaultTableModel() {
         @Override
         public boolean isCellEditable(int row, int column) {
-            return false;
+            return true;
         }
     };
     
@@ -382,6 +418,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableModelTen.addColumn("Mặt Hàng");
         defaultTableModelTen.addColumn("Thành Tiền");
         defaultTableModelTen.addColumn("Ghi Chú");
+        defaultTableModelTen.addColumn("Hạng Mục");
 
         // Get the data from your controller or data source
         List<GiaoDichModel> allGiaoDich = homeViewController.getAllInforUser(accountId);
@@ -389,7 +426,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         // Populate both tables with the data
         for (GiaoDichModel giaoDich : allGiaoDich) {
             defaultTableModelTen.addRow(new Object[]{giaoDich.getId(), giaoDich.getDate(),
-                    giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu()});
+                    giaoDich.getMatHang(), giaoDich.getThanhTien(), giaoDich.getGhiChu(), giaoDich.getHangMuc()});
         }
     }
         
@@ -411,6 +448,31 @@ public class HomeViewPro extends javax.swing.JFrame {
         themTGDButton = new javax.swing.JButton();
         thoatTGDButton = new javax.swing.JButton();
         thoiGianTGDTextField = new com.toedter.calendar.JDateChooser();
+        hangMucButton = new javax.swing.JLabel();
+        quanAoRadioButton = new javax.swing.JRadioButton();
+        anUongRadioButton = new javax.swing.JRadioButton();
+        dvSinhHoatRadioButton = new javax.swing.JRadioButton();
+        khacRadioButton = new javax.swing.JRadioButton();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        editChiDialog = new javax.swing.JDialog();
+        headerThemGiaoDichPanel1 = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        bodyThemGiaoDichPanel1 = new javax.swing.JPanel();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        matHangTGDTextField1 = new javax.swing.JTextField();
+        thanhTienTGDTextField1 = new javax.swing.JTextField();
+        ghiChuTGDTextField1 = new javax.swing.JTextField();
+        themTGDButton1 = new javax.swing.JButton();
+        thoatTGDButton1 = new javax.swing.JButton();
+        thoiGianTGDTextField1 = new com.toedter.calendar.JDateChooser();
+        hangMucButton1 = new javax.swing.JLabel();
+        quanAoRadioButton1 = new javax.swing.JRadioButton();
+        anUongRadioButton1 = new javax.swing.JRadioButton();
+        dvSinhHoatRadioButton1 = new javax.swing.JRadioButton();
+        khacRadioButton1 = new javax.swing.JRadioButton();
         headerPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -422,17 +484,22 @@ public class HomeViewPro extends javax.swing.JFrame {
         buttonPanel = new javax.swing.JPanel();
         giaoDichButton = new javax.swing.JButton();
         timKiemButton = new javax.swing.JButton();
+        soTietKiemButton = new javax.swing.JButton();
         thongKeButton = new javax.swing.JButton();
         thoatHomeButton = new javax.swing.JButton();
         mainPanel = new javax.swing.JPanel();
         giaoDichPanel = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel9 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         chiTable = new javax.swing.JTable();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        thuTable = new javax.swing.JTable();
         jPanel10 = new javax.swing.JPanel();
         themChiButton = new javax.swing.JButton();
         xoaChiButton = new javax.swing.JButton();
+        suaChiButton = new javax.swing.JButton();
+        xoaAllChiButton = new javax.swing.JButton();
+        refreshButton = new javax.swing.JButton();
         timKiemPanel = new javax.swing.JPanel();
         jTabbedPane2 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
@@ -466,6 +533,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         yearTextField = new javax.swing.JTextField();
         tkYearTKButton = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
+        thuTienPanel = new javax.swing.JPanel();
 
         themDialog.setMinimumSize(new java.awt.Dimension(400, 400));
 
@@ -480,9 +548,9 @@ public class HomeViewPro extends javax.swing.JFrame {
         headerThemGiaoDichPanelLayout.setHorizontalGroup(
             headerThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(headerThemGiaoDichPanelLayout.createSequentialGroup()
-                .addContainerGap(70, Short.MAX_VALUE)
+                .addContainerGap(156, Short.MAX_VALUE)
                 .addComponent(jLabel6)
-                .addContainerGap(69, Short.MAX_VALUE))
+                .addContainerGap(157, Short.MAX_VALUE))
         );
         headerThemGiaoDichPanelLayout.setVerticalGroup(
             headerThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -495,6 +563,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         themDialog.getContentPane().add(headerThemGiaoDichPanel, java.awt.BorderLayout.PAGE_START);
 
         bodyThemGiaoDichPanel.setBackground(new java.awt.Color(255, 255, 255));
+        bodyThemGiaoDichPanel.setPreferredSize(new java.awt.Dimension(490, 400));
 
         jLabel8.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel8.setText("Thời Gian");
@@ -527,6 +596,26 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        hangMucButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        hangMucButton.setText("Hạng Mục");
+
+        buttonGroup1.add(quanAoRadioButton);
+        quanAoRadioButton.setText("Quần áo");
+
+        buttonGroup1.add(anUongRadioButton);
+        anUongRadioButton.setText("Ăn uống");
+
+        buttonGroup1.add(dvSinhHoatRadioButton);
+        dvSinhHoatRadioButton.setText("Dịch vụ sinh hoạt");
+        dvSinhHoatRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dvSinhHoatRadioButtonActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(khacRadioButton);
+        khacRadioButton.setText("Khác");
+
         javax.swing.GroupLayout bodyThemGiaoDichPanelLayout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel);
         bodyThemGiaoDichPanel.setLayout(bodyThemGiaoDichPanelLayout);
         bodyThemGiaoDichPanelLayout.setHorizontalGroup(
@@ -539,13 +628,23 @@ public class HomeViewPro extends javax.swing.JFrame {
                             .addComponent(jLabel8)
                             .addComponent(jLabel9)
                             .addComponent(jLabel10)
-                            .addComponent(jLabel11))
+                            .addComponent(jLabel11)
+                            .addComponent(hangMucButton))
                         .addGap(34, 34, 34)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(matHangTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                            .addComponent(matHangTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
                             .addComponent(thanhTienTGDTextField)
                             .addComponent(ghiChuTGDTextField)
-                            .addComponent(thoiGianTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(thoiGianTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                .addComponent(anUongRadioButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(quanAoRadioButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(dvSinhHoatRadioButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(khacRadioButton)
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(thoatTGDButton))
@@ -571,17 +670,180 @@ public class HomeViewPro extends javax.swing.JFrame {
                     .addComponent(jLabel10)
                     .addComponent(thanhTienTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ghiChuTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11))
+                .addGap(18, 18, 18)
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel11)
-                    .addComponent(ghiChuTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(hangMucButton)
+                    .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(anUongRadioButton)
+                        .addComponent(quanAoRadioButton)
+                        .addComponent(dvSinhHoatRadioButton)
+                        .addComponent(khacRadioButton)))
                 .addGap(18, 18, 18)
                 .addComponent(themTGDButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                 .addComponent(thoatTGDButton)
                 .addContainerGap())
         );
 
         themDialog.getContentPane().add(bodyThemGiaoDichPanel, java.awt.BorderLayout.CENTER);
+
+        editChiDialog.setMinimumSize(new java.awt.Dimension(400, 400));
+
+        headerThemGiaoDichPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel7.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Notes.png"))); // NOI18N
+        jLabel7.setText("THÊM GIAO DỊCH");
+
+        javax.swing.GroupLayout headerThemGiaoDichPanel1Layout = new javax.swing.GroupLayout(headerThemGiaoDichPanel1);
+        headerThemGiaoDichPanel1.setLayout(headerThemGiaoDichPanel1Layout);
+        headerThemGiaoDichPanel1Layout.setHorizontalGroup(
+            headerThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(headerThemGiaoDichPanel1Layout.createSequentialGroup()
+                .addContainerGap(156, Short.MAX_VALUE)
+                .addComponent(jLabel7)
+                .addContainerGap(157, Short.MAX_VALUE))
+        );
+        headerThemGiaoDichPanel1Layout.setVerticalGroup(
+            headerThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(headerThemGiaoDichPanel1Layout.createSequentialGroup()
+                .addContainerGap(24, Short.MAX_VALUE)
+                .addComponent(jLabel7)
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+
+        editChiDialog.getContentPane().add(headerThemGiaoDichPanel1, java.awt.BorderLayout.PAGE_START);
+
+        bodyThemGiaoDichPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        bodyThemGiaoDichPanel1.setPreferredSize(new java.awt.Dimension(490, 400));
+
+        jLabel17.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel17.setText("Thời Gian");
+
+        jLabel18.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel18.setText("Mặt Hàng");
+
+        jLabel19.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel19.setText("Thành Tiền");
+
+        jLabel20.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel20.setText("Ghi Chú");
+
+        themTGDButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        themTGDButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Accept.png"))); // NOI18N
+        themTGDButton1.setText("  THÊM");
+        themTGDButton1.setToolTipText("");
+        themTGDButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                themTGDButton1ActionPerformed(evt);
+            }
+        });
+
+        thoatTGDButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        thoatTGDButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Delete.png"))); // NOI18N
+        thoatTGDButton1.setText("THOÁT");
+        thoatTGDButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                thoatTGDButton1ActionPerformed(evt);
+            }
+        });
+
+        hangMucButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        hangMucButton1.setText("Hạng Mục");
+
+        buttonGroup1.add(quanAoRadioButton1);
+        quanAoRadioButton1.setText("Quần áo");
+
+        buttonGroup1.add(anUongRadioButton1);
+        anUongRadioButton1.setText("Ăn uống");
+
+        buttonGroup1.add(dvSinhHoatRadioButton1);
+        dvSinhHoatRadioButton1.setText("Dịch vụ sinh hoạt");
+        dvSinhHoatRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dvSinhHoatRadioButton1ActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(khacRadioButton1);
+        khacRadioButton1.setText("Khác");
+
+        javax.swing.GroupLayout bodyThemGiaoDichPanel1Layout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel1);
+        bodyThemGiaoDichPanel1.setLayout(bodyThemGiaoDichPanel1Layout);
+        bodyThemGiaoDichPanel1Layout.setHorizontalGroup(
+            bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bodyThemGiaoDichPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bodyThemGiaoDichPanel1Layout.createSequentialGroup()
+                        .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel17)
+                            .addComponent(jLabel18)
+                            .addComponent(jLabel19)
+                            .addComponent(jLabel20)
+                            .addComponent(hangMucButton1))
+                        .addGap(34, 34, 34)
+                        .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(matHangTGDTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
+                            .addComponent(thanhTienTGDTextField1)
+                            .addComponent(ghiChuTGDTextField1)
+                            .addComponent(thoiGianTGDTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(bodyThemGiaoDichPanel1Layout.createSequentialGroup()
+                                .addComponent(anUongRadioButton1)
+                                .addGap(18, 18, 18)
+                                .addComponent(quanAoRadioButton1)
+                                .addGap(18, 18, 18)
+                                .addComponent(dvSinhHoatRadioButton1)
+                                .addGap(18, 18, 18)
+                                .addComponent(khacRadioButton1)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(thoatTGDButton1))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(themTGDButton1)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        bodyThemGiaoDichPanel1Layout.setVerticalGroup(
+            bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bodyThemGiaoDichPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel17)
+                    .addComponent(thoiGianTGDTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18)
+                    .addComponent(matHangTGDTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel19)
+                    .addComponent(thanhTienTGDTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ghiChuTGDTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20))
+                .addGap(18, 18, 18)
+                .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(hangMucButton1)
+                    .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(anUongRadioButton1)
+                        .addComponent(quanAoRadioButton1)
+                        .addComponent(dvSinhHoatRadioButton1)
+                        .addComponent(khacRadioButton1)))
+                .addGap(18, 18, 18)
+                .addComponent(themTGDButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                .addComponent(thoatTGDButton1)
+                .addContainerGap())
+        );
+
+        editChiDialog.getContentPane().add(bodyThemGiaoDichPanel1, java.awt.BorderLayout.CENTER);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -609,9 +871,9 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(162, Short.MAX_VALUE)
+                .addContainerGap(408, Short.MAX_VALUE)
                 .addComponent(jLabel3)
-                .addContainerGap(162, Short.MAX_VALUE))
+                .addContainerGap(409, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -663,12 +925,12 @@ public class HomeViewPro extends javax.swing.JFrame {
         getContentPane().add(headerPanel, java.awt.BorderLayout.PAGE_START);
 
         buttonPanel.setBackground(new java.awt.Color(204, 204, 255));
-        buttonPanel.setLayout(new java.awt.GridLayout(4, 0));
+        buttonPanel.setLayout(new java.awt.GridLayout(5, 0));
 
         giaoDichButton.setBackground(new java.awt.Color(204, 204, 255));
         giaoDichButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         giaoDichButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/List.png"))); // NOI18N
-        giaoDichButton.setText("  Giao Dịch");
+        giaoDichButton.setText("Giao Dịch");
         giaoDichButton.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         giaoDichButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -680,7 +942,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         timKiemButton.setBackground(new java.awt.Color(204, 204, 255));
         timKiemButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         timKiemButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
-        timKiemButton.setText("  Tìm Kiếm ");
+        timKiemButton.setText("Tìm Kiếm ");
         timKiemButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 timKiemButtonActionPerformed(evt);
@@ -688,10 +950,21 @@ public class HomeViewPro extends javax.swing.JFrame {
         });
         buttonPanel.add(timKiemButton);
 
+        soTietKiemButton.setBackground(new java.awt.Color(204, 204, 255));
+        soTietKiemButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        soTietKiemButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Price list.png"))); // NOI18N
+        soTietKiemButton.setText("Sổ Tiết Kiệm");
+        soTietKiemButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                soTietKiemButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(soTietKiemButton);
+
         thongKeButton.setBackground(new java.awt.Color(204, 204, 255));
         thongKeButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         thongKeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Statistics.png"))); // NOI18N
-        thongKeButton.setText("  Thống Kê");
+        thongKeButton.setText("Thống Kê");
         thongKeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 thongKeButtonActionPerformed(evt);
@@ -724,8 +997,6 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         jTabbedPane1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
 
-        jPanel9.setBackground(new java.awt.Color(255, 255, 255));
-
         chiTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -738,6 +1009,23 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         ));
         jScrollPane2.setViewportView(chiTable);
+
+        jTabbedPane1.addTab("Mục Chi", jScrollPane2);
+
+        thuTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane5.setViewportView(thuTable);
+
+        jTabbedPane1.addTab("Mục Thu", jScrollPane5);
 
         jPanel10.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -759,47 +1047,56 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        suaChiButton.setText("Sửa");
+        suaChiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                suaChiButtonActionPerformed(evt);
+            }
+        });
+
+        xoaAllChiButton.setText("Xóa ALL");
+        xoaAllChiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xoaAllChiButtonActionPerformed(evt);
+            }
+        });
+
+        refreshButton.setText("Refresh");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
         jPanel10Layout.setHorizontalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(refreshButton)
+                .addGap(18, 18, 18)
                 .addComponent(themChiButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(33, 33, 33)
                 .addComponent(xoaChiButton)
+                .addGap(28, 28, 28)
+                .addComponent(suaChiButton)
+                .addGap(18, 18, 18)
+                .addComponent(xoaAllChiButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addContainerGap(43, Short.MAX_VALUE)
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themChiButton)
-                    .addComponent(xoaChiButton))
-                .addContainerGap(25, Short.MAX_VALUE))
+                    .addComponent(xoaChiButton)
+                    .addComponent(suaChiButton)
+                    .addComponent(xoaAllChiButton)
+                    .addComponent(refreshButton))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
-
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        jTabbedPane1.addTab("MỤC CHI", jPanel9);
 
         javax.swing.GroupLayout giaoDichPanelLayout = new javax.swing.GroupLayout(giaoDichPanel);
         giaoDichPanel.setLayout(giaoDichPanelLayout);
@@ -807,14 +1104,21 @@ public class HomeViewPro extends javax.swing.JFrame {
             giaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(giaoDichPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
-                .addContainerGap())
+                .addGroup(giaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(giaoDichPanelLayout.createSequentialGroup()
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 964, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(giaoDichPanelLayout.createSequentialGroup()
+                        .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(37, 37, 37))))
         );
         giaoDichPanelLayout.setVerticalGroup(
             giaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(giaoDichPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -867,14 +1171,13 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(99, Short.MAX_VALUE)
-                .addComponent(jLabel12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(99, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tenTKButton)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tenTKButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -920,7 +1223,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 964, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -989,18 +1292,17 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap(83, Short.MAX_VALUE)
-                .addComponent(jLabel13)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tuTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel14)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(84, Short.MAX_VALUE))
-            .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tienTKButton)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tuTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tienTKButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
@@ -1025,7 +1327,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE)
+            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 964, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1082,18 +1384,17 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap(81, Short.MAX_VALUE)
-                .addComponent(jLabel15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17)
-                .addComponent(jLabel16)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(81, Short.MAX_VALUE))
-            .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(ngayTKButton)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(17, 17, 17)
+                        .addComponent(jLabel16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ngayTKButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
@@ -1118,7 +1419,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 964, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1156,7 +1457,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         showTKPanel.setLayout(showTKPanelLayout);
         showTKPanelLayout.setHorizontalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 481, Short.MAX_VALUE)
+            .addGap(0, 964, Short.MAX_VALUE)
         );
         showTKPanelLayout.setVerticalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1189,11 +1490,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(118, Short.MAX_VALUE)
+                .addContainerGap(359, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(yearTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 112, Short.MAX_VALUE))
+                .addGap(0, 354, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tkYearTKButton)
@@ -1232,6 +1533,19 @@ public class HomeViewPro extends javax.swing.JFrame {
         );
 
         mainPanel.add(thongKePanel, "card4");
+
+        javax.swing.GroupLayout thuTienPanelLayout = new javax.swing.GroupLayout(thuTienPanel);
+        thuTienPanel.setLayout(thuTienPanelLayout);
+        thuTienPanelLayout.setHorizontalGroup(
+            thuTienPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 976, Short.MAX_VALUE)
+        );
+        thuTienPanelLayout.setVerticalGroup(
+            thuTienPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 361, Short.MAX_VALUE)
+        );
+
+        mainPanel.add(thuTienPanel, "card5");
 
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
@@ -1276,11 +1590,11 @@ public class HomeViewPro extends javax.swing.JFrame {
     }//GEN-LAST:event_thongKeButtonActionPerformed
 
     private void thoatTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatTGDButtonActionPerformed
-        themDialog.setVisible(false);
+//        themDialog.setVisible(false);
     }//GEN-LAST:event_thoatTGDButtonActionPerformed
 
     private void themTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themTGDButtonActionPerformed
-        themGD(logId);
+//        themGD(logId);
     }//GEN-LAST:event_themTGDButtonActionPerformed
 
     private void tenTKTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tenTKTableMouseClicked
@@ -1303,8 +1617,9 @@ public class HomeViewPro extends javax.swing.JFrame {
     }//GEN-LAST:event_tienTKButtonActionPerformed
 
     private void themChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themChiButtonActionPerformed
-        themDialog.setVisible(true);
-        themDialog.setLocationRelativeTo(null);
+//        new themChiJFrame().setVisible(true);
+        System.out.println(logId);
+        new themChiJFrame(logId).setVisible(true);
     }//GEN-LAST:event_themChiButtonActionPerformed
 
     private void tenTKTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tenTKTextFieldKeyReleased
@@ -1325,7 +1640,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Ban chac chan muon xoa khong");
             if (confirm == JOptionPane.YES_OPTION){
                 int userId = Integer.parseInt(String.valueOf(chiTable.getValueAt(row, 0)));
-                homeViewController.deleteGiaoDich(userId);
+                homeViewController.deleteGiaoDichChi(userId);
                 defaultTableModel.setRowCount(0);
                 setTableData(homeViewController.getAllInforUser(logId));
             }
@@ -1401,6 +1716,64 @@ public class HomeViewPro extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tenTKTextFieldKeyTyped
 
+    private void xoaAllChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaAllChiButtonActionPerformed
+        // TODO add your handling code here:
+        int row = chiTable.getSelectedRow();
+
+            int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Bạn chắc chắn muốn xóa tất cả dữ liệu không?");
+            if (confirm == JOptionPane.YES_OPTION) {
+                // Xóa tất cả dữ liệu trong bảng
+                homeViewController.deleteAllGiaoDichChi();
+
+                // Cập nhật bảng sau khi xóa
+                defaultTableModel.setRowCount(0);
+                setTableData(homeViewController.getAllInforUser(logId));
+            }
+     
+    }//GEN-LAST:event_xoaAllChiButtonActionPerformed
+
+    private void suaChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaChiButtonActionPerformed
+        // TODO add your handling code here:
+         int row = chiTable.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            } else {
+                int giaoDichId = Integer.valueOf(String.valueOf(chiTable.getValueAt(row, 0)));
+                new editChiJFrame(giaoDichId).setVisible(true);
+            }
+        
+    }//GEN-LAST:event_suaChiButtonActionPerformed
+
+    private void soTietKiemButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soTietKiemButtonActionPerformed
+        // TODO add your handling code here:
+        mainPanel.removeAll();
+        mainPanel.add(thongKePanel);
+        mainPanel.revalidate();
+        mainPanel.repaint(); 
+    }//GEN-LAST:event_soTietKiemButtonActionPerformed
+
+    private void dvSinhHoatRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dvSinhHoatRadioButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dvSinhHoatRadioButtonActionPerformed
+
+    private void themTGDButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themTGDButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_themTGDButton1ActionPerformed
+
+    private void thoatTGDButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatTGDButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_thoatTGDButton1ActionPerformed
+
+    private void dvSinhHoatRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dvSinhHoatRadioButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dvSinhHoatRadioButton1ActionPerformed
+
+    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
+        // TODO add your handling code here:
+        defaultTableModel.setRowCount(0);
+        setTableData(homeViewController.getAllInforUser(logId));
+    }//GEN-LAST:event_refreshButtonActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -1435,16 +1808,27 @@ public class HomeViewPro extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButton anUongRadioButton;
+    private javax.swing.JRadioButton anUongRadioButton1;
     private javax.swing.JPanel bodyThemGiaoDichPanel;
+    private javax.swing.JPanel bodyThemGiaoDichPanel1;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JTable chiTable;
     private com.toedter.calendar.JDateChooser denNgayTKTextField;
     private javax.swing.JTextField denTienTKTextField;
+    private javax.swing.JRadioButton dvSinhHoatRadioButton;
+    private javax.swing.JRadioButton dvSinhHoatRadioButton1;
+    private javax.swing.JDialog editChiDialog;
     private javax.swing.JTextField ghiChuTGDTextField;
+    private javax.swing.JTextField ghiChuTGDTextField1;
     private javax.swing.JButton giaoDichButton;
     private javax.swing.JPanel giaoDichPanel;
+    private javax.swing.JLabel hangMucButton;
+    private javax.swing.JLabel hangMucButton1;
     private javax.swing.JPanel headerPanel;
     private javax.swing.JPanel headerThemGiaoDichPanel;
+    private javax.swing.JPanel headerThemGiaoDichPanel1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1453,10 +1837,15 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -1468,33 +1857,47 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JRadioButton khacRadioButton;
+    private javax.swing.JRadioButton khacRadioButton1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTextField matHangTGDTextField;
+    private javax.swing.JTextField matHangTGDTextField1;
     private javax.swing.JButton ngayTKButton;
+    private javax.swing.JRadioButton quanAoRadioButton;
+    private javax.swing.JRadioButton quanAoRadioButton1;
+    private javax.swing.JButton refreshButton;
     private javax.swing.JLabel showDateLabel;
     private javax.swing.JLabel showRealTimeLabel;
     private javax.swing.JPanel showTKPanel;
+    private javax.swing.JButton soTietKiemButton;
+    private javax.swing.JButton suaChiButton;
     private javax.swing.JButton tenTKButton;
     private javax.swing.JTable tenTKTable;
     private javax.swing.JTextField tenTKTextField;
     private javax.swing.JTextField thanhTienTGDTextField;
+    private javax.swing.JTextField thanhTienTGDTextField1;
     private javax.swing.JButton themChiButton;
     private javax.swing.JDialog themDialog;
     private javax.swing.JButton themTGDButton;
+    private javax.swing.JButton themTGDButton1;
     private javax.swing.JButton thoatHomeButton;
     private javax.swing.JButton thoatTGDButton;
+    private javax.swing.JButton thoatTGDButton1;
     private com.toedter.calendar.JDateChooser thoiGianTGDTextField;
+    private com.toedter.calendar.JDateChooser thoiGianTGDTextField1;
     private javax.swing.JTable thoiGianTKTable;
     private javax.swing.JButton thongKeButton;
     private javax.swing.JPanel thongKePanel;
+    private javax.swing.JTable thuTable;
+    private javax.swing.JPanel thuTienPanel;
     private javax.swing.JButton tienTKButton;
     private javax.swing.JTable tienTKTable;
     private javax.swing.JButton timKiemButton;
@@ -1502,6 +1905,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JButton tkYearTKButton;
     private com.toedter.calendar.JDateChooser tuNgayTKTextField;
     private javax.swing.JTextField tuTienTKTextField;
+    private javax.swing.JButton xoaAllChiButton;
     private javax.swing.JButton xoaChiButton;
     private javax.swing.JTextField yearTextField;
     // End of variables declaration//GEN-END:variables

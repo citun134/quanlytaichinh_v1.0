@@ -6,7 +6,9 @@ public class GiaoDichModel {
     private String matHang;
     private double thanhTien;
     private String ghiChu;
+    private String hangMuc;
     private int accountId;
+    
     private int year;
     private int month;
     private int totalMoney;
@@ -15,20 +17,22 @@ public class GiaoDichModel {
 //        new GiaoDichModel();
     }
     
-    public GiaoDichModel(int id, String date, String matHang, double thanhTien, String ghiChu) {
+    public GiaoDichModel(int id, String date, String matHang, double thanhTien, String ghiChu, String hangMuc) {
         this.id = id;
         this.date = date;
         this.matHang = matHang;
         this.thanhTien = thanhTien;
         this.ghiChu = ghiChu;
+        this.hangMuc = hangMuc;
     }
     
-    public GiaoDichModel(int id, String date, String matHang, double thanhTien, String ghiChu, int accountId) {
+    public GiaoDichModel(int id, String date, String matHang, double thanhTien, String ghiChu, String hangMuc, int accountId) {
         this.id = id;
         this.date = date;
         this.matHang = matHang;
         this.thanhTien = thanhTien;
         this.ghiChu = ghiChu;
+        this.hangMuc = hangMuc;
         this.accountId = accountId;
     }    
 
@@ -70,6 +74,14 @@ public class GiaoDichModel {
 
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
+    }
+
+    public String getHangMuc() {
+        return hangMuc;
+    }
+
+    public void setHangMuc(String hangMuc) {
+        this.hangMuc = hangMuc;
     }
 
     public int getAccountId() {
