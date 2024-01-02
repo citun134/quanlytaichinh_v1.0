@@ -2,6 +2,7 @@ package com.quanlytaichinh.controller;
 
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.dao.GiaoDichDao;
+import com.quanlytaichinh.model.GiaoDichThuModel;
 import com.quanlytaichinh.model.LoginModel;
 import java.util.List;
 import java.util.ArrayList;
@@ -19,20 +20,41 @@ public class HomeViewController {
         giaoDichDao.deleteGiaoDichChi(user);
     }
     
+    public void deleteGiaoDichThu(int user){
+        giaoDichDao.deleteGiaoDichThu(user);
+    }
+    
     public void deleteAllGiaoDichChi(){
         giaoDichDao.deleteAllGiaoDichChi();
     }
+    
+    public void deleteAllGiaoDichThu(){
+        giaoDichDao.deleteAllGiaoDichThu();
+    }
+    
     public void updateGiaoDichChi(GiaoDichModel giaoDichModel) {
         giaoDichDao.updateGiaoDichChi(giaoDichModel);
+    }
+    
+    public void updateGiaoDichThu(GiaoDichThuModel giaoDichModel) {
+        giaoDichDao.updateGiaoDichThu(giaoDichModel);
     }
     
     public void addGiaoDichChi(GiaoDichModel giaoDichModel){
         giaoDichDao.addGiaoDichChi(giaoDichModel);
     }
     
+    public void addGiaoDichThu(GiaoDichThuModel giaoDichModel){
+        giaoDichDao.addGiaoDichThu(giaoDichModel);
+    }
+    
     public ArrayList<GiaoDichModel> searchTienGiaoDich(String tu, String den, int accountId){
         return giaoDichDao.searchTienGiaoDich(tu, den, accountId);
     }  
+    
+    public ArrayList<GiaoDichModel> searchTienGiaoDichThuChi(String tu, String den, int accountId){
+        return giaoDichDao.searchTienGiaoDichThuChi(tu, den, accountId);
+    }
     
     public ArrayList<GiaoDichModel> searchTenGiaoDich(String ten, int accountId){
         return giaoDichDao.searchTenGiaoDich(ten, accountId);
@@ -42,10 +64,21 @@ public class HomeViewController {
         return giaoDichDao.searchThoiGianGiaoDich(tu, den, accountId);
     }   
     
+    public ArrayList<GiaoDichModel> searchThoiGianGiaoDichThuChi(String tu, String den, int accountId){
+        return giaoDichDao.searchThoiGianGiaoDichThuChi(tu, den, accountId);
+    }  
+    
     public List<GiaoDichModel> getAllInforUser(int accountId){
         return giaoDichDao.getAllInforUser(accountId);
     }
     
+    public List<GiaoDichThuModel> getAllInforUserThu(int accountId){
+        return giaoDichDao.getAllInforUserThu(accountId);
+    }
+    
+    public List<GiaoDichModel> getAllInforUserThuChi(int accountId){
+        return giaoDichDao.getAllInforUserThuChi(accountId);
+    }
     public List<GiaoDichModel> getListByMoney(int accountId){
         return giaoDichDao.getListByMoney(accountId);
     }
@@ -57,4 +90,9 @@ public class HomeViewController {
     public GiaoDichModel getInforUser(int accountId){
         return giaoDichDao.getInforUser(accountId);
     }
+    
+    public GiaoDichThuModel getInforUserThu(int accountId){
+        return giaoDichDao.getInforUserThu(accountId);
+    }
+    
 }

@@ -34,6 +34,7 @@ public class editChiJFrame extends javax.swing.JFrame {
     public GiaoDichModel giaoDichModel;
     
     public int loginId;
+    
     public editChiJFrame() {}
 
     public editChiJFrame(int loginModel){
@@ -48,14 +49,12 @@ public class editChiJFrame extends javax.swing.JFrame {
     }
     
     public void editGD(int accountId){
-//        giaoDichModel.setId(accountId);
-
-        HomeViewController homeViewController = new HomeViewController();
         giaoDichModel = homeViewController.getInforUser(accountId);
         thoiGianTGDTextField1.setText(giaoDichModel.getDate());
         matHangTGDTextField1.setText(giaoDichModel.getMatHang());
         thanhTienTGDTextField1.setText(String.valueOf(giaoDichModel.getThanhTien()));
         ghiChuTGDTextField1.setText(giaoDichModel.getGhiChu());
+        
         if (anUongRadioButton1.isSelected()) {
             giaoDichModel.setHangMuc("Ăn Uống");
         } else if (quanAoRadioButton1.isSelected()) {
@@ -65,7 +64,7 @@ public class editChiJFrame extends javax.swing.JFrame {
         } else if (khacRadioButton1.isSelected()) {
             giaoDichModel.setHangMuc("Khác");
         }
-        homeViewController.updateGiaoDichChi(giaoDichModel);
+//        homeViewController.updateGiaoDichChi(giaoDichModel);
     };
     
     public void themGD(int accountId){
@@ -100,12 +99,12 @@ public class editChiJFrame extends javax.swing.JFrame {
 
                     homeViewController.updateGiaoDichChi(giaoDichModel);
 
-                    JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                    JOptionPane.showMessageDialog(this, "Sửa thành công!");
                 } else {
-                    JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Thanh Tiền không hợp lệ.");
+                    JOptionPane.showMessageDialog(this, "Sửa Thất Bại! Thanh Tiền không hợp lệ.");
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Vui lòng nhập đầy đủ thông tin.");
+                JOptionPane.showMessageDialog(this, "Sửa Thất Bại! Vui lòng nhập đầy đủ thông tin.");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,6 +122,7 @@ public class editChiJFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         headerThemGiaoDichPanel1 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         bodyThemGiaoDichPanel1 = new javax.swing.JPanel();
@@ -206,10 +206,13 @@ public class editChiJFrame extends javax.swing.JFrame {
         hangMucButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         hangMucButton1.setText("Hạng Mục");
 
+        buttonGroup1.add(quanAoRadioButton1);
         quanAoRadioButton1.setText("Quần áo");
 
+        buttonGroup1.add(anUongRadioButton1);
         anUongRadioButton1.setText("Ăn uống");
 
+        buttonGroup1.add(dvSinhHoatRadioButton1);
         dvSinhHoatRadioButton1.setText("Dịch vụ sinh hoạt");
         dvSinhHoatRadioButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -217,6 +220,7 @@ public class editChiJFrame extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(khacRadioButton1);
         khacRadioButton1.setText("Khác");
 
         javax.swing.GroupLayout bodyThemGiaoDichPanel1Layout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel1);
@@ -348,6 +352,7 @@ public class editChiJFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton anUongRadioButton1;
     private javax.swing.JPanel bodyThemGiaoDichPanel1;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JRadioButton dvSinhHoatRadioButton1;
     private javax.swing.JTextField ghiChuTGDTextField1;
     private javax.swing.JLabel hangMucButton1;
