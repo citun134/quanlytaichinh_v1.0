@@ -3,8 +3,10 @@ package com.quanlytaichinh.view;
 import com.quanlytaichinh.controller.HomeViewController;
 import com.quanlytaichinh.controller.LoginController;
 import com.quanlytaichinh.dao.GiaoDichDao;
+import com.quanlytaichinh.model.SoTietKiemModel;
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.GiaoDichThuModel;
+import com.quanlytaichinh.model.LaiSuatVayModel;
 import com.quanlytaichinh.model.LoginModel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -30,12 +32,19 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class HomeViewPro extends javax.swing.JFrame {
     public HomeViewController homeViewController;
     public GiaoDichDao giaoDichDao;
+    
     public LoginController loginController;
+    
+    public SoTietKiemModel soTietKiemModel;
+    public LaiSuatVayModel laiSuatVayModel;
     public LoginModel loginModel;
-    public LoginView loginView;
     public GiaoDichModel giaoDichModel;
+    
+    public LoginView loginView;
     public DefaultTableModel defaultTableModel;
     public DefaultTableModel defaultTableThuModel;
+    public DefaultTableModel defaultTableSTKModel;
+    public DefaultTableModel defaultTableLSVModel;
     public DefaultTableModel timKiemTen;
     public DefaultTableModel timKiemTien;
     public DefaultTableModel timKiemNgay;
@@ -73,6 +82,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         displayTen(logId);
         displayTien(logId);
         displayNgay(logId);
+        displaySTK(logId);
+        displayLSV(logId);
         
         thoiGianTGDTextField.setDateFormatString("yyyy-MM-dd");
         tuNgayTKTextField.setDateFormatString("yyyy-MM-dd");
@@ -125,7 +136,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         setThuTableData(homeViewController.getAllInforUserThu(accountId));
     }
     
-    
     public void setTableData(List<GiaoDichModel> allGiaoDich){
         for(GiaoDichModel giaoDich: allGiaoDich){
             DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
@@ -148,6 +158,37 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     }
     
+    public void setSTKTable(List<SoTietKiemModel> allGiaoDich){
+        for (SoTietKiemModel giaoDich : allGiaoDich) {
+            DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
+            String formattedSoTienGui = df.format(giaoDich.getSoTienGui());
+            String formattedSoTienLaiNhanDuoc = df.format(giaoDich.getSoTienLaiNhanDuoc());
+            String formattedTongTienNhanDuoc = df.format(giaoDich.getTongTienNhanDuoc());
+            
+            defaultTableSTKModel.addRow(new Object[]{giaoDich.getTietKiemId(), giaoDich.getNgayGui(),
+                    giaoDich.getTenNganHang(), formattedSoTienGui, giaoDich.getLaiSuatGui(),
+                    formattedSoTienLaiNhanDuoc, formattedTongTienNhanDuoc, 
+                    giaoDich.getKyHan()
+            });
+        }
+    }
+    
+    public void setLSVTable(List<LaiSuatVayModel> allGiaoDich){
+        for (LaiSuatVayModel giaoDich : allGiaoDich) {
+            DecimalFormat df = new DecimalFormat("###,###,###,###,###"); // Định dạng số theo dấu phẩy
+            String formattedGiaTriBDS = df.format(giaoDich.getGiaTriBatDongSan());
+            String formattedSoTienVay = df.format(giaoDich.getSoTienVay());
+            String formattedSoTienTraHangThang = df.format(giaoDich.getSoTienPhaiTraHangThang());
+            String formattedTongLaiPhaiTra = df.format(giaoDich.getTongLaiPhaiTra());
+            
+            defaultTableLSVModel.addRow(new Object[]{giaoDich.getLaiSuatVayId(), giaoDich.getTenNganHangLSV(),
+                    formattedGiaTriBDS, formattedSoTienVay, giaoDich.getThoiGianVay(),
+                    giaoDich.getLaiSuat(), giaoDich.getNgayGiaiNgan(),  
+                    formattedSoTienTraHangThang, formattedTongLaiPhaiTra
+            });
+        }
+    }
+    
     public final void findUsers(int accountId){
         List<GiaoDichModel> users = homeViewController.searchTenGiaoDich(tenTKTextField.getText(), accountId);
         DefaultTableModel model = new DefaultTableModel();
@@ -167,7 +208,6 @@ public class HomeViewPro extends javax.swing.JFrame {
        tenTKTable.setModel(model);
        
     }
-
     
     public final void findMoney(int accountId){
         List<GiaoDichModel> users = homeViewController.searchTienGiaoDichThuChi(tuTienTKTextField.getText(), denTienTKTextField.getText(), accountId);
@@ -223,70 +263,6 @@ public class HomeViewPro extends javax.swing.JFrame {
             // Handle the case where either tuNgayTKTextField or denNgayTKTextField returned null dates
             // You can display an error message or take appropriate action.
         }
-    }
-
-    
-    public void themGD(int accountId){
-//        String dateTGD = thoiGianTGDTextField.getText();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String dateTGD = sdf.format(thoiGianTGDTextField.getDate());
-        String matHangTGD = matHangTGDTextField.getText();
-        String thanhTienTGD = thanhTienTGDTextField.getText();
-        String ghiChuTGD = ghiChuTGDTextField.getText();
-        
-//        if(loginModel.getUser() == loginView.getName() )
-        try {
-            if (!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty() && !dateTGD.isEmpty()) {
-                // Kiểm tra xem thanhTienTGD không chứa chữ cái
-                if (!thanhTienTGD.matches(".*[a-zA-Z].*")) {
-                    DecimalFormat decimalFormat = new DecimalFormat();
-                    decimalFormat.setParseBigDecimal(true);
-                    BigDecimal bigDecimal = (BigDecimal) decimalFormat.parse(thanhTienTGD);
-
-                    SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    inputDateFormat.setLenient(false);
-                    Date parsedDate = inputDateFormat.parse(dateTGD);
-
-                    // Format the parsed date back to the desired format
-                    SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    String formattedDate = outputDateFormat.format(parsedDate);
-
-                    giaoDichModel.setDate(formattedDate);
-                    giaoDichModel.setMatHang(matHangTGD);                                               
-                    giaoDichModel.setThanhTien(bigDecimal.doubleValue());
-                    giaoDichModel.setGhiChu(ghiChuTGD);
-                    giaoDichModel.setAccountId(accountId);
-                    
-                    if (anUongRadioButton.isSelected()) {
-                    giaoDichModel.setHangMuc("Ăn Uống");
-                    } else if (quanAoRadioButton.isSelected()) {
-                        giaoDichModel.setHangMuc("Quần Áo");
-                    } else if (dvSinhHoatRadioButton.isSelected()) {
-                        giaoDichModel.setHangMuc("Dịch Vụ Sinh Hoạt");
-                    } else if (khacRadioButton.isSelected()) {
-                        giaoDichModel.setHangMuc("Khác");
-                    }
-                    
-                    homeViewController.addGiaoDichChi(giaoDichModel);
-                    JOptionPane.showMessageDialog(this, "Thêm thành công!");
-                    defaultTableModel.setRowCount(0);
-                    setTableData(homeViewController.getAllInforUser(accountId));
-                } else {
-                    JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Thanh Tiền không hợp lệ.");
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Thêm Thất Bại!");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
-
-        
-//        thoiGianTGDTextField.setText("");
-        matHangTGDTextField.setText("");
-        thanhTienTGDTextField.setText("");
-        ghiChuTGDTextField.setText("");
     }
 
     public void setDataToChartYear(JPanel jpanel, int year) {
@@ -449,6 +425,89 @@ public class HomeViewPro extends javax.swing.JFrame {
                     giaoDich.getMatHang(), formattedThanhTien, giaoDich.getGhiChu(), giaoDich.getHangMuc()});
         }
     }
+   
+    public void displaySTK(int accountId) {
+       
+    // Create a DefaultTableModel for the second table (tenTKTable)
+    defaultTableSTKModel = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+    
+        soTietKiemTable.setModel(defaultTableSTKModel);
+
+        defaultTableSTKModel.addColumn("ID");
+        defaultTableSTKModel.addColumn("Ngày Gửi");
+        defaultTableSTKModel.addColumn("Tên Ngân Hàng");
+        defaultTableSTKModel.addColumn("Số Tiền Gửi");
+        defaultTableSTKModel.addColumn("Lãi Suất Gửi");
+        defaultTableSTKModel.addColumn("Số Tiền Lãi Nhận Được");
+        defaultTableSTKModel.addColumn("Tổng Tiền Nhận Được");
+        defaultTableSTKModel.addColumn("Kỳ Hạn");
+
+        // Get the data from your controller or data source
+        List<SoTietKiemModel> allGiaoDich = homeViewController.getAllInforUserSTK(accountId);
+
+        // Populate both tables with the data
+        for (SoTietKiemModel giaoDich : allGiaoDich) {
+            DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
+            String formattedSoTienGui = df.format(giaoDich.getSoTienGui());
+            String formattedSoTienLaiNhanDuoc = df.format(giaoDich.getSoTienLaiNhanDuoc());
+            String formattedTongTienNhanDuoc = df.format(giaoDich.getTongTienNhanDuoc());
+            
+            defaultTableSTKModel.addRow(new Object[]{giaoDich.getTietKiemId(), giaoDich.getNgayGui(),
+                    giaoDich.getTenNganHang(), formattedSoTienGui, giaoDich.getLaiSuatGui(),
+                    formattedSoTienLaiNhanDuoc, formattedTongTienNhanDuoc, 
+                    giaoDich.getKyHan()
+            });
+        }
+    }
+    
+    public void displayLSV(int accountId) {
+       
+    // Create a DefaultTableModel for the second table (tenTKTable)
+    defaultTableLSVModel = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+    
+        laiSuatVayTable.setModel(defaultTableLSVModel);
+
+    
+        defaultTableLSVModel.addColumn("ID");
+        defaultTableLSVModel.addColumn("Tên Ngân Hàng");
+        defaultTableLSVModel.addColumn("Giá Trị BĐS");
+        defaultTableLSVModel.addColumn("Số Tiền Vay");
+        defaultTableLSVModel.addColumn("Thời Gian Vay");
+        defaultTableLSVModel.addColumn("Lãi Suất");
+        defaultTableLSVModel.addColumn("Ngày Giải Ngân");
+        defaultTableLSVModel.addColumn("Số Tiền Trả Mỗi Tháng");
+        defaultTableLSVModel.addColumn("Tổng Số Tiền ");
+
+
+        // Get the data from your controller or data source
+        List<LaiSuatVayModel> allGiaoDich = homeViewController.getAllInforUserLSV(accountId);
+
+        // Populate both tables with the data
+        for (LaiSuatVayModel giaoDich : allGiaoDich) {
+            DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
+            String formattedGiaTriBDS = df.format(giaoDich.getGiaTriBatDongSan());
+            String formattedSoTienVay = df.format(giaoDich.getSoTienVay());
+            String formattedSoTienTraHangThang = df.format(giaoDich.getSoTienPhaiTraHangThang());
+            String formattedTongLaiPhaiTra = df.format(giaoDich.getTongLaiPhaiTra());
+            
+            defaultTableLSVModel.addRow(new Object[]{giaoDich.getLaiSuatVayId(), giaoDich.getTenNganHangLSV(),
+                    formattedGiaTriBDS, formattedSoTienVay, giaoDich.getThoiGianVay(),
+                    giaoDich.getLaiSuat(), giaoDich.getNgayGiaiNgan(),  
+                    formattedSoTienTraHangThang, formattedTongLaiPhaiTra
+            });
+        }
+    }
+
         
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -541,27 +600,46 @@ public class HomeViewPro extends javax.swing.JFrame {
         yearTextField = new javax.swing.JTextField();
         tkYearTKButton = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        thuTienPanel = new javax.swing.JPanel();
         giaoDichPanel = new javax.swing.JPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel9 = new javax.swing.JPanel();
-        jPanel10 = new javax.swing.JPanel();
+        jTabbedPane4 = new javax.swing.JTabbedPane();
+        jPanel15 = new javax.swing.JPanel();
+        jPanel17 = new javax.swing.JPanel();
         themChiButton = new javax.swing.JButton();
-        xoaChiButton = new javax.swing.JButton();
         suaChiButton = new javax.swing.JButton();
+        xoaChiButton = new javax.swing.JButton();
         xoaAllChiButton = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPane7 = new javax.swing.JScrollPane();
         chiTable = new javax.swing.JTable();
-        jPanel11 = new javax.swing.JPanel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        thuTable = new javax.swing.JTable();
-        jPanel12 = new javax.swing.JPanel();
+        jPanel16 = new javax.swing.JPanel();
+        jPanel18 = new javax.swing.JPanel();
         themThuButton = new javax.swing.JButton();
-        refreshThuButton = new javax.swing.JButton();
         suaThuButton = new javax.swing.JButton();
         xoaThuButton = new javax.swing.JButton();
         xoaAllThuButton = new javax.swing.JButton();
+        refreshThuButton = new javax.swing.JButton();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        thuTable = new javax.swing.JTable();
+        soTietKiemPanel = new javax.swing.JPanel();
+        jTabbedPane3 = new javax.swing.JTabbedPane();
+        jPanel13 = new javax.swing.JPanel();
+        jPanel14 = new javax.swing.JPanel();
+        themSTKButton = new javax.swing.JButton();
+        suaSTKButton = new javax.swing.JButton();
+        xoaSTKButton = new javax.swing.JButton();
+        xoaAllSTKButton = new javax.swing.JButton();
+        refreshSTKButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        soTietKiemTable = new javax.swing.JTable();
+        jPanel19 = new javax.swing.JPanel();
+        jPanel20 = new javax.swing.JPanel();
+        themLSVButton = new javax.swing.JButton();
+        suaLSVButton = new javax.swing.JButton();
+        xoaLSVButton = new javax.swing.JButton();
+        xoaAllLSVButton = new javax.swing.JButton();
+        refreshLSVButton = new javax.swing.JButton();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        laiSuatVayTable = new javax.swing.JTable();
 
         themDialog.setMinimumSize(new java.awt.Dimension(400, 400));
 
@@ -874,6 +952,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         editChiDialog.getContentPane().add(bodyThemGiaoDichPanel1, java.awt.BorderLayout.CENTER);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(800, 500));
 
         headerPanel.setBackground(new java.awt.Color(204, 255, 255));
 
@@ -899,9 +978,9 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(415, Short.MAX_VALUE)
+                .addContainerGap(237, Short.MAX_VALUE)
                 .addComponent(jLabel3)
-                .addContainerGap(414, Short.MAX_VALUE))
+                .addContainerGap(236, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1115,12 +1194,12 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1219,13 +1298,13 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE)
+            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1276,7 +1355,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(151, Short.MAX_VALUE)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addComponent(jLabel15)
@@ -1287,7 +1366,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(ngayTKButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(150, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1311,13 +1390,13 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1349,11 +1428,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         showTKPanel.setLayout(showTKPanelLayout);
         showTKPanelLayout.setHorizontalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 976, Short.MAX_VALUE)
+            .addGap(0, 620, Short.MAX_VALUE)
         );
         showTKPanelLayout.setVerticalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 350, Short.MAX_VALUE)
+            .addGap(0, 396, Short.MAX_VALUE)
         );
 
         jPanel8.setBackground(new java.awt.Color(255, 255, 255));
@@ -1382,11 +1461,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(363, Short.MAX_VALUE)
+                .addContainerGap(186, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(yearTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 362, Short.MAX_VALUE))
+                .addGap(0, 183, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tkYearTKButton)
@@ -1426,19 +1505,6 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         mainPanel.add(thongKePanel, "card4");
 
-        javax.swing.GroupLayout thuTienPanelLayout = new javax.swing.GroupLayout(thuTienPanel);
-        thuTienPanel.setLayout(thuTienPanelLayout);
-        thuTienPanelLayout.setHorizontalGroup(
-            thuTienPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 988, Short.MAX_VALUE)
-        );
-        thuTienPanelLayout.setVerticalGroup(
-            thuTienPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 445, Short.MAX_VALUE)
-        );
-
-        mainPanel.add(thuTienPanel, "card5");
-
         giaoDichPanel.setBackground(new java.awt.Color(255, 255, 255));
         giaoDichPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -1446,26 +1512,10 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
-        jTabbedPane1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-
-        jPanel10.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel10.setPreferredSize(new java.awt.Dimension(952, 85));
-
-        themChiButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        themChiButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Add.png"))); // NOI18N
-        themChiButton.setText("  Thêm");
+        themChiButton.setText("Thêm");
         themChiButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 themChiButtonActionPerformed(evt);
-            }
-        });
-
-        xoaChiButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        xoaChiButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Delete.png"))); // NOI18N
-        xoaChiButton.setText("  Xóa");
-        xoaChiButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                xoaChiButtonActionPerformed(evt);
             }
         });
 
@@ -1476,7 +1526,14 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
-        xoaAllChiButton.setText("Xóa ALL");
+        xoaChiButton.setText("Xóa");
+        xoaChiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xoaChiButtonActionPerformed(evt);
+            }
+        });
+
+        xoaAllChiButton.setText("Xóa tất cả");
         xoaAllChiButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 xoaAllChiButtonActionPerformed(evt);
@@ -1490,34 +1547,34 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
-        jPanel10.setLayout(jPanel10Layout);
-        jPanel10Layout.setHorizontalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel10Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(refreshButton)
-                .addGap(18, 18, 18)
+        javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
+        jPanel17.setLayout(jPanel17Layout);
+        jPanel17Layout.setHorizontalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel17Layout.createSequentialGroup()
+                .addContainerGap(69, Short.MAX_VALUE)
                 .addComponent(themChiButton)
-                .addGap(33, 33, 33)
-                .addComponent(xoaChiButton)
-                .addGap(28, 28, 28)
+                .addGap(18, 18, 18)
                 .addComponent(suaChiButton)
                 .addGap(18, 18, 18)
+                .addComponent(xoaChiButton)
+                .addGap(18, 18, 18)
                 .addComponent(xoaAllChiButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(refreshButton)
+                .addContainerGap(96, Short.MAX_VALUE))
         );
-        jPanel10Layout.setVerticalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel10Layout.createSequentialGroup()
-                .addContainerGap(49, Short.MAX_VALUE)
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        jPanel17Layout.setVerticalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel17Layout.createSequentialGroup()
+                .addContainerGap(71, Short.MAX_VALUE)
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themChiButton)
-                    .addComponent(xoaChiButton)
                     .addComponent(suaChiButton)
+                    .addComponent(xoaChiButton)
                     .addComponent(xoaAllChiButton)
                     .addComponent(refreshButton))
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         chiTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -1531,51 +1588,33 @@ public class HomeViewPro extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(chiTable);
+        jScrollPane7.setViewportView(chiTable);
 
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE)
-            .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE)
+        javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
+        jPanel15.setLayout(jPanel15Layout);
+        jPanel15Layout.setHorizontalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel15Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(jScrollPane7)
         );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+        jPanel15Layout.setVerticalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Mục Chi", jPanel9);
-
-        thuTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane5.setViewportView(thuTable);
-
-        jPanel12.setBackground(new java.awt.Color(255, 255, 255));
+        jTabbedPane4.addTab("Mục Chi", jPanel15);
 
         themThuButton.setText("Thêm");
         themThuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 themThuButtonActionPerformed(evt);
-            }
-        });
-
-        refreshThuButton.setText("Refresh");
-        refreshThuButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshThuButtonActionPerformed(evt);
             }
         });
 
@@ -1600,14 +1639,19 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
-        jPanel12.setLayout(jPanel12Layout);
-        jPanel12Layout.setHorizontalGroup(
-            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel12Layout.createSequentialGroup()
-                .addGap(261, 261, 261)
-                .addComponent(refreshThuButton)
-                .addGap(18, 18, 18)
+        refreshThuButton.setText("Refresh");
+        refreshThuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshThuButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel18Layout = new javax.swing.GroupLayout(jPanel18);
+        jPanel18.setLayout(jPanel18Layout);
+        jPanel18Layout.setHorizontalGroup(
+            jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel18Layout.createSequentialGroup()
+                .addGap(74, 74, 74)
                 .addComponent(themThuButton)
                 .addGap(18, 18, 18)
                 .addComponent(suaThuButton)
@@ -1615,37 +1659,56 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(xoaThuButton)
                 .addGap(18, 18, 18)
                 .addComponent(xoaAllThuButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(refreshThuButton)
+                .addContainerGap(91, Short.MAX_VALUE))
         );
-        jPanel12Layout.setVerticalGroup(
-            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
-                .addContainerGap(54, Short.MAX_VALUE)
-                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        jPanel18Layout.setVerticalGroup(
+            jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel18Layout.createSequentialGroup()
+                .addContainerGap(71, Short.MAX_VALUE)
+                .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themThuButton)
-                    .addComponent(refreshThuButton)
                     .addComponent(suaThuButton)
                     .addComponent(xoaThuButton)
-                    .addComponent(xoaAllThuButton))
-                .addContainerGap(55, Short.MAX_VALUE))
+                    .addComponent(xoaAllThuButton)
+                    .addComponent(refreshThuButton))
+                .addContainerGap())
         );
 
-        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
-        jPanel11.setLayout(jPanel11Layout);
-        jPanel11Layout.setHorizontalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE)
-            .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        thuTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane8.setViewportView(thuTable);
+
+        javax.swing.GroupLayout jPanel16Layout = new javax.swing.GroupLayout(jPanel16);
+        jPanel16.setLayout(jPanel16Layout);
+        jPanel16Layout.setHorizontalGroup(
+            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel16Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(jScrollPane8)
         );
-        jPanel11Layout.setVerticalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+        jPanel16Layout.setVerticalGroup(
+            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel16Layout.createSequentialGroup()
+                .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Mục Thu", jPanel11);
+        jTabbedPane4.addTab("Mục Thu", jPanel16);
 
         javax.swing.GroupLayout giaoDichPanelLayout = new javax.swing.GroupLayout(giaoDichPanel);
         giaoDichPanel.setLayout(giaoDichPanelLayout);
@@ -1653,18 +1716,235 @@ public class HomeViewPro extends javax.swing.JFrame {
             giaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(giaoDichPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
+                .addComponent(jTabbedPane4)
                 .addContainerGap())
         );
         giaoDichPanelLayout.setVerticalGroup(
             giaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(giaoDichPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
+                .addComponent(jTabbedPane4)
                 .addContainerGap())
         );
 
         mainPanel.add(giaoDichPanel, "card2");
+
+        themSTKButton.setText("Thêm");
+        themSTKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                themSTKButtonActionPerformed(evt);
+            }
+        });
+
+        suaSTKButton.setText("Sửa");
+        suaSTKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                suaSTKButtonActionPerformed(evt);
+            }
+        });
+
+        xoaSTKButton.setText("Xóa");
+        xoaSTKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xoaSTKButtonActionPerformed(evt);
+            }
+        });
+
+        xoaAllSTKButton.setText("Xóa tất cả");
+        xoaAllSTKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xoaAllSTKButtonActionPerformed(evt);
+            }
+        });
+
+        refreshSTKButton.setText("Refresh");
+        refreshSTKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshSTKButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
+        jPanel14.setLayout(jPanel14Layout);
+        jPanel14Layout.setHorizontalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel14Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(themSTKButton)
+                .addGap(18, 18, 18)
+                .addComponent(suaSTKButton)
+                .addGap(18, 18, 18)
+                .addComponent(xoaSTKButton)
+                .addGap(18, 18, 18)
+                .addComponent(xoaAllSTKButton)
+                .addGap(18, 18, 18)
+                .addComponent(refreshSTKButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel14Layout.setVerticalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel14Layout.createSequentialGroup()
+                .addContainerGap(43, Short.MAX_VALUE)
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(themSTKButton)
+                    .addComponent(suaSTKButton)
+                    .addComponent(xoaSTKButton)
+                    .addComponent(xoaAllSTKButton)
+                    .addComponent(refreshSTKButton))
+                .addContainerGap(52, Short.MAX_VALUE))
+        );
+
+        soTietKiemTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(soTietKiemTable);
+
+        javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
+        jPanel13.setLayout(jPanel13Layout);
+        jPanel13Layout.setHorizontalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel13Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+        );
+        jPanel13Layout.setVerticalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel13Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jTabbedPane3.addTab("Sổ Tiết Kiệm", jPanel13);
+
+        themLSVButton.setText("Thêm");
+        themLSVButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                themLSVButtonActionPerformed(evt);
+            }
+        });
+
+        suaLSVButton.setText("Sửa");
+        suaLSVButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                suaLSVButtonActionPerformed(evt);
+            }
+        });
+
+        xoaLSVButton.setText("Xóa");
+        xoaLSVButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xoaLSVButtonActionPerformed(evt);
+            }
+        });
+
+        xoaAllLSVButton.setText("Xóa tất cả");
+        xoaAllLSVButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xoaAllLSVButtonActionPerformed(evt);
+            }
+        });
+
+        refreshLSVButton.setText("Refresh");
+        refreshLSVButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshLSVButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel20Layout = new javax.swing.GroupLayout(jPanel20);
+        jPanel20.setLayout(jPanel20Layout);
+        jPanel20Layout.setHorizontalGroup(
+            jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel20Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(themLSVButton)
+                .addGap(18, 18, 18)
+                .addComponent(suaLSVButton)
+                .addGap(18, 18, 18)
+                .addComponent(xoaLSVButton)
+                .addGap(18, 18, 18)
+                .addComponent(xoaAllLSVButton)
+                .addGap(18, 18, 18)
+                .addComponent(refreshLSVButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel20Layout.setVerticalGroup(
+            jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel20Layout.createSequentialGroup()
+                .addContainerGap(43, Short.MAX_VALUE)
+                .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(themLSVButton)
+                    .addComponent(suaLSVButton)
+                    .addComponent(xoaLSVButton)
+                    .addComponent(xoaAllLSVButton)
+                    .addComponent(refreshLSVButton))
+                .addContainerGap(52, Short.MAX_VALUE))
+        );
+
+        laiSuatVayTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane5.setViewportView(laiSuatVayTable);
+
+        javax.swing.GroupLayout jPanel19Layout = new javax.swing.GroupLayout(jPanel19);
+        jPanel19.setLayout(jPanel19Layout);
+        jPanel19Layout.setHorizontalGroup(
+            jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel19Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+        );
+        jPanel19Layout.setVerticalGroup(
+            jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel19Layout.createSequentialGroup()
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jTabbedPane3.addTab("Lãi Suất Vay", jPanel19);
+
+        javax.swing.GroupLayout soTietKiemPanelLayout = new javax.swing.GroupLayout(soTietKiemPanel);
+        soTietKiemPanel.setLayout(soTietKiemPanelLayout);
+        soTietKiemPanelLayout.setHorizontalGroup(
+            soTietKiemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(soTietKiemPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jTabbedPane3)
+                .addContainerGap())
+        );
+        soTietKiemPanelLayout.setVerticalGroup(
+            soTietKiemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(soTietKiemPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jTabbedPane3)
+                .addContainerGap())
+        );
+
+        mainPanel.add(soTietKiemPanel, "card6");
 
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
@@ -1735,12 +2015,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_tienTKButtonActionPerformed
 
-    private void themChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themChiButtonActionPerformed
-//        new themChiJFrame().setVisible(true);
-        System.out.println("button chi"+logId);
-        new themChiJFrame(logId).setVisible(true);
-    }//GEN-LAST:event_themChiButtonActionPerformed
-
     private void tenTKTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tenTKTextFieldKeyReleased
         displayTen(logId);
 //        DefaultTableModel obj = (DefaultTableModel) tenTKTable.getModel();
@@ -1748,23 +2022,6 @@ public class HomeViewPro extends javax.swing.JFrame {
 //        tenTKTable.setRowSorter(tableRS);
 //        tableRS.setRowFilter(RowFilter.regexFilter(tenTKTextField.getText()));
     }//GEN-LAST:event_tenTKTextFieldKeyReleased
-
-    private void xoaChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaChiButtonActionPerformed
-        // TODO add your handling code here:
-//        if(){};
-        int row = chiTable.getSelectedRow();
-        if(row == -1){
-            JOptionPane.showMessageDialog(HomeViewPro.this, "Vui long chon user truoc", "Loi", JOptionPane.ERROR_MESSAGE);
-        } else {
-            int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Ban chac chan muon xoa khong");
-            if (confirm == JOptionPane.YES_OPTION){
-                int userId = Integer.parseInt(String.valueOf(chiTable.getValueAt(row, 0)));
-                homeViewController.deleteGiaoDichChi(userId);
-                defaultTableModel.setRowCount(0);
-                setTableData(homeViewController.getAllInforUser(logId));
-            }
-        }
-    }//GEN-LAST:event_xoaChiButtonActionPerformed
 
     private void tenTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tenTKButtonActionPerformed
         // TODO add your handling code here:
@@ -1835,38 +2092,10 @@ public class HomeViewPro extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tenTKTextFieldKeyTyped
 
-    private void xoaAllChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaAllChiButtonActionPerformed
-        // TODO add your handling code here:
-        int row = chiTable.getSelectedRow();
-
-            int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Bạn chắc chắn muốn xóa tất cả dữ liệu không?");
-            if (confirm == JOptionPane.YES_OPTION) {
-                // Xóa tất cả dữ liệu trong bảng
-                homeViewController.deleteAllGiaoDichChi();
-
-                // Cập nhật bảng sau khi xóa
-                defaultTableModel.setRowCount(0);
-                setTableData(homeViewController.getAllInforUser(logId));
-            }
-     
-    }//GEN-LAST:event_xoaAllChiButtonActionPerformed
-
-    private void suaChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaChiButtonActionPerformed
-        // TODO add your handling code here:
-         int row = chiTable.getSelectedRow();
-            if (row == -1) {
-                JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            } else {
-                int giaoDichId = Integer.valueOf(String.valueOf(chiTable.getValueAt(row, 0)));
-                new editChiJFrame(giaoDichId).setVisible(true);
-            }
-        
-    }//GEN-LAST:event_suaChiButtonActionPerformed
-
     private void soTietKiemButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soTietKiemButtonActionPerformed
         // TODO add your handling code here:
         mainPanel.removeAll();
-        mainPanel.add(thongKePanel);
+        mainPanel.add(soTietKiemPanel);
         mainPanel.revalidate();
         mainPanel.repaint(); 
     }//GEN-LAST:event_soTietKiemButtonActionPerformed
@@ -1887,6 +2116,54 @@ public class HomeViewPro extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_dvSinhHoatRadioButton1ActionPerformed
 
+    private void xoaAllChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaAllChiButtonActionPerformed
+        // TODO add your handling code here:
+        int row = chiTable.getSelectedRow();
+
+            int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Bạn chắc chắn muốn xóa tất cả dữ liệu không?");
+            if (confirm == JOptionPane.YES_OPTION) {
+                // Xóa tất cả dữ liệu trong bảng
+                homeViewController.deleteAllGiaoDichChi(logId);
+
+                // Cập nhật bảng sau khi xóa
+                defaultTableModel.setRowCount(0);
+                setTableData(homeViewController.getAllInforUser(logId));
+        }
+    }//GEN-LAST:event_xoaAllChiButtonActionPerformed
+
+    private void themChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themChiButtonActionPerformed
+        // TODO add your handling code here:
+        System.out.println("button chi"+logId);
+        new themChiJFrame(logId).setVisible(true);
+    }//GEN-LAST:event_themChiButtonActionPerformed
+
+    private void suaChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaChiButtonActionPerformed
+        // TODO add your handling code here:
+        int row = chiTable.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            } else {
+                int giaoDichId = Integer.valueOf(String.valueOf(chiTable.getValueAt(row, 0)));
+                new editChiJFrame(giaoDichId).setVisible(true);
+            }
+    }//GEN-LAST:event_suaChiButtonActionPerformed
+
+    private void xoaChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaChiButtonActionPerformed
+        // TODO add your handling code here:
+        int row = chiTable.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(HomeViewPro.this, "Vui long chon user truoc", "Loi", JOptionPane.ERROR_MESSAGE);
+        } else {
+            int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Ban chac chan muon xoa khong");
+            if (confirm == JOptionPane.YES_OPTION){
+                int userId = Integer.parseInt(String.valueOf(chiTable.getValueAt(row, 0)));
+                homeViewController.deleteGiaoDichChi(userId);
+                defaultTableModel.setRowCount(0);
+                setTableData(homeViewController.getAllInforUser(logId));
+            }
+        }
+    }//GEN-LAST:event_xoaChiButtonActionPerformed
+
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
         // TODO add your handling code here:
         defaultTableModel.setRowCount(0);
@@ -1898,12 +2175,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         System.out.println("button thu " + logId);
         new themThuJFrame(logId).setVisible(true);
     }//GEN-LAST:event_themThuButtonActionPerformed
-
-    private void refreshThuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshThuButtonActionPerformed
-        // TODO add your handling code here:
-        defaultTableThuModel.setRowCount(0);
-        setThuTableData(homeViewController.getAllInforUserThu(logId));
-    }//GEN-LAST:event_refreshThuButtonActionPerformed
 
     private void suaThuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaThuButtonActionPerformed
         // TODO add your handling code here:
@@ -1933,19 +2204,135 @@ public class HomeViewPro extends javax.swing.JFrame {
     }//GEN-LAST:event_xoaThuButtonActionPerformed
 
     private void xoaAllThuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaAllThuButtonActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here     
         int row = thuTable.getSelectedRow();
 
             int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Bạn chắc chắn muốn xóa tất cả dữ liệu không?");
             if (confirm == JOptionPane.YES_OPTION) {
                 // Xóa tất cả dữ liệu trong bảng
-                homeViewController.deleteAllGiaoDichThu();
+                homeViewController.deleteAllGiaoDichThu(logId);
 
                 // Cập nhật bảng sau khi xóa
                 defaultTableThuModel.setRowCount(0);
                 setThuTableData(homeViewController.getAllInforUserThu(logId));
         }
     }//GEN-LAST:event_xoaAllThuButtonActionPerformed
+
+    private void refreshThuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshThuButtonActionPerformed
+        // TODO add your handling code here:
+        defaultTableThuModel.setRowCount(0);
+        setThuTableData(homeViewController.getAllInforUserThu(logId));
+    }//GEN-LAST:event_refreshThuButtonActionPerformed
+
+    private void themSTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themSTKButtonActionPerformed
+        // TODO add your handling code here:
+        System.out.println("button them stk " + logId);
+        new themSTKJFrame(logId).setVisible(true);
+    }//GEN-LAST:event_themSTKButtonActionPerformed
+
+    private void suaSTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaSTKButtonActionPerformed
+        // TODO add your handling code here:
+        int row = soTietKiemTable.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            } else {
+                int giaoDichId = Integer.valueOf(String.valueOf(soTietKiemTable.getValueAt(row, 0)));
+                new editSTKJFrame(giaoDichId).setVisible(true);
+        }
+    }//GEN-LAST:event_suaSTKButtonActionPerformed
+
+    private void xoaSTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaSTKButtonActionPerformed
+        // TODO add your handling code here:
+        int row = soTietKiemTable.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else {
+            int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Bạn chắc chắn muốn xóa không!");
+            if (confirm == JOptionPane.YES_OPTION){
+                int userId = Integer.parseInt(String.valueOf(soTietKiemTable.getValueAt(row, 0)));
+                homeViewController.deleteSoTietKiem(userId);
+                defaultTableSTKModel.setRowCount(0);
+                setSTKTable(homeViewController.getAllInforUserSTK(logId));
+            }
+        }
+    }//GEN-LAST:event_xoaSTKButtonActionPerformed
+
+    private void xoaAllSTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaAllSTKButtonActionPerformed
+        // TODO add your handling code here:
+        int row = soTietKiemTable.getSelectedRow();
+
+        int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Bạn chắc chắn muốn xóa tất cả dữ liệu không?");
+        if (confirm == JOptionPane.YES_OPTION) {
+                // Xóa tất cả dữ liệu trong bảng
+            homeViewController.deleteAllSoTietKiem(logId);
+
+                // Cập nhật bảng sau khi xóa
+            defaultTableSTKModel.setRowCount(0);
+            setSTKTable(homeViewController.getAllInforUserSTK(logId));
+        }
+    }//GEN-LAST:event_xoaAllSTKButtonActionPerformed
+
+    private void refreshSTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshSTKButtonActionPerformed
+        // TODO add your handling code here:
+        defaultTableSTKModel.setRowCount(0);
+        setSTKTable(homeViewController.getAllInforUserSTK(logId));
+    }//GEN-LAST:event_refreshSTKButtonActionPerformed
+
+    private void themLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themLSVButtonActionPerformed
+        // TODO add your handling code here:
+//        HomeViewPro homeViewProInstance = new HomeViewPro(loginModel);
+//        themLSVJFrame frame = new themLSVJFrame(logId, homeViewProInstance);
+        
+        new themLSVJFrame(logId).setVisible(true);
+    }//GEN-LAST:event_themLSVButtonActionPerformed
+
+    private void suaLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaLSVButtonActionPerformed
+        // TODO add your handling code here:
+        int row = laiSuatVayTable.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            } else {
+                int giaoDichId = Integer.valueOf(String.valueOf(laiSuatVayTable.getValueAt(row, 0)));
+                new editLSVJFrame(giaoDichId).setVisible(true);
+        }
+    }//GEN-LAST:event_suaLSVButtonActionPerformed
+
+    private void xoaLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaLSVButtonActionPerformed
+        // TODO add your handling code here:
+        int row = laiSuatVayTable.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else {
+            int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Bạn chắc chắn muốn xóa không!");
+            if (confirm == JOptionPane.YES_OPTION){
+                int userId = Integer.parseInt(String.valueOf(laiSuatVayTable.getValueAt(row, 0)));
+                homeViewController.deleteLaiSuatVay(userId);
+                defaultTableLSVModel.setRowCount(0);
+            setLSVTable(homeViewController.getAllInforUserLSV(logId));
+            }
+        }
+    }//GEN-LAST:event_xoaLSVButtonActionPerformed
+
+    private void xoaAllLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaAllLSVButtonActionPerformed
+        // TODO add your handling code here:
+        int row = laiSuatVayTable.getSelectedRow();
+
+        int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Bạn chắc chắn muốn xóa tất cả dữ liệu không?");
+        if (confirm == JOptionPane.YES_OPTION) {
+                // Xóa tất cả dữ liệu trong bảng
+            homeViewController.deleteAllLaiSuatVay(logId);
+
+                // Cập nhật bảng sau khi xóa
+            defaultTableLSVModel.setRowCount(0);
+            setLSVTable(homeViewController.getAllInforUserLSV(logId));
+        }
+    }//GEN-LAST:event_xoaAllLSVButtonActionPerformed
+
+    private void refreshLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshLSVButtonActionPerformed
+        // TODO add your handling code here:
+        defaultTableLSVModel.setRowCount(0);
+        setLSVTable(homeViewController.getAllInforUserLSV(logId));
+    }//GEN-LAST:event_refreshLSVButtonActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -2022,27 +2409,35 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
-    private javax.swing.JPanel jPanel11;
-    private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
+    private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
+    private javax.swing.JPanel jPanel17;
+    private javax.swing.JPanel jPanel18;
+    private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel20;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
+    public javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JTabbedPane jTabbedPane3;
+    private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JRadioButton khacRadioButton;
     private javax.swing.JRadioButton khacRadioButton1;
+    public javax.swing.JTable laiSuatVayTable;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTextField matHangTGDTextField;
     private javax.swing.JTextField matHangTGDTextField1;
@@ -2050,12 +2445,18 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JRadioButton quanAoRadioButton;
     private javax.swing.JRadioButton quanAoRadioButton1;
     private javax.swing.JButton refreshButton;
+    private javax.swing.JButton refreshLSVButton;
+    private javax.swing.JButton refreshSTKButton;
     private javax.swing.JButton refreshThuButton;
     private javax.swing.JLabel showDateLabel;
     private javax.swing.JLabel showRealTimeLabel;
     private javax.swing.JPanel showTKPanel;
     private javax.swing.JButton soTietKiemButton;
+    private javax.swing.JPanel soTietKiemPanel;
+    private javax.swing.JTable soTietKiemTable;
     private javax.swing.JButton suaChiButton;
+    private javax.swing.JButton suaLSVButton;
+    private javax.swing.JButton suaSTKButton;
     private javax.swing.JButton suaThuButton;
     private javax.swing.JButton tenTKButton;
     private javax.swing.JTable tenTKTable;
@@ -2064,6 +2465,8 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JTextField thanhTienTGDTextField1;
     private javax.swing.JButton themChiButton;
     private javax.swing.JDialog themDialog;
+    private javax.swing.JButton themLSVButton;
+    private javax.swing.JButton themSTKButton;
     private javax.swing.JButton themTGDButton;
     private javax.swing.JButton themTGDButton1;
     private javax.swing.JButton themThuButton;
@@ -2076,7 +2479,6 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JButton thongKeButton;
     private javax.swing.JPanel thongKePanel;
     private javax.swing.JTable thuTable;
-    private javax.swing.JPanel thuTienPanel;
     private javax.swing.JButton tienTKButton;
     private javax.swing.JTable tienTKTable;
     private javax.swing.JButton timKiemButton;
@@ -2085,8 +2487,12 @@ public class HomeViewPro extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser tuNgayTKTextField;
     private javax.swing.JTextField tuTienTKTextField;
     private javax.swing.JButton xoaAllChiButton;
+    private javax.swing.JButton xoaAllLSVButton;
+    private javax.swing.JButton xoaAllSTKButton;
     private javax.swing.JButton xoaAllThuButton;
     private javax.swing.JButton xoaChiButton;
+    private javax.swing.JButton xoaLSVButton;
+    private javax.swing.JButton xoaSTKButton;
     private javax.swing.JButton xoaThuButton;
     private javax.swing.JTextField yearTextField;
     // End of variables declaration//GEN-END:variables

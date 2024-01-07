@@ -34,6 +34,7 @@ public class themChiJFrame extends javax.swing.JFrame {
     public LoginModel loginModel;
     public LoginView loginView;
     public GiaoDichModel giaoDichModel;
+    public SimpleDateFormat simpleDateFormat;
     
     public int loginId;
     
@@ -45,24 +46,32 @@ public class themChiJFrame extends javax.swing.JFrame {
         
         homeViewController = new HomeViewController();
         giaoDichModel = new GiaoDichModel();
+        
+        thoiGianTGDTextField.setDateFormatString("yyyy-MM-dd");
+        
+        Date date = new Date();
+        
+        thoiGianTGDTextField.setDate(date);
     }
 
     public void themGD(int accountId) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String dateTGD = thoiGianTGDTextField.getText();
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date dateTGD = thoiGianTGDTextField.getDate();
+        
+        String ngayTGD = simpleDateFormat.format(dateTGD);
         String matHangTGD = matHangTGDTextField.getText();
         String thanhTienTGD = thanhTienTGDTextField.getText();
         String ghiChuTGD = ghiChuTGDTextField.getText();
 
         try {
-            if (!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty()) {
+            if (!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty() && !ngayTGD.isEmpty()) {
                 if (!thanhTienTGD.matches(".*[a-zA-Z].*")) {
                     DecimalFormat decimalFormat = new DecimalFormat();
                     decimalFormat.setParseBigDecimal(true);
                     BigDecimal bigDecimal = (BigDecimal) decimalFormat.parse(thanhTienTGD);
 
                     // Set properties of the giaoDichModel object
-                    giaoDichModel.setDate(dateTGD);
+                    giaoDichModel.setDate(ngayTGD);
                     giaoDichModel.setMatHang(matHangTGD);
                     giaoDichModel.setThanhTien(bigDecimal.doubleValue());
                     giaoDichModel.setGhiChu(ghiChuTGD);
@@ -124,7 +133,7 @@ public class themChiJFrame extends javax.swing.JFrame {
         anUongRadioButton = new javax.swing.JRadioButton();
         dvSinhHoatRadioButton = new javax.swing.JRadioButton();
         khacRadioButton = new javax.swing.JRadioButton();
-        thoiGianTGDTextField = new javax.swing.JTextField();
+        thoiGianTGDTextField = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -215,12 +224,12 @@ public class themChiJFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8)
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel9)
-                            .addComponent(jLabel10)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel11)
-                            .addComponent(hangMucButton))
+                            .addComponent(hangMucButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(34, 34, 34)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(matHangTGDTextField)
@@ -235,7 +244,7 @@ public class themChiJFrame extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(khacRadioButton)
                                 .addGap(0, 66, Short.MAX_VALUE))
-                            .addComponent(thoiGianTGDTextField)))
+                            .addComponent(thoiGianTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(thoatTGDButton))
@@ -248,11 +257,10 @@ public class themChiJFrame extends javax.swing.JFrame {
         bodyThemGiaoDichPanelLayout.setVerticalGroup(
             bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(thoiGianTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(thoiGianTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
                     .addComponent(matHangTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -274,7 +282,7 @@ public class themChiJFrame extends javax.swing.JFrame {
                         .addComponent(khacRadioButton)))
                 .addGap(18, 18, 18)
                 .addComponent(themTGDButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 133, Short.MAX_VALUE)
                 .addComponent(thoatTGDButton)
                 .addContainerGap())
         );
@@ -352,6 +360,6 @@ public class themChiJFrame extends javax.swing.JFrame {
     private javax.swing.JTextField thanhTienTGDTextField;
     private javax.swing.JButton themTGDButton;
     private javax.swing.JButton thoatTGDButton;
-    private javax.swing.JTextField thoiGianTGDTextField;
+    private com.toedter.calendar.JDateChooser thoiGianTGDTextField;
     // End of variables declaration//GEN-END:variables
 }

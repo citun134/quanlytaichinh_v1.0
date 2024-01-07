@@ -3,6 +3,8 @@ package com.quanlytaichinh.dao;
 
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.GiaoDichThuModel;
+import com.quanlytaichinh.model.LaiSuatVayModel;
+import com.quanlytaichinh.model.SoTietKiemModel;
 import com.quanlytaichinh.model.LoginModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +17,8 @@ public class GiaoDichDao {
 //    private GiaoDichModel giaoDichModel;
     public GiaoDichModel giaoDichModel;
     public GiaoDichThuModel giaoDichThuModel;
+    public SoTietKiemModel soTietKiemModel; 
+    public LaiSuatVayModel laiSuatVayModel;
     public LoginModel loginModel;
     
     public void addGiaoDichChi(GiaoDichModel giaoDichModel){
@@ -54,6 +58,50 @@ public class GiaoDichDao {
         }
     }
     
+    public void addGiaoDichSTK(SoTietKiemModel giaoDichModel) {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "INSERT INTO soTietKiem (ngayGui, tenNganHang, soTienGui, laiSuatGui, soTienLaiNhanDuoc, tongTienNhanDuoc, kyHan, account_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, giaoDichModel.getNgayGui());
+            preparedStatement.setString(2, giaoDichModel.getTenNganHang());
+            preparedStatement.setDouble(3, giaoDichModel.getSoTienGui());
+            preparedStatement.setDouble(4, giaoDichModel.getLaiSuatGui());
+            preparedStatement.setDouble(5, giaoDichModel.getSoTienLaiNhanDuoc());
+            preparedStatement.setDouble(6, giaoDichModel.getTongTienNhanDuoc());
+            preparedStatement.setDouble(7, giaoDichModel.getKyHan());
+            preparedStatement.setInt(8, giaoDichModel.getAccountId());
+            int rs = preparedStatement.executeUpdate();
+            System.out.println(rs);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void addGiaoDichLSV(LaiSuatVayModel giaoDichModel) {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "INSERT INTO LaiSuatVay (tenNganHangLSV, giaTriBatDongSan,"
+                + "soTienVay, thoiGianVay, laiSuat, ngayGiaiNgan, "
+                + "soTienPhaiTraHangThang, tongLaiPhaiTra, account_id) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, giaoDichModel.getTenNganHangLSV());
+            preparedStatement.setDouble(2, giaoDichModel.getGiaTriBatDongSan());
+            preparedStatement.setDouble(3, giaoDichModel.getSoTienVay());
+            preparedStatement.setDouble(4, giaoDichModel.getThoiGianVay());
+            preparedStatement.setDouble(5, giaoDichModel.getLaiSuat());
+            preparedStatement.setString(6, giaoDichModel.getNgayGiaiNgan());
+            preparedStatement.setDouble(7, giaoDichModel.getSoTienPhaiTraHangThang());
+            preparedStatement.setDouble(8, giaoDichModel.getTongLaiPhaiTra());
+            preparedStatement.setInt(9, giaoDichModel.getAccountId());
+            int rs = preparedStatement.executeUpdate();
+            System.out.println(rs);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public void deleteGiaoDichChi(int id){
         Connection connection = JDBCConnection.getJDBCConecction();
         String sql = "DELETE FROM giaodichchi WHERE chiId = ? ";
@@ -80,24 +128,78 @@ public class GiaoDichDao {
         }
     }  
     
-    public void deleteAllGiaoDichChi() {
+    public void deleteSoTietKiem(int id){
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "DELETE FROM giaodichchi";
+        String sql = "DELETE FROM sotietkiem WHERE tietKiemId = ? ";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }  
+    
+    public void deleteLaiSuatVay(int id){
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "DELETE FROM LaiSuatVay WHERE laiSuatVayId = ? ";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }  
+    
+    public void deleteAllGiaoDichChi(int id) {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "DELETE FROM giaodichchi Where account_id = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
     
-    public void deleteAllGiaoDichThu() {
+    public void deleteAllGiaoDichThu(int id) {
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "DELETE FROM giaodichthu";
+        String sql = "DELETE FROM giaodichthu Where account_id = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void deleteAllSoTietKiem(int id) {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "DELETE FROM sotietkiem Where account_id = ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void deleteAllLaiSuatVay(int id) {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "DELETE FROM LaiSuatVay Where account_id = ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -132,6 +234,53 @@ public class GiaoDichDao {
             preparedStatement.setString(3, giaoDichModel.getGhiChu());
             preparedStatement.setString(4, giaoDichModel.getHangMuc());            
             preparedStatement.setInt(5,giaoDichModel.getId()); // ID của giao dịch cần cập nhật
+            int rs = preparedStatement.executeUpdate();
+            System.out.println(rs);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void updateSoTietKiem(SoTietKiemModel giaoDichModel) {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "UPDATE soTietKiem SET ngayGui = ?, tenNganHang = ?,"
+                + " soTienGui = ?, laiSuatGui = ?, soTienLaiNhanDuoc = ?,"
+                + " tongTienNhanDuoc = ?, kyHan = ? WHERE tietKiemId = ?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, giaoDichModel.getNgayGui());
+            preparedStatement.setString(2, giaoDichModel.getTenNganHang());
+            preparedStatement.setDouble(3, giaoDichModel.getSoTienGui());
+            preparedStatement.setDouble(4, giaoDichModel.getLaiSuatGui());
+            preparedStatement.setDouble(5, giaoDichModel.getSoTienLaiNhanDuoc());
+            preparedStatement.setDouble(6, giaoDichModel.getTongTienNhanDuoc());
+            preparedStatement.setDouble(7, giaoDichModel.getKyHan());
+            preparedStatement.setInt(8, giaoDichModel.getTietKiemId());
+            int rs = preparedStatement.executeUpdate();
+            System.out.println(rs);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void updateLaiSuatVay(LaiSuatVayModel giaoDichModel) {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "UPDATE LaiSuatVay SET tenNganHangLSV = ?, giaTriBatDongSan = ?,"
+                + " soTienVay = ?, thoiGianVay = ?, laiSuat = ?, ngayGiaiNgan = ?,"
+                + " soTienPhaiTraHangThang = ?, tongLaiPhaiTra = ? WHERE laiSuatVayId = ?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            
+            preparedStatement.setString(1, giaoDichModel.getTenNganHangLSV());
+            preparedStatement.setDouble(2, giaoDichModel.getGiaTriBatDongSan());
+            preparedStatement.setDouble(3, giaoDichModel.getSoTienVay());
+            preparedStatement.setDouble(4, giaoDichModel.getThoiGianVay());
+            preparedStatement.setDouble(5, giaoDichModel.getLaiSuat());
+            preparedStatement.setString(6, giaoDichModel.getNgayGiaiNgan());
+            preparedStatement.setDouble(7, giaoDichModel.getSoTienPhaiTraHangThang());
+            preparedStatement.setDouble(8, giaoDichModel.getTongLaiPhaiTra());
+            preparedStatement.setInt(9, giaoDichModel.getLaiSuatVayId());
+            
             int rs = preparedStatement.executeUpdate();
             System.out.println(rs);
         } catch (SQLException ex) {
@@ -210,7 +359,6 @@ public class GiaoDichDao {
     return infor;
 }
 
-    
     public ArrayList<GiaoDichModel> searchTenGiaoDich(String ten, int accountId){
         ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
@@ -298,7 +446,6 @@ public class GiaoDichDao {
         return infor;
     }
 
-    
     public List<GiaoDichModel> getAllInforUser(int accountId){
         loginModel = new LoginModel();
         List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
@@ -345,6 +492,106 @@ public class GiaoDichDao {
                 giaoDichThuModel.setHangMuc(rs.getString("hangMucThu"));
                 giaoDichThuModel.setAccountId(rs.getInt("account_id"));                
                 infor.add(giaoDichThuModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }   
+        return infor;
+    }
+    
+    public List<GiaoDichModel> getAllInforUserThuChi(int accountId){
+        List<GiaoDichModel> infor = new ArrayList<>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT chiId as id, ngayChi as date, thanhTienChi as thanhTien, matHangChi as matHang, ghiChuChi as ghiChu, hangMuc as hangMuc, account_id " +
+                     "FROM giaoDichChi " +
+                     "WHERE account_id = ? " +
+                     "UNION " +
+                     "SELECT thuId as id, ngayThu as date, thanhTienThu as thanhTien, NULL as matHang, ghiChuThu as ghiChu, hangMucThu as hangMuc, account_id " +
+                     "FROM giaoDichThu " +
+                     "WHERE account_id = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+            preparedStatement.setInt(2, accountId);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                GiaoDichModel giaoDichModel = new GiaoDichModel();
+                giaoDichModel.setId(rs.getInt("id"));
+                giaoDichModel.setDate(rs.getString("date"));
+                giaoDichModel.setMatHang(rs.getString("matHang"));
+                giaoDichModel.setThanhTien(rs.getDouble("thanhTien"));
+                giaoDichModel.setGhiChu(rs.getString("ghiChu"));
+                giaoDichModel.setHangMuc(rs.getString("hangMuc"));
+                giaoDichModel.setAccountId(rs.getInt("account_id"));
+                infor.add(giaoDichModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return infor;
+    }
+    
+    public List<SoTietKiemModel> getAllInforUserSTK(int accountId){
+        soTietKiemModel = new SoTietKiemModel();
+        List<SoTietKiemModel> infor = new ArrayList<SoTietKiemModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+//        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
+        String sql = "SELECT * FROM sotietkiem WHERE account_id = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                SoTietKiemModel soTietKiemModel = new SoTietKiemModel();
+                soTietKiemModel.setTietKiemId(rs.getInt("tietKiemId"));
+                soTietKiemModel.setNgayGui(rs.getString("ngayGui"));
+                soTietKiemModel.setTenNganHang(rs.getString("tenNganHang"));
+                soTietKiemModel.setSoTienGui(rs.getDouble("soTienGui"));
+                soTietKiemModel.setLaiSuatGui(rs.getDouble("laiSuatGui"));
+                soTietKiemModel.setSoTienLaiNhanDuoc(rs.getDouble("soTienLaiNhanDuoc"));
+                soTietKiemModel.setTongTienNhanDuoc(rs.getDouble("tongTienNhanDuoc"));
+                soTietKiemModel.setKyHan(rs.getDouble("kyHan"));
+                soTietKiemModel.setAccountId(rs.getInt("account_id"));                
+                infor.add(soTietKiemModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }   
+        return infor;
+    }
+    
+    public List<LaiSuatVayModel> getAllInforUserLSV(int accountId){
+        laiSuatVayModel = new LaiSuatVayModel();
+        List<LaiSuatVayModel> infor = new ArrayList<LaiSuatVayModel>();
+        
+        Connection connection = JDBCConnection.getJDBCConecction();
+//        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
+        String sql = "SELECT * FROM LaiSuatVay WHERE account_id = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                LaiSuatVayModel laiSuatVayModel = new LaiSuatVayModel();
+                laiSuatVayModel.setLaiSuatVayId(rs.getInt("laiSuatVayId"));
+                laiSuatVayModel.setTenNganHangLSV(rs.getString("tenNganHangLSV"));
+                laiSuatVayModel.setGiaTriBatDongSan(rs.getDouble("giaTriBatDongSan"));
+                laiSuatVayModel.setSoTienVay(rs.getDouble("soTienVay"));
+                laiSuatVayModel.setThoiGianVay(rs.getDouble("thoiGianVay"));
+                laiSuatVayModel.setLaiSuat(rs.getDouble("laiSuat"));
+                laiSuatVayModel.setNgayGiaiNgan(rs.getString("ngayGiaiNgan"));
+                laiSuatVayModel.setSoTienPhaiTraHangThang(rs.getDouble("soTienPhaiTraHangThang"));
+                laiSuatVayModel.setTongLaiPhaiTra(rs.getDouble("tongLaiPhaiTra"));
+                laiSuatVayModel.setAccountId(rs.getInt("account_id"));                
+                infor.add(laiSuatVayModel);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -432,6 +679,7 @@ public class GiaoDichDao {
         }   
         return null;
     }
+    
     public GiaoDichThuModel getInforUserThu(int accountId){
         Connection connection = JDBCConnection.getJDBCConecction();
 //        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
@@ -458,45 +706,64 @@ public class GiaoDichDao {
         return null;
     }
     
-    public List<GiaoDichModel> getAllInforUserThuChi(int accountId){
-        List<GiaoDichModel> infor = new ArrayList<>();
+    public SoTietKiemModel getInforUserSTK(int accountId){
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "SELECT chiId as id, ngayChi as date, thanhTienChi as thanhTien, matHangChi as matHang, ghiChuChi as ghiChu, hangMuc as hangMuc, account_id " +
-                     "FROM giaoDichChi " +
-                     "WHERE account_id = ? " +
-                     "UNION " +
-                     "SELECT thuId as id, ngayThu as date, thanhTienThu as thanhTien, NULL as matHang, ghiChuThu as ghiChu, hangMucThu as hangMuc, account_id " +
-                     "FROM giaoDichThu " +
-                     "WHERE account_id = ?";
+//        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
+        String sql = "SELECT * FROM sotietkiem WHERE tietKiemId = ?";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, accountId);
-            preparedStatement.setInt(2, accountId);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
-                GiaoDichModel giaoDichModel = new GiaoDichModel();
-                giaoDichModel.setId(rs.getInt("id"));
-                giaoDichModel.setDate(rs.getString("date"));
-                giaoDichModel.setMatHang(rs.getString("matHang"));
-                giaoDichModel.setThanhTien(rs.getDouble("thanhTien"));
-                giaoDichModel.setGhiChu(rs.getString("ghiChu"));
-                giaoDichModel.setHangMuc(rs.getString("hangMuc"));
-                giaoDichModel.setAccountId(rs.getInt("account_id"));
-                infor.add(giaoDichModel);
+                SoTietKiemModel soTietKiemModel = new SoTietKiemModel();
+                
+                soTietKiemModel.setTietKiemId(rs.getInt("tietKiemId"));
+                soTietKiemModel.setNgayGui(rs.getString("ngayGui"));
+                soTietKiemModel.setTenNganHang(rs.getString("tenNganHang"));
+                soTietKiemModel.setSoTienGui(rs.getDouble("soTienGui"));
+                soTietKiemModel.setLaiSuatGui(rs.getDouble("laiSuatGui"));
+                soTietKiemModel.setSoTienLaiNhanDuoc(rs.getDouble("soTienLaiNhanDuoc"));
+                soTietKiemModel.setTongTienNhanDuoc(rs.getDouble("tongTienNhanDuoc"));
+                soTietKiemModel.setKyHan(rs.getDouble("kyHan"));                
+                soTietKiemModel.setAccountId(rs.getInt("account_id"));                            
+
+                return soTietKiemModel;
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-        } finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return infor;
+        }   
+        return null;
     }
+    
+    public LaiSuatVayModel getInforUserLSV(int accountId){
+        Connection connection = JDBCConnection.getJDBCConecction();
+//        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
+        String sql = "SELECT * FROM laisuatvay WHERE laiSuatVayId = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                LaiSuatVayModel laiSuatVayModel = new LaiSuatVayModel();
+                
+                laiSuatVayModel.setLaiSuatVayId(rs.getInt("laiSuatVayId"));
+                laiSuatVayModel.setTenNganHangLSV(rs.getString("tenNganHangLSV"));
+                laiSuatVayModel.setGiaTriBatDongSan(rs.getDouble("giaTriBatDongSan"));
+                laiSuatVayModel.setSoTienVay(rs.getDouble("soTienVay"));
+                laiSuatVayModel.setThoiGianVay(rs.getDouble("thoiGianVay"));
+                laiSuatVayModel.setLaiSuat(rs.getDouble("laiSuat"));
+                laiSuatVayModel.setNgayGiaiNgan(rs.getString("ngayGiaiNgan"));
+                laiSuatVayModel.setSoTienPhaiTraHangThang(rs.getDouble("soTienPhaiTraHangThang"));
+                laiSuatVayModel.setTongLaiPhaiTra(rs.getDouble("tongLaiPhaiTra"));
+                laiSuatVayModel.setLaiSuatVayId(rs.getInt("laiSuatVayId"));                            
 
+                return laiSuatVayModel;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }   
+        return null;
+    }
+    
 }
 

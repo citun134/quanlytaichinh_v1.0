@@ -95,19 +95,19 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel10" alignment="0" max="32767" attributes="0"/>
                               <Component id="jLabel11" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="hangMucButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="hangMucButton" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jLabel8" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="matHangTGDTextField" alignment="0" max="32767" attributes="0"/>
                               <Component id="thanhTienTGDTextField" alignment="0" max="32767" attributes="0"/>
                               <Component id="ghiChuTGDTextField" alignment="0" max="32767" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
+                              <Group type="102" attributes="0">
                                   <Component id="anUongRadioButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="quanAoRadioButton" min="-2" max="-2" attributes="0"/>
@@ -117,7 +117,7 @@
                                   <Component id="khacRadioButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="0" pref="66" max="32767" attributes="0"/>
                               </Group>
-                              <Component id="thoiGianTGDTextField" max="32767" attributes="0"/>
+                              <Component id="thoiGianTGDTextField" alignment="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
@@ -137,12 +137,11 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="thoiGianTGDTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="thoiGianTGDTextField" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel8" min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="matHangTGDTextField" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -169,7 +168,7 @@
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="themTGDButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="133" max="32767" attributes="0"/>
                   <Component id="thoatTGDButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -287,7 +286,7 @@
             <Property name="text" type="java.lang.String" value="Kh&#xe1;c"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="thoiGianTGDTextField">
+        <Component class="com.toedter.calendar.JDateChooser" name="thoiGianTGDTextField">
         </Component>
       </SubComponents>
     </Container>

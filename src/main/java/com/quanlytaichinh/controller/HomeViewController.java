@@ -3,13 +3,17 @@ package com.quanlytaichinh.controller;
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.dao.GiaoDichDao;
 import com.quanlytaichinh.model.GiaoDichThuModel;
+import com.quanlytaichinh.model.LaiSuatVayModel;
 import com.quanlytaichinh.model.LoginModel;
+import com.quanlytaichinh.model.SoTietKiemModel;
 import java.util.List;
 import java.util.ArrayList;
 
 public class HomeViewController {  
     private GiaoDichDao giaoDichDao;
     private LoginModel loginModel;
+    private SoTietKiemModel soTietKiemModel;
+    private LaiSuatVayModel laiSuatVayModel;
 //    private GiaoDichModel giaoDichModel;
 
     public HomeViewController() {
@@ -24,12 +28,28 @@ public class HomeViewController {
         giaoDichDao.deleteGiaoDichThu(user);
     }
     
-    public void deleteAllGiaoDichChi(){
-        giaoDichDao.deleteAllGiaoDichChi();
+    public void deleteSoTietKiem(int user){
+        giaoDichDao.deleteSoTietKiem(user);
     }
     
-    public void deleteAllGiaoDichThu(){
-        giaoDichDao.deleteAllGiaoDichThu();
+    public void deleteLaiSuatVay(int user){
+        giaoDichDao.deleteLaiSuatVay(user);
+    }
+    
+    public void deleteAllGiaoDichChi(int user){
+        giaoDichDao.deleteAllGiaoDichChi(user);
+    }
+    
+    public void deleteAllGiaoDichThu(int user){
+        giaoDichDao.deleteAllGiaoDichThu(user);
+    }
+    
+    public void deleteAllSoTietKiem(int user){
+        giaoDichDao.deleteAllSoTietKiem(user);
+    }
+    
+    public void deleteAllLaiSuatVay(int user){
+        giaoDichDao.deleteAllLaiSuatVay(user);
     }
     
     public void updateGiaoDichChi(GiaoDichModel giaoDichModel) {
@@ -40,12 +60,28 @@ public class HomeViewController {
         giaoDichDao.updateGiaoDichThu(giaoDichModel);
     }
     
+    public void updateSoTietKiem(SoTietKiemModel giaoDichModel) {
+        giaoDichDao.updateSoTietKiem(giaoDichModel);
+    }
+    
+    public void updateLaiSuatVay(LaiSuatVayModel giaoDichModel) {
+        giaoDichDao.updateLaiSuatVay(giaoDichModel);
+    }
+    
     public void addGiaoDichChi(GiaoDichModel giaoDichModel){
         giaoDichDao.addGiaoDichChi(giaoDichModel);
     }
     
     public void addGiaoDichThu(GiaoDichThuModel giaoDichModel){
         giaoDichDao.addGiaoDichThu(giaoDichModel);
+    }
+    
+    public void addGiaoDichSTK(SoTietKiemModel giaoDichModel){
+        giaoDichDao.addGiaoDichSTK(giaoDichModel);
+    }
+    
+    public void addGiaoDichLSV(LaiSuatVayModel giaoDichModel){
+        giaoDichDao.addGiaoDichLSV(giaoDichModel);
     }
     
     public ArrayList<GiaoDichModel> searchTienGiaoDich(String tu, String den, int accountId){
@@ -79,6 +115,15 @@ public class HomeViewController {
     public List<GiaoDichModel> getAllInforUserThuChi(int accountId){
         return giaoDichDao.getAllInforUserThuChi(accountId);
     }
+    
+    public List<SoTietKiemModel> getAllInforUserSTK(int accountId){
+        return giaoDichDao.getAllInforUserSTK(accountId);
+    }
+    
+    public List<LaiSuatVayModel> getAllInforUserLSV(int accountId){
+        return giaoDichDao.getAllInforUserLSV(accountId);
+    }
+    
     public List<GiaoDichModel> getListByMoney(int accountId){
         return giaoDichDao.getListByMoney(accountId);
     }
@@ -95,4 +140,11 @@ public class HomeViewController {
         return giaoDichDao.getInforUserThu(accountId);
     }
     
+    public SoTietKiemModel getInforUserSTK(int accountId){
+        return giaoDichDao.getInforUserSTK(accountId);
+    }
+    
+    public LaiSuatVayModel getInforUserLSV(int accountId){
+        return giaoDichDao.getInforUserLSV(accountId);
+    }
 }
