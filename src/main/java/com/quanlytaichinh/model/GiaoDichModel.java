@@ -12,6 +12,8 @@ public class GiaoDichModel {
     private int year;
     private int month;
     private int totalMoney;
+    private int totalMoneyThu;
+
 
     public GiaoDichModel() {
 //        new GiaoDichModel();
@@ -114,6 +116,14 @@ public class GiaoDichModel {
 
     public void setTotalMoney(int totalMoney) {
         this.totalMoney = totalMoney;
+    }
+
+    public int getTotalMoneyThu() {
+        return totalMoneyThu;
+    }
+
+    public void setTotalMoneyThu(int totalMoneyThu) {
+        this.totalMoneyThu = totalMoneyThu;
     }
     
 

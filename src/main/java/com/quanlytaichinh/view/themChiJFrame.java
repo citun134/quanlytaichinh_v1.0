@@ -9,13 +9,13 @@ import com.quanlytaichinh.controller.LoginController;
 import com.quanlytaichinh.dao.GiaoDichDao;
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.LoginModel;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import javax.swing.JOptionPane;
-import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -35,11 +35,17 @@ public class themChiJFrame extends javax.swing.JFrame {
     public LoginView loginView;
     public GiaoDichModel giaoDichModel;
     public SimpleDateFormat simpleDateFormat;
+    public DefaultTableModel defaultTableLSVModel;
+    
+    
     
     public int loginId;
     
-    public themChiJFrame() {}
-    public themChiJFrame(int loginModel){
+    public themChiJFrame() {
+    }
+    public themChiJFrame( int loginModel){
+        
+        
         initComponents();
         loginId = loginModel;
         System.out.println("loggoedInAccount id themchi: " + loginId);

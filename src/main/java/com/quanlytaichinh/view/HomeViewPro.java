@@ -265,9 +265,93 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     }
 
-    public void setDataToChartYear(JPanel jpanel, int year) {
+    public void thongKeGiaoDichChi(JPanel jpanel, int year) {
         //Hiển thị 12 columns
-        List<GiaoDichModel> listItem = homeViewController.getListByMoneyYear(logId, year);
+        List<GiaoDichModel> listItem = homeViewController.thongKeGiaoDichChi(logId, year);
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
+                "Tiền", dataset);
+
+        // Create a map to store the data for each month
+        Map<String, Long> monthData = new HashMap<>();
+
+        // Initialize the map with 0 values for all 12 months
+        for (int month = 1; month <= 12; month++) {
+            monthData.put("tháng " + month, 0L);
+        }
+
+        // Populate the map with actual data
+        for (GiaoDichModel item : listItem) {
+//            int year = item.getYear();
+            int month = item.getMonth();
+            long totalMoney = item.getTotalMoney();
+            String key = "tháng " + month;
+
+            // Add the totalMoney to the corresponding month
+            monthData.put(key, monthData.getOrDefault(key, 0L) + totalMoney);
+        }
+
+        // Add the data to the dataset
+        for (int month = 1; month <= 12; month++) {
+            String key = "tháng " + month;
+            dataset.addValue(monthData.get(key), "Số tiền", key);
+        }
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+
+        // Thêm chartPanel vào JPanel
+        jpanel.removeAll(); // Xóa bất kỳ thành phần hiện có trong JPanel
+        jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
+        jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
+        jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+    }
+    
+    public void thongKeGiaoDichThu(JPanel jpanel, int year) {
+        //Hiển thị 12 columns
+        List<GiaoDichModel> listItem = homeViewController.thongKeGiaoDichThu(logId, year);
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
+                "Tiền", dataset);
+
+        // Create a map to store the data for each month
+        Map<String, Long> monthData = new HashMap<>();
+
+        // Initialize the map with 0 values for all 12 months
+        for (int month = 1; month <= 12; month++) {
+            monthData.put("tháng " + month, 0L);
+        }
+
+        // Populate the map with actual data
+        for (GiaoDichModel item : listItem) {
+//            int year = item.getYear();
+            int month = item.getMonth();
+            long totalMoney = item.getTotalMoney();
+            String key = "tháng " + month;
+
+            // Add the totalMoney to the corresponding month
+            monthData.put(key, monthData.getOrDefault(key, 0L) + totalMoney);
+        }
+
+        // Add the data to the dataset
+        for (int month = 1; month <= 12; month++) {
+            String key = "tháng " + month;
+            dataset.addValue(monthData.get(key), "Số tiền", key);
+        }
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+
+        // Thêm chartPanel vào JPanel
+        jpanel.removeAll(); // Xóa bất kỳ thành phần hiện có trong JPanel
+        jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
+        jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
+        jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+    }
+    
+    public void thongKeGiaoDichThuChi(JPanel jpanel, int year) {
+        //Hiển thị 12 columns
+        List<GiaoDichModel> listItem = homeViewController.thongKeGiaoDichThuChi(logId, year);
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
@@ -507,6 +591,11 @@ public class HomeViewPro extends javax.swing.JFrame {
             });
         }
     }
+    
+    public void updateTableChi() {
+        defaultTableLSVModel.setRowCount(0);
+        setTableData(homeViewController.getAllInforUser(logId));
+    }
 
         
     @SuppressWarnings("unchecked")
@@ -552,6 +641,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         anUongRadioButton1 = new javax.swing.JRadioButton();
         dvSinhHoatRadioButton1 = new javax.swing.JRadioButton();
         khacRadioButton1 = new javax.swing.JRadioButton();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         headerPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -600,6 +690,9 @@ public class HomeViewPro extends javax.swing.JFrame {
         yearTextField = new javax.swing.JTextField();
         tkYearTKButton = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
+        tkChiRadioButton = new javax.swing.JRadioButton();
+        tkThuRadioButton = new javax.swing.JRadioButton();
+        tkThuChiRadioButton = new javax.swing.JRadioButton();
         giaoDichPanel = new javax.swing.JPanel();
         jTabbedPane4 = new javax.swing.JTabbedPane();
         jPanel15 = new javax.swing.JPanel();
@@ -1199,7 +1292,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1303,7 +1396,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1395,7 +1488,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1432,7 +1525,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         );
         showTKPanelLayout.setVerticalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 396, Short.MAX_VALUE)
+            .addGap(0, 363, Short.MAX_VALUE)
         );
 
         jPanel8.setBackground(new java.awt.Color(255, 255, 255));
@@ -1456,31 +1549,58 @@ public class HomeViewPro extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel4.setText("Năm");
 
+        buttonGroup2.add(tkChiRadioButton);
+        tkChiRadioButton.setText("Mục Chi");
+        tkChiRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tkChiRadioButtonActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(tkThuRadioButton);
+        tkThuRadioButton.setText("Mục Thu");
+
+        buttonGroup2.add(tkThuChiRadioButton);
+        tkThuChiRadioButton.setText("Mục Thu & Chi");
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(186, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tkChiRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(tkThuRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(tkThuChiRadioButton)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(yearTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 183, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tkYearTKButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(250, 250, 250))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tkChiRadioButton)
+                    .addComponent(tkThuRadioButton)
+                    .addComponent(tkThuChiRadioButton))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(yearTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(tkYearTKButton)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout thongKePanelLayout = new javax.swing.GroupLayout(thongKePanel);
@@ -1552,29 +1672,29 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel17Layout.setHorizontalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel17Layout.createSequentialGroup()
-                .addContainerGap(69, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(themChiButton)
-                .addGap(18, 18, 18)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(suaChiButton)
-                .addGap(18, 18, 18)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(xoaChiButton)
-                .addGap(18, 18, 18)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(xoaAllChiButton)
-                .addGap(18, 18, 18)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(refreshButton)
-                .addContainerGap(96, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel17Layout.createSequentialGroup()
-                .addContainerGap(71, Short.MAX_VALUE)
+                .addContainerGap(35, Short.MAX_VALUE)
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themChiButton)
                     .addComponent(suaChiButton)
                     .addComponent(xoaChiButton)
                     .addComponent(xoaAllChiButton)
                     .addComponent(refreshButton))
-                .addContainerGap())
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         chiTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -1598,14 +1718,14 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane7)
+            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
         );
         jPanel15Layout.setVerticalGroup(
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1651,7 +1771,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel18Layout.setHorizontalGroup(
             jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel18Layout.createSequentialGroup()
-                .addGap(74, 74, 74)
+                .addGap(154, 154, 154)
                 .addComponent(themThuButton)
                 .addGap(18, 18, 18)
                 .addComponent(suaThuButton)
@@ -1661,19 +1781,19 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(xoaAllThuButton)
                 .addGap(18, 18, 18)
                 .addComponent(refreshThuButton)
-                .addContainerGap(91, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel18Layout.setVerticalGroup(
             jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel18Layout.createSequentialGroup()
-                .addContainerGap(71, Short.MAX_VALUE)
+                .addContainerGap(35, Short.MAX_VALUE)
                 .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themThuButton)
                     .addComponent(suaThuButton)
                     .addComponent(xoaThuButton)
                     .addComponent(xoaAllThuButton)
                     .addComponent(refreshThuButton))
-                .addContainerGap())
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         thuTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -1697,14 +1817,14 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane8)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
         );
         jPanel16Layout.setVerticalGroup(
             jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel16Layout.createSequentialGroup()
-                .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
+                .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1721,8 +1841,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         );
         giaoDichPanelLayout.setVerticalGroup(
             giaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(giaoDichPanelLayout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, giaoDichPanelLayout.createSequentialGroup()
                 .addComponent(jTabbedPane4)
                 .addContainerGap())
         );
@@ -1820,7 +1939,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel13Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1919,7 +2038,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel19Layout.setVerticalGroup(
             jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel19Layout.createSequentialGroup()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -2085,7 +2204,15 @@ public class HomeViewPro extends javax.swing.JFrame {
 
     private void tkYearTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkYearTKButtonActionPerformed
         String year = yearTextField.getText();
-        setDataToChartYear(showTKPanel, Integer.parseInt(year));
+        
+        if (tkChiRadioButton.isSelected()) {
+            thongKeGiaoDichChi(showTKPanel, Integer.parseInt(year));
+        } else if (tkThuRadioButton.isSelected()) {
+            thongKeGiaoDichThu(showTKPanel, Integer.parseInt(year));
+        } else if (tkThuChiRadioButton.isSelected()) {
+            thongKeGiaoDichThuChi(showTKPanel, Integer.parseInt(year));
+        } 
+//        thongKeGiaoDichChi(showTKPanel, Integer.parseInt(year));
     }//GEN-LAST:event_tkYearTKButtonActionPerformed
 
     private void tenTKTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tenTKTextFieldKeyTyped
@@ -2133,7 +2260,9 @@ public class HomeViewPro extends javax.swing.JFrame {
 
     private void themChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themChiButtonActionPerformed
         // TODO add your handling code here:
+//        themChiJFrame themChiFrame = new themChiJFrame(logId);
         System.out.println("button chi"+logId);
+//        themChiFrame.setVisible(true);
         new themChiJFrame(logId).setVisible(true);
     }//GEN-LAST:event_themChiButtonActionPerformed
 
@@ -2334,6 +2463,10 @@ public class HomeViewPro extends javax.swing.JFrame {
         setLSVTable(homeViewController.getAllInforUserLSV(logId));
     }//GEN-LAST:event_refreshLSVButtonActionPerformed
 
+    private void tkChiRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkChiRadioButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tkChiRadioButtonActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -2373,6 +2506,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JPanel bodyThemGiaoDichPanel;
     private javax.swing.JPanel bodyThemGiaoDichPanel1;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JTable chiTable;
     private com.toedter.calendar.JDateChooser denNgayTKTextField;
@@ -2483,6 +2617,9 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JTable tienTKTable;
     private javax.swing.JButton timKiemButton;
     private javax.swing.JPanel timKiemPanel;
+    private javax.swing.JRadioButton tkChiRadioButton;
+    private javax.swing.JRadioButton tkThuChiRadioButton;
+    private javax.swing.JRadioButton tkThuRadioButton;
     private javax.swing.JButton tkYearTKButton;
     private com.toedter.calendar.JDateChooser tuNgayTKTextField;
     private javax.swing.JTextField tuTienTKTextField;

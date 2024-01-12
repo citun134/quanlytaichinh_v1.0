@@ -626,7 +626,7 @@ public class GiaoDichDao {
         return infor;
     }
 
-    public List<GiaoDichModel> getListByMoneyYear(int accountId, int year) {
+    public List<GiaoDichModel> thongKeGiaoDichChi(int accountId, int year) {
         List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
         String sql = "SELECT YEAR(ngayChi) AS Year, MONTH(ngayChi) AS Month, " +
@@ -653,6 +653,75 @@ public class GiaoDichDao {
         }
         return infor;
     }
+    
+    public List<GiaoDichModel> thongKeGiaoDichThu(int accountId, int year) {
+        List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT YEAR(ngayThu) AS Year, MONTH(ngayThu) AS Month, " +
+                     "COALESCE(SUM(thanhTienThu), 0) AS TotalMoney " +
+                     "FROM giaoDichThu " +
+                     "WHERE account_id = ? AND YEAR(ngayThu) = ? " + // Add condition for the selected year
+                     "GROUP BY YEAR(ngayThu), MONTH(ngayThu) " +
+                     "ORDER BY YEAR(ngayThu), MONTH(ngayThu)";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId); // Set the value for accountId
+            preparedStatement.setInt(2, year); // Set the value for the selected year
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                GiaoDichModel giaoDichModel = new GiaoDichModel();
+                giaoDichModel.setYear(rs.getInt("Year"));
+                giaoDichModel.setMonth(rs.getInt("Month"));
+                giaoDichModel.setTotalMoney(rs.getInt("TotalMoney"));
+                infor.add(giaoDichModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return infor;
+    }
+    
+    public List<GiaoDichModel> thongKeGiaoDichThuChi(int accountId, int year) {
+        List<GiaoDichModel> infor = new ArrayList<>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT Year, Month, " +
+                     "COALESCE(SUM(thanhTienThu) + SUM(thanhTienChi), 0) AS TotalMoney " +
+                     "FROM ( " +
+                     "    SELECT YEAR(ngayThu) AS Year, MONTH(ngayThu) AS Month, " +
+                     "           thanhTienThu, 0 AS thanhTienChi " +
+                     "    FROM giaoDichThu " +
+                     "    WHERE account_id = ? AND YEAR(ngayThu) = ? " +
+                     "    UNION ALL " +
+                     "    SELECT YEAR(ngayChi) AS Year, MONTH(ngayChi) AS Month, " +
+                     "           0 AS thanhTienThu, thanhTienChi " +
+                     "    FROM giaoDichChi " +
+                     "    WHERE account_id = ? AND YEAR(ngayChi) = ? " +
+                     ") AS combined " +
+                     "GROUP BY Year, Month " +
+                     "ORDER BY Year, Month";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+            preparedStatement.setInt(2, year);
+            preparedStatement.setInt(3, accountId);
+            preparedStatement.setInt(4, year);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                GiaoDichModel giaoDichModel = new GiaoDichModel();
+                giaoDichModel.setYear(rs.getInt("Year"));
+                giaoDichModel.setMonth(rs.getInt("Month"));
+                giaoDichModel.setTotalMoney(rs.getInt("TotalMoney"));
+                infor.add(giaoDichModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return infor;
+    }
+
+
     
     public GiaoDichModel getInforUser(int accountId){
         Connection connection = JDBCConnection.getJDBCConecction();
@@ -764,6 +833,8 @@ public class GiaoDichDao {
         }   
         return null;
     }
+    
+    
     
 }
 

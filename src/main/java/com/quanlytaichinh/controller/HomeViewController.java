@@ -128,8 +128,16 @@ public class HomeViewController {
         return giaoDichDao.getListByMoney(accountId);
     }
     
-    public List<GiaoDichModel> getListByMoneyYear(int accountId, int year){
-        return giaoDichDao.getListByMoneyYear(accountId, year);
+    public List<GiaoDichModel> thongKeGiaoDichChi(int accountId, int year){
+        return giaoDichDao.thongKeGiaoDichChi(accountId, year);
+    }
+    
+    public List<GiaoDichModel> thongKeGiaoDichThu(int accountId, int year){
+        return giaoDichDao.thongKeGiaoDichThu(accountId, year);
+    }
+    
+    public List<GiaoDichModel> thongKeGiaoDichThuChi(int accountId, int year){
+        return giaoDichDao.thongKeGiaoDichThuChi(accountId, year);
     }
     
     public GiaoDichModel getInforUser(int accountId){

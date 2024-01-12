@@ -96,6 +96,7 @@ com\quanlytaichinh\model\GiaoDichModel.class
 com\quanlytaichinh\view\HomeViewPro$32.class
 com\quanlytaichinh\view\LoginView$1.class
 com\quanlytaichinh\view\HomeViewPro$42.class
+com\quanlytaichinh\view\HomeViewPro$55.class
 com\quanlytaichinh\view\themSTKJFrame$1.class
 com\quanlytaichinh\dao\JDBCConnection.class
 com\quanlytaichinh\model\SoTietKiemModel.class
