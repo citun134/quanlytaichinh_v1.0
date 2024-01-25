@@ -9,8 +9,13 @@ import com.quanlytaichinh.model.GiaoDichThuModel;
 import com.quanlytaichinh.model.LaiSuatVayModel;
 import com.quanlytaichinh.model.LoginModel;
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -18,16 +23,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import javax.xml.crypto.dsig.spec.XSLTTransformParameterSpec;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
         
 public class HomeViewPro extends javax.swing.JFrame {
     public HomeViewController homeViewController;
@@ -596,7 +609,57 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableLSVModel.setRowCount(0);
         setTableData(homeViewController.getAllInforUser(logId));
     }
+    
+    public static void openFile(String file){
+        try{
+            File path = new File(file);
+            Desktop.getDesktop().open(path);
+        } catch (IOException ioe) {
+            System.out.println(ioe);
+        }
+    }
+    
+    public static void exportTableToExcel(JTable table) {
+        try {
+            JFileChooser jFileChooser = new JFileChooser();
+            jFileChooser.showSaveDialog(null);
+            File saveFile = jFileChooser.getSelectedFile();
 
+            if (saveFile != null) {
+                saveFile = new File(saveFile.toString() + ".csv");
+                Workbook wb = new XSSFWorkbook();
+                Sheet sheet = wb.createSheet("Sheet1");
+
+                Row rowCol = sheet.createRow(0);
+                for (int i = 0; i < table.getColumnCount(); i++) {
+                    Cell cell = rowCol.createCell(i);
+                    cell.setCellValue(table.getColumnName(i));
+                }
+
+                for (int j = 0; j < table.getRowCount(); j++) {
+                    Row row = sheet.createRow(j + 1); // Skip header row
+                    for (int k = 0; k < table.getColumnCount(); k++) {
+                        Cell cell = row.createCell(k);
+                        if (table.getValueAt(j, k) != null) {
+                            cell.setCellValue(table.getValueAt(j, k).toString());
+                        }
+                    }
+                }
+
+                try (FileOutputStream out = new FileOutputStream(saveFile)) {
+                    wb.write(out);
+                }
+                
+                openFile(saveFile.toString());
+            } else {
+                JOptionPane.showMessageDialog(null, "Error");
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
+        } catch (IOException io) {
+            System.out.println(io);
+        }
+    }
         
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -664,6 +727,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         tenTKTextField = new javax.swing.JTextField();
         tenTKButton = new javax.swing.JButton();
+        inTenButton = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         tenTKTable = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
@@ -675,6 +739,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jLabel14 = new javax.swing.JLabel();
         denTienTKTextField = new javax.swing.JTextField();
         tienTKButton = new javax.swing.JButton();
+        inTienButton = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         thoiGianTKTable = new javax.swing.JTable();
@@ -684,6 +749,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         ngayTKButton = new javax.swing.JButton();
         tuNgayTKTextField = new com.toedter.calendar.JDateChooser();
         denNgayTKTextField = new com.toedter.calendar.JDateChooser();
+        inNgayThangNamButton = new javax.swing.JButton();
         thongKePanel = new javax.swing.JPanel();
         showTKPanel = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
@@ -702,6 +768,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         xoaChiButton = new javax.swing.JButton();
         xoaAllChiButton = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
+        inMucChiButton = new javax.swing.JButton();
         jScrollPane7 = new javax.swing.JScrollPane();
         chiTable = new javax.swing.JTable();
         jPanel16 = new javax.swing.JPanel();
@@ -711,6 +778,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         xoaThuButton = new javax.swing.JButton();
         xoaAllThuButton = new javax.swing.JButton();
         refreshThuButton = new javax.swing.JButton();
+        inMucThuButton = new javax.swing.JButton();
         jScrollPane8 = new javax.swing.JScrollPane();
         thuTable = new javax.swing.JTable();
         soTietKiemPanel = new javax.swing.JPanel();
@@ -722,6 +790,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         xoaSTKButton = new javax.swing.JButton();
         xoaAllSTKButton = new javax.swing.JButton();
         refreshSTKButton = new javax.swing.JButton();
+        inSTKButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         soTietKiemTable = new javax.swing.JTable();
         jPanel19 = new javax.swing.JPanel();
@@ -731,6 +800,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         xoaLSVButton = new javax.swing.JButton();
         xoaAllLSVButton = new javax.swing.JButton();
         refreshLSVButton = new javax.swing.JButton();
+        inLSVButton = new javax.swing.JButton();
         jScrollPane5 = new javax.swing.JScrollPane();
         laiSuatVayTable = new javax.swing.JTable();
 
@@ -1230,29 +1300,41 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inTenButton.setText("In");
+        inTenButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inTenButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel12)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(tenTKButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jLabel12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tenTKButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(inTenButton)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(7, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12))
                 .addGap(18, 18, 18)
-                .addComponent(tenTKButton)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tenTKButton)
+                    .addComponent(inTenButton))
                 .addContainerGap(8, Short.MAX_VALUE))
         );
 
@@ -1292,7 +1374,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1351,6 +1433,13 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inTienButton.setText("In");
+        inTienButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inTienButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -1365,9 +1454,12 @@ public class HomeViewPro extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel14)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(tienTKButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(tienTKButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(inTienButton))))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1379,7 +1471,9 @@ public class HomeViewPro extends javax.swing.JFrame {
                     .addComponent(jLabel14)
                     .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(tienTKButton)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tienTKButton)
+                    .addComponent(inTienButton))
                 .addContainerGap(8, Short.MAX_VALUE))
         );
 
@@ -1443,6 +1537,13 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inNgayThangNamButton.setText("In");
+        inNgayThangNamButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inNgayThangNamButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -1457,9 +1558,12 @@ public class HomeViewPro extends javax.swing.JFrame {
                         .addGap(17, 17, 17)
                         .addComponent(jLabel16)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(ngayTKButton))
-                .addContainerGap(150, Short.MAX_VALUE))
+                        .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(150, Short.MAX_VALUE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(ngayTKButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(inNgayThangNamButton))))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1471,7 +1575,9 @@ public class HomeViewPro extends javax.swing.JFrame {
                     .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(ngayTKButton)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ngayTKButton)
+                    .addComponent(inNgayThangNamButton))
                 .addContainerGap(8, Short.MAX_VALUE))
         );
 
@@ -1667,20 +1773,29 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inMucChiButton.setText("In");
+        inMucChiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inMucChiButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
         jPanel17.setLayout(jPanel17Layout);
         jPanel17Layout.setHorizontalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel17Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(inMucChiButton)
+                .addGap(18, 18, 18)
                 .addComponent(themChiButton)
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(suaChiButton)
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(xoaChiButton)
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(xoaAllChiButton)
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(refreshButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1693,7 +1808,8 @@ public class HomeViewPro extends javax.swing.JFrame {
                     .addComponent(suaChiButton)
                     .addComponent(xoaChiButton)
                     .addComponent(xoaAllChiButton)
-                    .addComponent(refreshButton))
+                    .addComponent(refreshButton)
+                    .addComponent(inMucChiButton))
                 .addContainerGap(39, Short.MAX_VALUE))
         );
 
@@ -1766,12 +1882,21 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inMucThuButton.setText("In");
+        inMucThuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inMucThuButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel18Layout = new javax.swing.GroupLayout(jPanel18);
         jPanel18.setLayout(jPanel18Layout);
         jPanel18Layout.setHorizontalGroup(
             jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel18Layout.createSequentialGroup()
-                .addGap(154, 154, 154)
+                .addGap(61, 61, 61)
+                .addComponent(inMucThuButton)
+                .addGap(18, 18, 18)
                 .addComponent(themThuButton)
                 .addGap(18, 18, 18)
                 .addComponent(suaThuButton)
@@ -1792,7 +1917,8 @@ public class HomeViewPro extends javax.swing.JFrame {
                     .addComponent(suaThuButton)
                     .addComponent(xoaThuButton)
                     .addComponent(xoaAllThuButton)
-                    .addComponent(refreshThuButton))
+                    .addComponent(refreshThuButton)
+                    .addComponent(inMucThuButton))
                 .addContainerGap(38, Short.MAX_VALUE))
         );
 
@@ -1883,12 +2009,21 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inSTKButton.setText("In");
+        inSTKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inSTKButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
         jPanel14.setLayout(jPanel14Layout);
         jPanel14Layout.setHorizontalGroup(
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel14Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(inSTKButton)
+                .addGap(18, 18, 18)
                 .addComponent(themSTKButton)
                 .addGap(18, 18, 18)
                 .addComponent(suaSTKButton)
@@ -1898,7 +2033,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(xoaAllSTKButton)
                 .addGap(18, 18, 18)
                 .addComponent(refreshSTKButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
         jPanel14Layout.setVerticalGroup(
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1909,7 +2044,8 @@ public class HomeViewPro extends javax.swing.JFrame {
                     .addComponent(suaSTKButton)
                     .addComponent(xoaSTKButton)
                     .addComponent(xoaAllSTKButton)
-                    .addComponent(refreshSTKButton))
+                    .addComponent(refreshSTKButton)
+                    .addComponent(inSTKButton))
                 .addContainerGap(52, Short.MAX_VALUE))
         );
 
@@ -1982,12 +2118,21 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inLSVButton.setText("In");
+        inLSVButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inLSVButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel20Layout = new javax.swing.GroupLayout(jPanel20);
         jPanel20.setLayout(jPanel20Layout);
         jPanel20Layout.setHorizontalGroup(
             jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel20Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(inLSVButton)
+                .addGap(18, 18, 18)
                 .addComponent(themLSVButton)
                 .addGap(18, 18, 18)
                 .addComponent(suaLSVButton)
@@ -2008,7 +2153,8 @@ public class HomeViewPro extends javax.swing.JFrame {
                     .addComponent(suaLSVButton)
                     .addComponent(xoaLSVButton)
                     .addComponent(xoaAllLSVButton)
-                    .addComponent(refreshLSVButton))
+                    .addComponent(refreshLSVButton)
+                    .addComponent(inLSVButton))
                 .addContainerGap(52, Short.MAX_VALUE))
         );
 
@@ -2467,6 +2613,41 @@ public class HomeViewPro extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tkChiRadioButtonActionPerformed
 
+    private void inMucChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inMucChiButtonActionPerformed
+        // TODO add your handling code here:
+        exportTableToExcel(chiTable);
+    }//GEN-LAST:event_inMucChiButtonActionPerformed
+
+    private void inNgayThangNamButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inNgayThangNamButtonActionPerformed
+        // TODO add your handling code here:
+        exportTableToExcel(thoiGianTKTable);
+    }//GEN-LAST:event_inNgayThangNamButtonActionPerformed
+
+    private void inMucThuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inMucThuButtonActionPerformed
+        // TODO add your handling code here:
+        exportTableToExcel(thuTable);
+    }//GEN-LAST:event_inMucThuButtonActionPerformed
+
+    private void inTenButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inTenButtonActionPerformed
+        // TODO add your handling code here:
+        exportTableToExcel(tenTKTable);
+    }//GEN-LAST:event_inTenButtonActionPerformed
+
+    private void inTienButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inTienButtonActionPerformed
+        // TODO add your handling code here:
+        exportTableToExcel(tienTKTable);
+    }//GEN-LAST:event_inTienButtonActionPerformed
+
+    private void inLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inLSVButtonActionPerformed
+        // TODO add your handling code here:
+        exportTableToExcel(laiSuatVayTable);
+    }//GEN-LAST:event_inLSVButtonActionPerformed
+
+    private void inSTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inSTKButtonActionPerformed
+        // TODO add your handling code here:
+        exportTableToExcel(soTietKiemTable);
+    }//GEN-LAST:event_inSTKButtonActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -2523,6 +2704,13 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JPanel headerPanel;
     private javax.swing.JPanel headerThemGiaoDichPanel;
     private javax.swing.JPanel headerThemGiaoDichPanel1;
+    private javax.swing.JButton inLSVButton;
+    private javax.swing.JButton inMucChiButton;
+    private javax.swing.JButton inMucThuButton;
+    private javax.swing.JButton inNgayThangNamButton;
+    private javax.swing.JButton inSTKButton;
+    private javax.swing.JButton inTenButton;
+    private javax.swing.JButton inTienButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

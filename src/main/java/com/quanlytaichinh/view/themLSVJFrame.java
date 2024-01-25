@@ -134,9 +134,9 @@ public class themLSVJFrame extends javax.swing.JFrame {
         double laiSuatHangThang = (laiSuat / 100) / 12;
 
         // Số tiền hàng tháng cố định
-        double soTienHangThang = (soTienVay * laiSuatHangThang) / (1 - Math.pow(1 + laiSuatHangThang, -soThangVay));
+//        double soTienHangThang = (soTienVay * laiSuatHangThang) / (1 - Math.pow(1 + laiSuatHangThang, -soThangVay));
         // Số tiền hàng tháng cố định - lãi giảm dần
-//        double soTienHangThang = soTienVay / soThangVay + soTienVay * laiSuatHangThang;
+        double soTienHangThang = soTienVay / soThangVay + soTienVay * laiSuatHangThang;
 
         return soTienHangThang;
     }
@@ -172,7 +172,7 @@ public class themLSVJFrame extends javax.swing.JFrame {
                 laiSuatTGD, Double.parseDouble(thoiGianVayTGD));
         
         try {
-            if (!ngayTGD.isEmpty()) {
+            if (ngayTGD.isEmpty() && giaTriBDSTGD.isEmpty() && soTienVayTGD.isEmpty()) {
                 DecimalFormat decimalFormat = new DecimalFormat();
                 decimalFormat.setParseBigDecimal(true);
                 BigDecimal BDSBigDecimal = (BigDecimal) decimalFormat.parse(giaTriBDSTGD);

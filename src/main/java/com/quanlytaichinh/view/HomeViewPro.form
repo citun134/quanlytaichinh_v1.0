@@ -918,7 +918,7 @@
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jScrollPane3" pref="357" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" pref="356" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -939,28 +939,33 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="tenTKTextField" min="-2" pref="215" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Component id="tenTKButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="tenTKTextField" min="-2" pref="215" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="tenTKButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="inTenButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace pref="7" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
                                       <Component id="tenTKTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="tenTKButton" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="tenTKButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="inTenButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                                   <EmptySpace pref="8" max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -998,6 +1003,14 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tenTKButtonActionPerformed"/>
                             <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="tenTKButtonKeyReleased"/>
+                          </Events>
+                        </Component>
+                        <Component class="javax.swing.JButton" name="inTenButton">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="In"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inTenButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -1115,7 +1128,7 @@
                               <Group type="102" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
+                                      <Group type="102" attributes="0">
                                           <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="tuTienTKTextField" min="-2" pref="120" max="-2" attributes="0"/>
@@ -1123,10 +1136,14 @@
                                           <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="denTienTKTextField" min="-2" pref="120" max="-2" attributes="0"/>
+                                          <EmptySpace max="32767" attributes="0"/>
                                       </Group>
-                                      <Component id="tienTKButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" attributes="0">
+                                          <Component id="tienTKButton" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="32767" attributes="0"/>
+                                          <Component id="inTienButton" min="-2" max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
-                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -1141,7 +1158,10 @@
                                       <Component id="denTienTKTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="tienTKButton" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="tienTKButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="inTienButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                                   <EmptySpace pref="8" max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -1187,6 +1207,14 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tienTKButtonActionPerformed"/>
                             <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="tienTKButtonKeyReleased"/>
+                          </Events>
+                        </Component>
+                        <Component class="javax.swing.JButton" name="inTienButton">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="In"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inTienButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -1266,7 +1294,7 @@
                               <Group type="102" attributes="0">
                                   <EmptySpace pref="151" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
+                                      <Group type="102" attributes="0">
                                           <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="tuNgayTKTextField" min="-2" pref="120" max="-2" attributes="0"/>
@@ -1274,10 +1302,14 @@
                                           <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="denNgayTKTextField" min="-2" pref="120" max="-2" attributes="0"/>
+                                          <EmptySpace pref="150" max="32767" attributes="0"/>
                                       </Group>
-                                      <Component id="ngayTKButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" attributes="0">
+                                          <Component id="ngayTKButton" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="32767" attributes="0"/>
+                                          <Component id="inNgayThangNamButton" min="-2" max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
-                                  <EmptySpace pref="150" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -1292,7 +1324,10 @@
                                       <Component id="denNgayTKTextField" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="ngayTKButton" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="ngayTKButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="inNgayThangNamButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                                   <EmptySpace pref="8" max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -1333,6 +1368,14 @@
                         <Component class="com.toedter.calendar.JDateChooser" name="tuNgayTKTextField">
                         </Component>
                         <Component class="com.toedter.calendar.JDateChooser" name="denNgayTKTextField">
+                        </Component>
+                        <Component class="javax.swing.JButton" name="inNgayThangNamButton">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="In"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inNgayThangNamButtonActionPerformed"/>
+                          </Events>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -1588,14 +1631,16 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="inMucChiButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="themChiButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="32767" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="suaChiButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="32767" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="xoaChiButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                                   <Component id="xoaAllChiButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="32767" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="refreshButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
                               </Group>
@@ -1611,6 +1656,7 @@
                                       <Component id="xoaChiButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="xoaAllChiButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="refreshButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="inMucChiButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace pref="39" max="32767" attributes="0"/>
                               </Group>
@@ -1656,6 +1702,14 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshButtonActionPerformed"/>
+                          </Events>
+                        </Component>
+                        <Component class="javax.swing.JButton" name="inMucChiButton">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="In"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inMucChiButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -1718,7 +1772,9 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="154" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
+                                  <Component id="inMucThuButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="themThuButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="suaThuButton" min="-2" max="-2" attributes="0"/>
@@ -1742,6 +1798,7 @@
                                       <Component id="xoaThuButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="xoaAllThuButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="refreshThuButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="inMucThuButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace pref="38" max="32767" attributes="0"/>
                               </Group>
@@ -1787,6 +1844,14 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshThuButtonActionPerformed"/>
+                          </Events>
+                        </Component>
+                        <Component class="javax.swing.JButton" name="inMucThuButton">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="In"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inMucThuButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -1886,6 +1951,8 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="inSTKButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="themSTKButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="suaSTKButton" min="-2" max="-2" attributes="0"/>
@@ -1895,7 +1962,7 @@
                                   <Component id="xoaAllSTKButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="refreshSTKButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace pref="62" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -1909,6 +1976,7 @@
                                       <Component id="xoaSTKButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="xoaAllSTKButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="refreshSTKButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="inSTKButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace pref="52" max="32767" attributes="0"/>
                               </Group>
@@ -1954,6 +2022,14 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshSTKButtonActionPerformed"/>
+                          </Events>
+                        </Component>
+                        <Component class="javax.swing.JButton" name="inSTKButton">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="In"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inSTKButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -2044,6 +2120,8 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="inLSVButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="themLSVButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="suaLSVButton" min="-2" max="-2" attributes="0"/>
@@ -2067,6 +2145,7 @@
                                       <Component id="xoaLSVButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="xoaAllLSVButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="refreshLSVButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="inLSVButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace pref="52" max="32767" attributes="0"/>
                               </Group>
@@ -2112,6 +2191,14 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshLSVButtonActionPerformed"/>
+                          </Events>
+                        </Component>
+                        <Component class="javax.swing.JButton" name="inLSVButton">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="In"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inLSVButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>
