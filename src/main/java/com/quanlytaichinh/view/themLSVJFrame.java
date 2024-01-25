@@ -31,6 +31,7 @@ public class themLSVJFrame extends javax.swing.JFrame {
      */
     
     public HomeViewController homeViewController;
+    public HomeViewPro homeViewPro;
     public GiaoDichDao giaoDichDao;
     public LoginController loginController;
     public SoTietKiemModel soTietKiemModel;
@@ -49,9 +50,10 @@ public class themLSVJFrame extends javax.swing.JFrame {
         initComponents();
     }
     
-    public themLSVJFrame(int logId){
+    public themLSVJFrame(HomeViewPro homeViewPro, int logId){
         initComponents();
-        
+        setLocationRelativeTo(null);
+        this.homeViewPro = homeViewPro;
         
         loginId = logId;
         
@@ -157,43 +159,50 @@ public class themLSVJFrame extends javax.swing.JFrame {
     public void themGD(int accountId) {
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date dateTGD = ngayGiaiNganLSVjDateChooser.getDate();
-        
+
         String tenNganHangTGD = tenNganHangLSVTGDTextField.getText();
         String giaTriBDSTGD = giaTriBDSLSVTGDTextField.getText();
         String soTienVayTGD = soTienVayLSVTGDTextField.getText();
         String thoiGianVayTGD = thoiGianVayLSVTGDTextField.getText();
         double laiSuatTGD = laiSuatLSVTGDSlider.getValue();
         String ngayTGD = simpleDateFormat.format(dateTGD);
-        
-        double tienHangThang = tinhSoTienPhaiTraHangThang(Double.parseDouble(soTienVayTGD),
-                laiSuatTGD, Double.parseDouble(thoiGianVayTGD));
-        
-        double tinhTong = tinhTongSoTienPhaiTra(Double.parseDouble(soTienVayTGD), 
-                laiSuatTGD, Double.parseDouble(thoiGianVayTGD));
-        
+
         try {
-            if (ngayTGD.isEmpty() && giaTriBDSTGD.isEmpty() && soTienVayTGD.isEmpty()) {
+            if (!ngayTGD.isEmpty() && !giaTriBDSTGD.isEmpty() && !soTienVayTGD.isEmpty()) {
                 DecimalFormat decimalFormat = new DecimalFormat();
                 decimalFormat.setParseBigDecimal(true);
-                BigDecimal BDSBigDecimal = (BigDecimal) decimalFormat.parse(giaTriBDSTGD);
-                BigDecimal STVBigDecimal = (BigDecimal) decimalFormat.parse(soTienVayTGD);
-                BigDecimal ThoiGianVayBigDecimal = (BigDecimal) decimalFormat.parse(thoiGianVayTGD);
-                
-                laiSuatVayModel.setTenNganHangLSV(tenNganHangTGD);
-                laiSuatVayModel.setGiaTriBatDongSan(BDSBigDecimal.doubleValue());
-                laiSuatVayModel.setSoTienVay(STVBigDecimal.doubleValue());
-                laiSuatVayModel.setThoiGianVay(ThoiGianVayBigDecimal.doubleValue());
-                laiSuatVayModel.setLaiSuat(laiSuatTGD);
-                laiSuatVayModel.setNgayGiaiNgan(ngayTGD);
-                laiSuatVayModel.setSoTienPhaiTraHangThang(tienHangThang);
-                laiSuatVayModel.setTongLaiPhaiTra(tinhTong);
-                   
-                laiSuatVayModel.setAccountId(accountId);
 
-                homeViewController.addGiaoDichLSV(laiSuatVayModel);
+                // Check if the strings are not empty before parsing
+                if (!giaTriBDSTGD.trim().isEmpty() && !soTienVayTGD.trim().isEmpty() && !thoiGianVayTGD.trim().isEmpty()) {
+                    BigDecimal BDSBigDecimal = (BigDecimal) decimalFormat.parse(giaTriBDSTGD);
+                    BigDecimal STVBigDecimal = (BigDecimal) decimalFormat.parse(soTienVayTGD);
+                    BigDecimal ThoiGianVayBigDecimal = (BigDecimal) decimalFormat.parse(thoiGianVayTGD);
 
-                JOptionPane.showMessageDialog(this, "Thêm thành công!");
-                
+                    // Add the condition to check if loan amount is less than or equal to property value
+                    if (STVBigDecimal.doubleValue() <= BDSBigDecimal.doubleValue()) {
+                        double tienHangThang = tinhSoTienPhaiTraHangThang(STVBigDecimal.doubleValue(), laiSuatTGD, ThoiGianVayBigDecimal.doubleValue());
+                        double tinhTong = tinhTongSoTienPhaiTra(STVBigDecimal.doubleValue(), laiSuatTGD, ThoiGianVayBigDecimal.doubleValue());
+
+                        laiSuatVayModel.setTenNganHangLSV(tenNganHangTGD);
+                        laiSuatVayModel.setGiaTriBatDongSan(BDSBigDecimal.doubleValue());
+                        laiSuatVayModel.setSoTienVay(STVBigDecimal.doubleValue());
+                        laiSuatVayModel.setThoiGianVay(ThoiGianVayBigDecimal.doubleValue());
+                        laiSuatVayModel.setLaiSuat(laiSuatTGD);
+                        laiSuatVayModel.setNgayGiaiNgan(ngayTGD);
+                        laiSuatVayModel.setSoTienPhaiTraHangThang(tienHangThang);
+                        laiSuatVayModel.setTongLaiPhaiTra(tinhTong);
+
+                        laiSuatVayModel.setAccountId(accountId);
+
+                        homeViewController.addGiaoDichLSV(laiSuatVayModel);
+
+                        JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Số tiền vay phải nhỏ hơn hoặc bằng giá trị BĐS!");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Vui lòng nhập đầy đủ thông tin.");
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Vui lòng nhập đầy đủ thông tin.");
             }
@@ -201,10 +210,10 @@ public class themLSVJFrame extends javax.swing.JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
-
-        // Clear text fields after adding a new record
-//        tenNganHangTGDTextField.setText("");
-//        soTienGuiTGDTextField.setText("");
+        tenNganHangLSVTGDTextField.setText("");
+        giaTriBDSLSVTGDTextField.setText("");
+        soTienVayLSVTGDTextField.setText("");
+        thoiGianVayLSVTGDTextField.setText("");  // Set thoiGianVayTGDTextField to an empty string
     }
 
     /**
@@ -400,8 +409,7 @@ public class themLSVJFrame extends javax.swing.JFrame {
     private void themTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themTGDButtonActionPerformed
 //        System.out.println("loggoedInAccount id themSTKbutton: " + loginId);
         themGD(loginId);
-        destinationFrame.defaultTableLSVModel.setRowCount(0);
-        setLSVTable(homeViewController.getAllInforUserLSV(loginId));
+        homeViewPro.refreshTableLSVData();
     }//GEN-LAST:event_themTGDButtonActionPerformed
 
     private void thoatTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatTGDButtonActionPerformed

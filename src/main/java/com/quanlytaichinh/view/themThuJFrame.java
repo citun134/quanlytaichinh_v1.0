@@ -22,6 +22,7 @@ public class themThuJFrame extends javax.swing.JFrame {
      */
     
     public HomeViewController homeViewController;
+    public HomeViewPro homeViewPro;
     public GiaoDichDao giaoDichDao;
     public LoginController loginController;
     public LoginModel loginModel;
@@ -33,9 +34,11 @@ public class themThuJFrame extends javax.swing.JFrame {
     
     public themThuJFrame() {}
     
-    public themThuJFrame(int logId){
+    public themThuJFrame(HomeViewPro homeViewPro, int logId){
         initComponents();
+        setLocationRelativeTo(null);
         
+        this.homeViewPro = homeViewPro;
         loginId = logId;
         
         System.out.println("loggoedInAccount id themThu: " + loginId);
@@ -249,25 +252,23 @@ public class themThuJFrame extends javax.swing.JFrame {
                     .addComponent(thoiGianThuTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(thanhTienThuTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(3, 3, 3)))
-                .addGap(18, 18, 18)
-                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11)
-                    .addComponent(ghiChuThuTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ghiChuThuTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11))
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(hangMucButton)
                     .addComponent(luongRadioButton)
                     .addComponent(thuongRadioButton)
                     .addComponent(choTangRadioButton)
-                    .addComponent(khacThuRadioButton)
-                    .addComponent(hangMucButton))
-                .addGap(57, 57, 57)
+                    .addComponent(khacThuRadioButton))
+                .addGap(40, 40, 40)
                 .addComponent(themThuTGDButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                 .addComponent(thoatThuTGDButton)
                 .addContainerGap())
         );
@@ -280,6 +281,7 @@ public class themThuJFrame extends javax.swing.JFrame {
     private void themThuTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themThuTGDButtonActionPerformed
         System.out.println("loggoedInAccount id thembutton: " + loginId);
         themGD(loginId);
+        homeViewPro.refreshTableThuData();
     }//GEN-LAST:event_themThuTGDButtonActionPerformed
 
     private void thoatThuTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatThuTGDButtonActionPerformed

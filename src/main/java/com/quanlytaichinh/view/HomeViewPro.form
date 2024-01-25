@@ -1638,11 +1638,9 @@
                                   <Component id="suaChiButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="xoaChiButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="xoaAllChiButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="refreshButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="xoaAllChiButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -1653,10 +1651,9 @@
                                   <Group type="103" groupAlignment="3" attributes="0">
                                       <Component id="themChiButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="suaChiButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="xoaChiButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="xoaAllChiButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="refreshButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="inMucChiButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="xoaChiButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace pref="39" max="32767" attributes="0"/>
                               </Group>
@@ -1694,14 +1691,6 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="xoaAllChiButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="refreshButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Refresh"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshButtonActionPerformed"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="inMucChiButton">
@@ -1772,7 +1761,7 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
+                                  <EmptySpace pref="146" max="32767" attributes="0"/>
                                   <Component id="inMucThuButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="themThuButton" min="-2" max="-2" attributes="0"/>
@@ -1782,8 +1771,6 @@
                                   <Component id="xoaThuButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="xoaAllThuButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="refreshThuButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -1797,7 +1784,6 @@
                                       <Component id="suaThuButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="xoaThuButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="xoaAllThuButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="refreshThuButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="inMucThuButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace pref="38" max="32767" attributes="0"/>
@@ -1836,14 +1822,6 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="xoaAllThuButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="refreshThuButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Refresh"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshThuButtonActionPerformed"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="inMucThuButton">
@@ -1950,7 +1928,7 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace pref="84" max="32767" attributes="0"/>
                                   <Component id="inSTKButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="themSTKButton" min="-2" max="-2" attributes="0"/>
@@ -1960,9 +1938,7 @@
                                   <Component id="xoaSTKButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="xoaAllSTKButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="refreshSTKButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="62" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -1975,7 +1951,6 @@
                                       <Component id="suaSTKButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="xoaSTKButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="xoaAllSTKButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="refreshSTKButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="inSTKButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace pref="52" max="32767" attributes="0"/>
@@ -2014,14 +1989,6 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="xoaAllSTKButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="refreshSTKButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Refresh"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshSTKButtonActionPerformed"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="inSTKButton">
@@ -2119,7 +2086,7 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace pref="37" max="32767" attributes="0"/>
                                   <Component id="inLSVButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="themLSVButton" min="-2" max="-2" attributes="0"/>
@@ -2129,8 +2096,6 @@
                                   <Component id="xoaLSVButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="xoaAllLSVButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="refreshLSVButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -2144,7 +2109,6 @@
                                       <Component id="suaLSVButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="xoaLSVButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="xoaAllLSVButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="refreshLSVButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="inLSVButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace pref="52" max="32767" attributes="0"/>
@@ -2183,14 +2147,6 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="xoaAllLSVButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="refreshLSVButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Refresh"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshLSVButtonActionPerformed"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="inLSVButton">

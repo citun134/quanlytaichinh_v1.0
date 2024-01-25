@@ -66,12 +66,14 @@ public class HomeViewPro extends javax.swing.JFrame {
     
     
     public int logId;
-     
+    private HomeViewPro homeViewPro; 
+    
     public HomeViewPro(){}
     public HomeViewPro(LoginModel loginModel) {
         initComponents();
-        
         setLocationRelativeTo(null);
+        
+        homeViewPro = this;
         
         this.loginModel = loginModel;
         
@@ -660,7 +662,27 @@ public class HomeViewPro extends javax.swing.JFrame {
             System.out.println(io);
         }
     }
-        
+    
+    public void refreshTableChiData() {
+        defaultTableModel.setRowCount(0);
+        setTableData(homeViewController.getAllInforUser(logId));
+    }
+    
+    public void refreshTableThuData() {
+        defaultTableThuModel.setRowCount(0);
+        setThuTableData(homeViewController.getAllInforUserThu(logId));
+    }
+    
+    public void refreshTableSTKData() {
+        defaultTableSTKModel.setRowCount(0);
+        setSTKTable(homeViewController.getAllInforUserSTK(logId));
+    }
+    
+    public void refreshTableLSVData() {
+        defaultTableLSVModel.setRowCount(0);
+        setLSVTable(homeViewController.getAllInforUserLSV(logId));
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -767,7 +789,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         suaChiButton = new javax.swing.JButton();
         xoaChiButton = new javax.swing.JButton();
         xoaAllChiButton = new javax.swing.JButton();
-        refreshButton = new javax.swing.JButton();
         inMucChiButton = new javax.swing.JButton();
         jScrollPane7 = new javax.swing.JScrollPane();
         chiTable = new javax.swing.JTable();
@@ -777,7 +798,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         suaThuButton = new javax.swing.JButton();
         xoaThuButton = new javax.swing.JButton();
         xoaAllThuButton = new javax.swing.JButton();
-        refreshThuButton = new javax.swing.JButton();
         inMucThuButton = new javax.swing.JButton();
         jScrollPane8 = new javax.swing.JScrollPane();
         thuTable = new javax.swing.JTable();
@@ -789,7 +809,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         suaSTKButton = new javax.swing.JButton();
         xoaSTKButton = new javax.swing.JButton();
         xoaAllSTKButton = new javax.swing.JButton();
-        refreshSTKButton = new javax.swing.JButton();
         inSTKButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         soTietKiemTable = new javax.swing.JTable();
@@ -799,7 +818,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         suaLSVButton = new javax.swing.JButton();
         xoaLSVButton = new javax.swing.JButton();
         xoaAllLSVButton = new javax.swing.JButton();
-        refreshLSVButton = new javax.swing.JButton();
         inLSVButton = new javax.swing.JButton();
         jScrollPane5 = new javax.swing.JScrollPane();
         laiSuatVayTable = new javax.swing.JTable();
@@ -1766,13 +1784,6 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
-        refreshButton.setText("Refresh");
-        refreshButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshButtonActionPerformed(evt);
-            }
-        });
-
         inMucChiButton.setText("In");
         inMucChiButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1793,11 +1804,9 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(suaChiButton)
                 .addGap(18, 18, 18)
                 .addComponent(xoaChiButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(xoaAllChiButton)
                 .addGap(18, 18, 18)
-                .addComponent(refreshButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(xoaAllChiButton)
+                .addGap(56, 56, 56))
         );
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1806,10 +1815,9 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themChiButton)
                     .addComponent(suaChiButton)
-                    .addComponent(xoaChiButton)
                     .addComponent(xoaAllChiButton)
-                    .addComponent(refreshButton)
-                    .addComponent(inMucChiButton))
+                    .addComponent(inMucChiButton)
+                    .addComponent(xoaChiButton))
                 .addContainerGap(39, Short.MAX_VALUE))
         );
 
@@ -1875,13 +1883,6 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
-        refreshThuButton.setText("Refresh");
-        refreshThuButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshThuButtonActionPerformed(evt);
-            }
-        });
-
         inMucThuButton.setText("In");
         inMucThuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1894,7 +1895,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel18Layout.setHorizontalGroup(
             jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel18Layout.createSequentialGroup()
-                .addGap(61, 61, 61)
+                .addContainerGap(146, Short.MAX_VALUE)
                 .addComponent(inMucThuButton)
                 .addGap(18, 18, 18)
                 .addComponent(themThuButton)
@@ -1904,8 +1905,6 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(xoaThuButton)
                 .addGap(18, 18, 18)
                 .addComponent(xoaAllThuButton)
-                .addGap(18, 18, 18)
-                .addComponent(refreshThuButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel18Layout.setVerticalGroup(
@@ -1917,7 +1916,6 @@ public class HomeViewPro extends javax.swing.JFrame {
                     .addComponent(suaThuButton)
                     .addComponent(xoaThuButton)
                     .addComponent(xoaAllThuButton)
-                    .addComponent(refreshThuButton)
                     .addComponent(inMucThuButton))
                 .addContainerGap(38, Short.MAX_VALUE))
         );
@@ -2002,13 +2000,6 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
-        refreshSTKButton.setText("Refresh");
-        refreshSTKButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshSTKButtonActionPerformed(evt);
-            }
-        });
-
         inSTKButton.setText("In");
         inSTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2021,7 +2012,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel14Layout.setHorizontalGroup(
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel14Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(84, Short.MAX_VALUE)
                 .addComponent(inSTKButton)
                 .addGap(18, 18, 18)
                 .addComponent(themSTKButton)
@@ -2031,9 +2022,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(xoaSTKButton)
                 .addGap(18, 18, 18)
                 .addComponent(xoaAllSTKButton)
-                .addGap(18, 18, 18)
-                .addComponent(refreshSTKButton)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel14Layout.setVerticalGroup(
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2044,7 +2033,6 @@ public class HomeViewPro extends javax.swing.JFrame {
                     .addComponent(suaSTKButton)
                     .addComponent(xoaSTKButton)
                     .addComponent(xoaAllSTKButton)
-                    .addComponent(refreshSTKButton)
                     .addComponent(inSTKButton))
                 .addContainerGap(52, Short.MAX_VALUE))
         );
@@ -2111,13 +2099,6 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
-        refreshLSVButton.setText("Refresh");
-        refreshLSVButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshLSVButtonActionPerformed(evt);
-            }
-        });
-
         inLSVButton.setText("In");
         inLSVButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2130,7 +2111,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel20Layout.setHorizontalGroup(
             jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel20Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(37, Short.MAX_VALUE)
                 .addComponent(inLSVButton)
                 .addGap(18, 18, 18)
                 .addComponent(themLSVButton)
@@ -2140,8 +2121,6 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(xoaLSVButton)
                 .addGap(18, 18, 18)
                 .addComponent(xoaAllLSVButton)
-                .addGap(18, 18, 18)
-                .addComponent(refreshLSVButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel20Layout.setVerticalGroup(
@@ -2153,7 +2132,6 @@ public class HomeViewPro extends javax.swing.JFrame {
                     .addComponent(suaLSVButton)
                     .addComponent(xoaLSVButton)
                     .addComponent(xoaAllLSVButton)
-                    .addComponent(refreshLSVButton)
                     .addComponent(inLSVButton))
                 .addContainerGap(52, Short.MAX_VALUE))
         );
@@ -2409,7 +2387,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 //        themChiJFrame themChiFrame = new themChiJFrame(logId);
         System.out.println("button chi"+logId);
 //        themChiFrame.setVisible(true);
-        new themChiJFrame(logId).setVisible(true);
+        new themChiJFrame(homeViewPro, logId).setVisible(true);
     }//GEN-LAST:event_themChiButtonActionPerformed
 
     private void suaChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaChiButtonActionPerformed
@@ -2439,16 +2417,10 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_xoaChiButtonActionPerformed
 
-    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        // TODO add your handling code here:
-        defaultTableModel.setRowCount(0);
-        setTableData(homeViewController.getAllInforUser(logId));
-    }//GEN-LAST:event_refreshButtonActionPerformed
-
     private void themThuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themThuButtonActionPerformed
         // TODO add your handling code here:
         System.out.println("button thu " + logId);
-        new themThuJFrame(logId).setVisible(true);
+        new themThuJFrame(homeViewPro, logId).setVisible(true);
     }//GEN-LAST:event_themThuButtonActionPerformed
 
     private void suaThuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaThuButtonActionPerformed
@@ -2493,16 +2465,10 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_xoaAllThuButtonActionPerformed
 
-    private void refreshThuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshThuButtonActionPerformed
-        // TODO add your handling code here:
-        defaultTableThuModel.setRowCount(0);
-        setThuTableData(homeViewController.getAllInforUserThu(logId));
-    }//GEN-LAST:event_refreshThuButtonActionPerformed
-
     private void themSTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themSTKButtonActionPerformed
         // TODO add your handling code here:
         System.out.println("button them stk " + logId);
-        new themSTKJFrame(logId).setVisible(true);
+        new themSTKJFrame(homeViewPro, logId).setVisible(true);
     }//GEN-LAST:event_themSTKButtonActionPerformed
 
     private void suaSTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaSTKButtonActionPerformed
@@ -2547,18 +2513,12 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_xoaAllSTKButtonActionPerformed
 
-    private void refreshSTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshSTKButtonActionPerformed
-        // TODO add your handling code here:
-        defaultTableSTKModel.setRowCount(0);
-        setSTKTable(homeViewController.getAllInforUserSTK(logId));
-    }//GEN-LAST:event_refreshSTKButtonActionPerformed
-
     private void themLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themLSVButtonActionPerformed
         // TODO add your handling code here:
 //        HomeViewPro homeViewProInstance = new HomeViewPro(loginModel);
 //        themLSVJFrame frame = new themLSVJFrame(logId, homeViewProInstance);
         
-        new themLSVJFrame(logId).setVisible(true);
+        new themLSVJFrame(homeViewPro,logId).setVisible(true);
     }//GEN-LAST:event_themLSVButtonActionPerformed
 
     private void suaLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaLSVButtonActionPerformed
@@ -2602,12 +2562,6 @@ public class HomeViewPro extends javax.swing.JFrame {
             setLSVTable(homeViewController.getAllInforUserLSV(logId));
         }
     }//GEN-LAST:event_xoaAllLSVButtonActionPerformed
-
-    private void refreshLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshLSVButtonActionPerformed
-        // TODO add your handling code here:
-        defaultTableLSVModel.setRowCount(0);
-        setLSVTable(homeViewController.getAllInforUserLSV(logId));
-    }//GEN-LAST:event_refreshLSVButtonActionPerformed
 
     private void tkChiRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkChiRadioButtonActionPerformed
         // TODO add your handling code here:
@@ -2766,10 +2720,6 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JButton ngayTKButton;
     private javax.swing.JRadioButton quanAoRadioButton;
     private javax.swing.JRadioButton quanAoRadioButton1;
-    private javax.swing.JButton refreshButton;
-    private javax.swing.JButton refreshLSVButton;
-    private javax.swing.JButton refreshSTKButton;
-    private javax.swing.JButton refreshThuButton;
     private javax.swing.JLabel showDateLabel;
     private javax.swing.JLabel showRealTimeLabel;
     private javax.swing.JPanel showTKPanel;

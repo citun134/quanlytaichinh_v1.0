@@ -37,8 +37,10 @@ public class editThuJFrame extends javax.swing.JFrame {
     
     public editThuJFrame(int logId){
         initComponents();
+        setLocationRelativeTo(null);
+        
         loginId = logId;
-        System.out.println("loggoedInAccount id themchi: " + loginId);
+        System.out.println("loggoedInAccount id themthu: " + loginId);
         
         homeViewController = new HomeViewController();
         giaoDichThuModel = new GiaoDichThuModel();
@@ -47,22 +49,24 @@ public class editThuJFrame extends javax.swing.JFrame {
     }
     
     public void editGD(int accountId){
-        DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
-        String formattedThanhTien = df.format(giaoDichThuModel.getThanhTien());
+        //DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
+        //String formattedThanhTien = df.format(giaoDichThuModel.getThanhTien());
             
         giaoDichThuModel = homeViewController.getInforUserThu(accountId);
         thoiGianThuTGDTextField.setText(giaoDichThuModel.getDate());
-        thanhTienThuTGDTextField.setText(formattedThanhTien);
+        thanhTienThuTGDTextField.setText(String.valueOf(giaoDichThuModel.getThanhTien()));
         ghiChuThuTGDTextField.setText(giaoDichThuModel.getGhiChu());
-        
-        if (luongRadioButton.isSelected()) {
-            giaoDichThuModel.setHangMuc("Lương");
-        } else if (thuongRadioButton.isSelected()) {
-            giaoDichThuModel.setHangMuc("Thưởng");
-        } else if (choTangRadioButton.isSelected()) {
-            giaoDichThuModel.setHangMuc("Được cho/tặng");
-        } else if (khacThuRadioButton.isSelected()) {
-            giaoDichThuModel.setHangMuc("Khác");
+        String hangMuc = giaoDichThuModel.getHangMuc(); // Retrieve the value from the model
+
+        // Check the value and set the corresponding radio button to be selected
+        if ("Lương".equals(hangMuc)) {
+            luongRadioButton.setSelected(true);
+        } else if ("Thưởng".equals(hangMuc)) {
+            thuongRadioButton.setSelected(true);
+        } else if ("Được cho/tặng".equals(hangMuc)) {
+            choTangRadioButton.setSelected(true);
+        } else if ("Khác".equals(hangMuc)) {
+            khacThuRadioButton.setSelected(true);
         }
 //        homeViewController.updateGiaoDichThu(giaoDichThuModel);
     };
@@ -73,7 +77,7 @@ public class editThuJFrame extends javax.swing.JFrame {
         String ghiChuTGD = ghiChuThuTGDTextField.getText();
         
         try {
-            if (!thanhTienTGD.isEmpty()) {
+            if (!thanhTienTGD.isEmpty() && !thanhTienTGD.isEmpty()) {
                 if (!thanhTienTGD.matches(".*[a-zA-Z].*")) {
                     DecimalFormat decimalFormat = new DecimalFormat();
                     decimalFormat.setParseBigDecimal(true);

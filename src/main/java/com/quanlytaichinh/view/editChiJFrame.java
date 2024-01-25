@@ -39,6 +39,8 @@ public class editChiJFrame extends javax.swing.JFrame {
 
     public editChiJFrame(int loginModel){
         initComponents();
+        setLocationRelativeTo(null);
+        
         loginId = loginModel;
         System.out.println("loggoedInAccount id themchi: " + loginId);
         
@@ -55,14 +57,17 @@ public class editChiJFrame extends javax.swing.JFrame {
         thanhTienTGDTextField1.setText(String.valueOf(giaoDichModel.getThanhTien()));
         ghiChuTGDTextField1.setText(giaoDichModel.getGhiChu());
         
-        if (anUongRadioButton1.isSelected()) {
-            giaoDichModel.setHangMuc("Ăn Uống");
-        } else if (quanAoRadioButton1.isSelected()) {
-            giaoDichModel.setHangMuc("Quần Áo");
-        } else if (dvSinhHoatRadioButton1.isSelected()) {
-            giaoDichModel.setHangMuc("Dịch Vụ Sinh Hoạt");
-        } else if (khacRadioButton1.isSelected()) {
-            giaoDichModel.setHangMuc("Khác");
+        String hangMuc = giaoDichModel.getHangMuc(); // Retrieve the value from the model
+
+        // Check the value and set the corresponding radio button to be selected
+        if ("Ăn Uống".equals(hangMuc)) {
+            anUongRadioButton1.setSelected(true);
+        } else if ("Quần Áo".equals(hangMuc)) {
+            quanAoRadioButton1.setSelected(true);
+        } else if ("Dịch Vụ Sinh Hoạt".equals(hangMuc)) {
+            dvSinhHoatRadioButton1.setSelected(true);
+        } else if ("Khác".equals(hangMuc)) {
+            khacRadioButton1.setSelected(true);
         }
 //        homeViewController.updateGiaoDichChi(giaoDichModel);
     };

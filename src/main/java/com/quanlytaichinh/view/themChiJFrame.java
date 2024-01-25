@@ -29,6 +29,7 @@ public class themChiJFrame extends javax.swing.JFrame {
      */
     
     public HomeViewController homeViewController;
+    public HomeViewPro homeViewPro;
     public GiaoDichDao giaoDichDao;
     public LoginController loginController;
     public LoginModel loginModel;
@@ -43,10 +44,15 @@ public class themChiJFrame extends javax.swing.JFrame {
     
     public themChiJFrame() {
     }
-    public themChiJFrame( int loginModel){
-        
+    
+     
+    public themChiJFrame(HomeViewPro homeViewPro, int loginModel){
         
         initComponents();
+        setLocationRelativeTo(null);
+        
+        this.homeViewPro = homeViewPro;
+        
         loginId = loginModel;
         System.out.println("loggoedInAccount id themchi: " + loginId);
         
@@ -59,7 +65,7 @@ public class themChiJFrame extends javax.swing.JFrame {
         
         thoiGianTGDTextField.setDate(date);
     }
-
+        
     public void themGD(int accountId) {
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date dateTGD = thoiGianTGDTextField.getDate();
@@ -301,7 +307,7 @@ public class themChiJFrame extends javax.swing.JFrame {
     private void themTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themTGDButtonActionPerformed
         System.out.println("loggoedInAccount id thembutton: " + loginId);
         themGD(loginId);
-
+        homeViewPro.refreshTableChiData();
     }//GEN-LAST:event_themTGDButtonActionPerformed
 
     private void thoatTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatTGDButtonActionPerformed

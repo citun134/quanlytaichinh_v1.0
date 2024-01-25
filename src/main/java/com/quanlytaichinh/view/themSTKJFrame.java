@@ -26,6 +26,7 @@ public class themSTKJFrame extends javax.swing.JFrame {
      * Creates new form themSTKJFrame
      */
     public HomeViewController homeViewController;
+    public HomeViewPro homeViewPro;
     public GiaoDichDao giaoDichDao;
     public LoginController loginController;
     public SoTietKiemModel soTietKiemModel;
@@ -40,9 +41,11 @@ public class themSTKJFrame extends javax.swing.JFrame {
         initComponents();
     }
     
-    public themSTKJFrame(int logId) {
+    public themSTKJFrame(HomeViewPro homeViewPro, int logId) {
         initComponents();
+        setLocationRelativeTo(null);
         
+        this.homeViewPro = homeViewPro;
         loginId = logId;
         
         System.out.println("loggoedInAccount id themThu: " + loginId);
@@ -78,28 +81,30 @@ public class themSTKJFrame extends javax.swing.JFrame {
     }
 
     
-    public void themGD(int accountId) {
-        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date dateTGD = ngayGuiTGDTextField.getDate();
-        
-        String ngayTGD = simpleDateFormat.format(dateTGD);
-        String tenNganHangTGD = tenNganHangTGDTextField.getText();
-        String soTienGuiTGD = soTienGuiTGDTextField.getText();
-        double laiSuatTGD = laiSuatGuiTGDSlider.getValue();
-        String kyHanTGD = kyHanTGDTextField.getText();
-        
-        double soTienLai = tinhSoTienLaiNhanDuoc(Double.parseDouble(soTienGuiTGD), laiSuatTGD, kyHanTGD);
-        double tongTien = tinhTongTienNhanDuoc(Double.parseDouble(soTienGuiTGD), laiSuatTGD, kyHanTGD);
+public void themGD(int accountId) {
+    simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    Date dateTGD = ngayGuiTGDTextField.getDate();
 
-        
-        try {
-            if (!ngayTGD.isEmpty()) {
-                DecimalFormat decimalFormat = new DecimalFormat();
-                decimalFormat.setParseBigDecimal(true);
+    String ngayTGD = simpleDateFormat.format(dateTGD);
+    String tenNganHangTGD = tenNganHangTGDTextField.getText();
+    String soTienGuiTGD = soTienGuiTGDTextField.getText();
+    double laiSuatTGD = laiSuatGuiTGDSlider.getValue();
+    String kyHanTGD = kyHanTGDTextField.getText();
+
+    try {
+        if (!ngayTGD.isEmpty() && !soTienGuiTGD.isEmpty() && !kyHanTGD.isEmpty()) {
+            DecimalFormat decimalFormat = new DecimalFormat();
+            decimalFormat.setParseBigDecimal(true);
+            
+            // Check if kyHanTGDTextField is not empty before parsing
+            if (!kyHanTGD.trim().isEmpty()) {
                 BigDecimal bigDecimal = (BigDecimal) decimalFormat.parse(soTienGuiTGD);
-                
+
                 double kyHan = Double.parseDouble(kyHanTGD);
-                
+
+                double soTienLai = tinhSoTienLaiNhanDuoc(bigDecimal.doubleValue(), laiSuatTGD, kyHanTGD);
+                double tongTien = tinhTongTienNhanDuoc(bigDecimal.doubleValue(), laiSuatTGD, kyHanTGD);
+
                 soTietKiemModel.setNgayGui(ngayTGD);
                 soTietKiemModel.setTenNganHang(tenNganHangTGD);
                 soTietKiemModel.setSoTienGui(bigDecimal.doubleValue());
@@ -107,25 +112,28 @@ public class themSTKJFrame extends javax.swing.JFrame {
                 soTietKiemModel.setKyHan(kyHan);
                 soTietKiemModel.setSoTienLaiNhanDuoc(soTienLai);
                 soTietKiemModel.setTongTienNhanDuoc(tongTien);
-                    
+
                 soTietKiemModel.setAccountId(accountId);
 
                 homeViewController.addGiaoDichSTK(soTietKiemModel);
 
                 JOptionPane.showMessageDialog(this, "Thêm thành công!");
-                
             } else {
-                JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Vui lòng nhập đầy đủ thông tin.");
+                JOptionPane.showMessageDialog(this, "Kỳ hạn không được để trống!");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, e.getMessage());
+        } else {
+            JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Vui lòng nhập đầy đủ thông tin.");
         }
-
-        // Clear text fields after adding a new record
-        tenNganHangTGDTextField.setText("");
-        soTienGuiTGDTextField.setText("");
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, e.getMessage());
     }
+
+    // Clear text fields after adding a new record
+    tenNganHangTGDTextField.setText("");
+    soTienGuiTGDTextField.setText("");
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -304,6 +312,7 @@ public class themSTKJFrame extends javax.swing.JFrame {
     private void themTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themTGDButtonActionPerformed
         System.out.println("loggoedInAccount id themSTKbutton: " + loginId);
         themGD(loginId);
+        homeViewPro.refreshTableSTKData();
     }//GEN-LAST:event_themTGDButtonActionPerformed
 
     private void thoatTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatTGDButtonActionPerformed

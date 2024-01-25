@@ -43,6 +43,8 @@ public class editSTKJFrame extends javax.swing.JFrame {
     
     public editSTKJFrame(int logId){
         initComponents();
+        setLocationRelativeTo(null);
+        
         loginId = logId;
         System.out.println("loggoedInAccount id themchi: " + loginId);
         

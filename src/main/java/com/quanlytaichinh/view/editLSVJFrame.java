@@ -50,7 +50,7 @@ public class editLSVJFrame extends javax.swing.JFrame {
     
     public editLSVJFrame(int logId) {
         initComponents();
-        
+        setLocationRelativeTo(null);
         loginId = logId;
         System.out.println("loggoedInAccount id themchi: " + loginId);
         
