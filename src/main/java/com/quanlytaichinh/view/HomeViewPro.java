@@ -1641,6 +1641,8 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         thongKePanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        showTKPanel.setBackground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout showTKPanelLayout = new javax.swing.GroupLayout(showTKPanel);
         showTKPanel.setLayout(showTKPanelLayout);
         showTKPanelLayout.setHorizontalGroup(
@@ -1756,6 +1758,10 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        jPanel15.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel17.setBackground(new java.awt.Color(255, 255, 255));
+
         themChiButton.setText("Thêm");
         themChiButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1854,6 +1860,10 @@ public class HomeViewPro extends javax.swing.JFrame {
         );
 
         jTabbedPane4.addTab("Mục Chi", jPanel15);
+
+        jPanel16.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel18.setBackground(new java.awt.Color(255, 255, 255));
 
         themThuButton.setText("Thêm");
         themThuButton.addActionListener(new java.awt.event.ActionListener() {
@@ -1972,6 +1982,12 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         mainPanel.add(giaoDichPanel, "card2");
 
+        soTietKiemPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel13.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel14.setBackground(new java.awt.Color(255, 255, 255));
+
         themSTKButton.setText("Thêm");
         themSTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2070,6 +2086,10 @@ public class HomeViewPro extends javax.swing.JFrame {
         );
 
         jTabbedPane3.addTab("Sổ Tiết Kiệm", jPanel13);
+
+        jPanel19.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel20.setBackground(new java.awt.Color(255, 255, 255));
 
         themLSVButton.setText("Thêm");
         themLSVButton.addActionListener(new java.awt.event.ActionListener() {
