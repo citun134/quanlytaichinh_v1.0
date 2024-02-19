@@ -40,6 +40,7 @@ public class editLSVJFrame extends javax.swing.JFrame {
     public GiaoDichThuModel giaoDichThuModel;
     public SoTietKiemModel soTietKiemModel;
     public SimpleDateFormat simpleDateFormat;
+    public HomeViewPro homeViewPro;
     
     private DefaultTableModel defaultTableSTKModel;
     
@@ -48,9 +49,12 @@ public class editLSVJFrame extends javax.swing.JFrame {
     public editLSVJFrame() {
     }
     
-    public editLSVJFrame(int logId) {
+    public editLSVJFrame(HomeViewPro homeViewPro, int logId) {
         initComponents();
         setLocationRelativeTo(null);
+        
+        this.homeViewPro = homeViewPro;
+        
         loginId = logId;
         System.out.println("loggoedInAccount id themchi: " + loginId);
         
@@ -251,7 +255,7 @@ public class editLSVJFrame extends javax.swing.JFrame {
 
         themTGDButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         themTGDButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Accept.png"))); // NOI18N
-        themTGDButton.setText("  THÊM");
+        themTGDButton.setText("SỬA");
         themTGDButton.setToolTipText("");
         themTGDButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -370,6 +374,7 @@ public class editLSVJFrame extends javax.swing.JFrame {
     private void themTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themTGDButtonActionPerformed
         //        System.out.println("loggoedInAccount id themSTKbutton: " + loginId);
         themGD(loginId);
+        homeViewPro.refreshTableLSVData();
     }//GEN-LAST:event_themTGDButtonActionPerformed
 
     private void thoatTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatTGDButtonActionPerformed

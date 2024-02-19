@@ -168,7 +168,7 @@ public class themLSVJFrame extends javax.swing.JFrame {
         String ngayTGD = simpleDateFormat.format(dateTGD);
 
         try {
-            if (!ngayTGD.isEmpty() && !giaTriBDSTGD.isEmpty() && !soTienVayTGD.isEmpty()) {
+            if (!ngayTGD.isEmpty() && !giaTriBDSTGD.isEmpty() && !soTienVayTGD.isEmpty() && !thoiGianVayTGD.isEmpty()) {
                 DecimalFormat decimalFormat = new DecimalFormat();
                 decimalFormat.setParseBigDecimal(true);
 

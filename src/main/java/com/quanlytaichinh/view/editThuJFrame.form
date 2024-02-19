@@ -105,7 +105,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="thanhTienThuTGDTextField" alignment="0" max="32767" attributes="0"/>
                               <Component id="ghiChuThuTGDTextField" alignment="0" max="32767" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
+                              <Group type="102" attributes="0">
                                   <Component id="luongRadioButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="thuongRadioButton" min="-2" max="-2" attributes="0"/>
@@ -136,9 +136,9 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="thoiGianThuTGDTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
+                      <Component id="thoiGianThuTGDTextField" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -270,7 +270,7 @@
             <Property name="text" type="java.lang.String" value="Kh&#xe1;c"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="thoiGianThuTGDTextField">
+        <Component class="com.toedter.calendar.JDateChooser" name="thoiGianThuTGDTextField">
         </Component>
       </SubComponents>
     </Container>

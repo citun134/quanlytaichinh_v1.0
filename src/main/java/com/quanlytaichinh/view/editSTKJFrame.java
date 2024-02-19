@@ -35,15 +35,18 @@ public class editSTKJFrame extends javax.swing.JFrame {
     public GiaoDichThuModel giaoDichThuModel;
     public SoTietKiemModel soTietKiemModel;
     public SimpleDateFormat simpleDateFormat;
+    public HomeViewPro homeViewPro;
     
     public int loginId;
     
     public editSTKJFrame() {
     }
     
-    public editSTKJFrame(int logId){
+    public editSTKJFrame(HomeViewPro homeViewPro, int logId){
         initComponents();
         setLocationRelativeTo(null);
+        
+        this.homeViewPro = homeViewPro;
         
         loginId = logId;
         System.out.println("loggoedInAccount id themchi: " + loginId);
@@ -243,7 +246,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
 
         themTGDButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         themTGDButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Accept.png"))); // NOI18N
-        themTGDButton.setText("  THÊM");
+        themTGDButton.setText("SỬA");
         themTGDButton.setToolTipText("");
         themTGDButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -278,10 +281,6 @@ public class editSTKJFrame extends javax.swing.JFrame {
         bodyThemGiaoDichPanelLayout.setHorizontalGroup(
             bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                .addGap(187, 187, 187)
-                .addComponent(themTGDButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
@@ -307,7 +306,11 @@ public class editSTKJFrame extends javax.swing.JFrame {
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(tenNganHangTGDTextField)
                             .addComponent(soTienGuiTGDTextField)
-                            .addComponent(ngayGuiTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(ngayGuiTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(themTGDButton)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         bodyThemGiaoDichPanelLayout.setVerticalGroup(
@@ -335,7 +338,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
                     .addComponent(kyHanTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(themTGDButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
                 .addComponent(thoatTGDButton)
                 .addContainerGap())
         );
@@ -352,6 +355,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
     private void themTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themTGDButtonActionPerformed
 //        System.out.println("loggoedInAccount id themSTKbutton: " + loginId);
         themGD(loginId);
+        homeViewPro.refreshTableSTKData();
     }//GEN-LAST:event_themTGDButtonActionPerformed
 
     private void thoatTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatTGDButtonActionPerformed

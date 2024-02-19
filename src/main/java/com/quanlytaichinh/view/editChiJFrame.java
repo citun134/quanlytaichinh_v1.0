@@ -11,10 +11,9 @@ import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.LoginModel;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JOptionPane;
-import javax.swing.Timer;
-import javax.swing.table.DefaultTableModel;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -32,14 +31,18 @@ public class editChiJFrame extends javax.swing.JFrame {
     public LoginModel loginModel;
     public LoginView loginView;
     public GiaoDichModel giaoDichModel;
+    public HomeViewPro homeViewPro;
+    public SimpleDateFormat simpleDateFormat;
     
     public int loginId;
     
     public editChiJFrame() {}
 
-    public editChiJFrame(int loginModel){
+    public editChiJFrame(HomeViewPro homeViewPro, int loginModel){
         initComponents();
         setLocationRelativeTo(null);
+        
+        this.homeViewPro = homeViewPro;
         
         loginId = loginModel;
         System.out.println("loggoedInAccount id themchi: " + loginId);
@@ -48,13 +51,25 @@ public class editChiJFrame extends javax.swing.JFrame {
         giaoDichModel = new GiaoDichModel();
         
         editGD(loginId);
+        
+        thoiGianTGDTextField1.setDateFormatString("yyyy-MM-dd");
+        
+        Date date = new Date();
+        
+        thoiGianTGDTextField1.setDate(date);
+        
     }
     
     public void editGD(int accountId){
         giaoDichModel = homeViewController.getInforUser(accountId);
-        thoiGianTGDTextField1.setText(giaoDichModel.getDate());
+        
+        DecimalFormat df = new DecimalFormat("###,###,###,###,###");
+        
+        String formattedThanhTien = df.format(giaoDichModel.getThanhTien());
+        thoiGianTGDTextField1.setDateFormatString(giaoDichModel.getDate());
         matHangTGDTextField1.setText(giaoDichModel.getMatHang());
-        thanhTienTGDTextField1.setText(String.valueOf(giaoDichModel.getThanhTien()));
+//        thanhTienTGDTextField1.setText(String.valueOf(giaoDichModel.getThanhTien()));
+        thanhTienTGDTextField1.setText(formattedThanhTien.replaceAll(",", ""));
         ghiChuTGDTextField1.setText(giaoDichModel.getGhiChu());
         
         String hangMuc = giaoDichModel.getHangMuc(); // Retrieve the value from the model
@@ -73,10 +88,13 @@ public class editChiJFrame extends javax.swing.JFrame {
     };
     
     public void themGD(int accountId){
-        String dateTGD = thoiGianTGDTextField1.getText();
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        String dateTGD = thoiGianTGDTextField1.getText();
+        Date ngayTGD = thoiGianTGDTextField1.getDate();
         String matHangTGD = matHangTGDTextField1.getText();
         String thanhTienTGD = thanhTienTGDTextField1.getText();
         String ghiChuTGD = ghiChuTGDTextField1.getText();
+        String dateTGD = simpleDateFormat.format(ngayTGD);
         
         try {
             if (!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty()) {
@@ -145,7 +163,7 @@ public class editChiJFrame extends javax.swing.JFrame {
         anUongRadioButton1 = new javax.swing.JRadioButton();
         dvSinhHoatRadioButton1 = new javax.swing.JRadioButton();
         khacRadioButton1 = new javax.swing.JRadioButton();
-        thoiGianTGDTextField1 = new javax.swing.JTextField();
+        thoiGianTGDTextField1 = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -256,7 +274,7 @@ public class editChiJFrame extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(khacRadioButton1)
                                 .addGap(0, 122, Short.MAX_VALUE))
-                            .addComponent(thoiGianTGDTextField1)))
+                            .addComponent(thoiGianTGDTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(thoatTGDButton1))
@@ -270,10 +288,10 @@ public class editChiJFrame extends javax.swing.JFrame {
             bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bodyThemGiaoDichPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel17)
                     .addComponent(thoiGianTGDTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23)
+                .addGap(18, 18, 18)
                 .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18)
                     .addComponent(matHangTGDTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -308,6 +326,7 @@ public class editChiJFrame extends javax.swing.JFrame {
     private void themTGDButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themTGDButton1ActionPerformed
         // TODO add your handling code here:
         themGD(loginId);
+        homeViewPro.refreshTableChiData();
     }//GEN-LAST:event_themTGDButton1ActionPerformed
 
     private void thoatTGDButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatTGDButton1ActionPerformed
@@ -373,6 +392,6 @@ public class editChiJFrame extends javax.swing.JFrame {
     private javax.swing.JTextField thanhTienTGDTextField1;
     private javax.swing.JButton themTGDButton1;
     private javax.swing.JButton thoatTGDButton1;
-    private javax.swing.JTextField thoiGianTGDTextField1;
+    private com.toedter.calendar.JDateChooser thoiGianTGDTextField1;
     // End of variables declaration//GEN-END:variables
 }

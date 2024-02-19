@@ -1303,8 +1303,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
-        tenTKButton.setBackground(new java.awt.Color(204, 204, 255));
-        tenTKButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        tenTKButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         tenTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
         tenTKButton.setText("  Tìm kiếm");
         tenTKButton.addActionListener(new java.awt.event.ActionListener() {
@@ -1318,6 +1317,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inTenButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        inTenButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Print preview.png"))); // NOI18N
         inTenButton.setText("In");
         inTenButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1330,11 +1331,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(168, Short.MAX_VALUE)
                 .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 163, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tenTKButton)
@@ -1392,7 +1393,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1437,7 +1438,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
-        tienTKButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        tienTKButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         tienTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
         tienTKButton.setText("  Tìm kiếm");
         tienTKButton.addActionListener(new java.awt.event.ActionListener() {
@@ -1451,6 +1452,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inTienButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        inTienButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Print preview.png"))); // NOI18N
         inTienButton.setText("In");
         inTienButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1463,21 +1466,20 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap(153, Short.MAX_VALUE)
+                .addComponent(jLabel13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tuTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(153, Short.MAX_VALUE))
+            .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tuTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(tienTKButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(inTienButton))))
+                .addComponent(tienTKButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(inTienButton))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1508,7 +1510,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1541,7 +1543,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jLabel16.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel16.setText("Đến");
 
-        ngayTKButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        ngayTKButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         ngayTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
         ngayTKButton.setText("  Tìm kiếm");
         ngayTKButton.addActionListener(new java.awt.event.ActionListener() {
@@ -1555,6 +1557,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inNgayThangNamButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        inNgayThangNamButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Print preview.png"))); // NOI18N
         inNgayThangNamButton.setText("In");
         inNgayThangNamButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1568,20 +1572,19 @@ public class HomeViewPro extends javax.swing.JFrame {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap(151, Short.MAX_VALUE)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jLabel15)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(17, 17, 17)
-                        .addComponent(jLabel16)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(150, Short.MAX_VALUE))
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(ngayTKButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(inNgayThangNamButton))))
+                .addComponent(jLabel15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(17, 17, 17)
+                .addComponent(jLabel16)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(150, Short.MAX_VALUE))
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(ngayTKButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(inNgayThangNamButton))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1612,7 +1615,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1651,7 +1654,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         );
         showTKPanelLayout.setVerticalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 363, Short.MAX_VALUE)
+            .addGap(0, 357, Short.MAX_VALUE)
         );
 
         jPanel8.setBackground(new java.awt.Color(255, 255, 255));
@@ -1694,23 +1697,23 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(177, Short.MAX_VALUE)
                 .addComponent(tkChiRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(tkThuRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(tkThuChiRadioButton)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 172, Short.MAX_VALUE))
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addGap(18, 18, 18)
                 .addComponent(yearTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+            .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tkYearTKButton)
-                .addGap(250, 250, 250))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1726,7 +1729,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
                 .addComponent(tkYearTKButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout thongKePanelLayout = new javax.swing.GroupLayout(thongKePanel);
@@ -1762,6 +1765,8 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         jPanel17.setBackground(new java.awt.Color(255, 255, 255));
 
+        themChiButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        themChiButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Add.png"))); // NOI18N
         themChiButton.setText("Thêm");
         themChiButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1769,6 +1774,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        suaChiButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        suaChiButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Edit.png"))); // NOI18N
         suaChiButton.setText("Sửa");
         suaChiButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1776,6 +1783,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        xoaChiButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        xoaChiButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Delete.png"))); // NOI18N
         xoaChiButton.setText("Xóa");
         xoaChiButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1783,6 +1792,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        xoaAllChiButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         xoaAllChiButton.setText("Xóa tất cả");
         xoaAllChiButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1790,6 +1800,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inMucChiButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        inMucChiButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Print preview.png"))); // NOI18N
         inMucChiButton.setText("In");
         inMucChiButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1812,19 +1824,19 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(xoaChiButton)
                 .addGap(18, 18, 18)
                 .addComponent(xoaAllChiButton)
-                .addGap(56, 56, 56))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel17Layout.createSequentialGroup()
-                .addContainerGap(35, Short.MAX_VALUE)
+                .addContainerGap(31, Short.MAX_VALUE)
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themChiButton)
                     .addComponent(suaChiButton)
                     .addComponent(xoaAllChiButton)
                     .addComponent(inMucChiButton)
                     .addComponent(xoaChiButton))
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         chiTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -1865,6 +1877,8 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         jPanel18.setBackground(new java.awt.Color(255, 255, 255));
 
+        themThuButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        themThuButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Add.png"))); // NOI18N
         themThuButton.setText("Thêm");
         themThuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1872,6 +1886,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        suaThuButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        suaThuButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Edit.png"))); // NOI18N
         suaThuButton.setText("Sửa");
         suaThuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1879,6 +1895,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        xoaThuButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        xoaThuButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Delete.png"))); // NOI18N
         xoaThuButton.setText("Xóa");
         xoaThuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1886,6 +1904,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        xoaAllThuButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         xoaAllThuButton.setText("Xóa tất cả");
         xoaAllThuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1893,6 +1912,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inMucThuButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        inMucThuButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Print preview.png"))); // NOI18N
         inMucThuButton.setText("In");
         inMucThuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1905,7 +1926,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel18Layout.setHorizontalGroup(
             jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel18Layout.createSequentialGroup()
-                .addContainerGap(146, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(inMucThuButton)
                 .addGap(18, 18, 18)
                 .addComponent(themThuButton)
@@ -1920,14 +1941,14 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel18Layout.setVerticalGroup(
             jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel18Layout.createSequentialGroup()
-                .addContainerGap(35, Short.MAX_VALUE)
+                .addContainerGap(31, Short.MAX_VALUE)
                 .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themThuButton)
                     .addComponent(suaThuButton)
                     .addComponent(xoaThuButton)
                     .addComponent(xoaAllThuButton)
                     .addComponent(inMucThuButton))
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         thuTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -1988,6 +2009,8 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         jPanel14.setBackground(new java.awt.Color(255, 255, 255));
 
+        themSTKButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        themSTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Add.png"))); // NOI18N
         themSTKButton.setText("Thêm");
         themSTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1995,6 +2018,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        suaSTKButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        suaSTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Edit.png"))); // NOI18N
         suaSTKButton.setText("Sửa");
         suaSTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2002,6 +2027,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        xoaSTKButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        xoaSTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Delete.png"))); // NOI18N
         xoaSTKButton.setText("Xóa");
         xoaSTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2009,6 +2036,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        xoaAllSTKButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         xoaAllSTKButton.setText("Xóa tất cả");
         xoaAllSTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2016,6 +2044,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inSTKButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        inSTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Print preview.png"))); // NOI18N
         inSTKButton.setText("In");
         inSTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2028,7 +2058,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel14Layout.setHorizontalGroup(
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel14Layout.createSequentialGroup()
-                .addContainerGap(84, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(inSTKButton)
                 .addGap(18, 18, 18)
                 .addComponent(themSTKButton)
@@ -2079,7 +2109,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel13Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -2091,6 +2121,8 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         jPanel20.setBackground(new java.awt.Color(255, 255, 255));
 
+        themLSVButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        themLSVButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Add.png"))); // NOI18N
         themLSVButton.setText("Thêm");
         themLSVButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2098,6 +2130,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        suaLSVButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        suaLSVButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Edit.png"))); // NOI18N
         suaLSVButton.setText("Sửa");
         suaLSVButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2105,6 +2139,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        xoaLSVButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        xoaLSVButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Delete.png"))); // NOI18N
         xoaLSVButton.setText("Xóa");
         xoaLSVButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2112,6 +2148,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        xoaAllLSVButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         xoaAllLSVButton.setText("Xóa tất cả");
         xoaAllLSVButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2119,6 +2156,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
+        inLSVButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        inLSVButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Print preview.png"))); // NOI18N
         inLSVButton.setText("In");
         inLSVButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2131,7 +2170,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel20Layout.setHorizontalGroup(
             jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel20Layout.createSequentialGroup()
-                .addContainerGap(37, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(inLSVButton)
                 .addGap(18, 18, 18)
                 .addComponent(themLSVButton)
@@ -2182,7 +2221,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel19Layout.setVerticalGroup(
             jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel19Layout.createSequentialGroup()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -2417,7 +2456,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
             } else {
                 int giaoDichId = Integer.valueOf(String.valueOf(chiTable.getValueAt(row, 0)));
-                new editChiJFrame(giaoDichId).setVisible(true);
+                new editChiJFrame(homeViewPro, giaoDichId).setVisible(true);
             }
     }//GEN-LAST:event_suaChiButtonActionPerformed
 
@@ -2425,9 +2464,9 @@ public class HomeViewPro extends javax.swing.JFrame {
         // TODO add your handling code here:
         int row = chiTable.getSelectedRow();
         if(row == -1){
-            JOptionPane.showMessageDialog(HomeViewPro.this, "Vui long chon user truoc", "Loi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
         } else {
-            int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Ban chac chan muon xoa khong");
+            int confirm = JOptionPane.showConfirmDialog(HomeViewPro.this, "Bạn chắc chắn muốn xóa dữ liệu không?");
             if (confirm == JOptionPane.YES_OPTION){
                 int userId = Integer.parseInt(String.valueOf(chiTable.getValueAt(row, 0)));
                 homeViewController.deleteGiaoDichChi(userId);
@@ -2450,7 +2489,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
             } else {
                 int giaoDichId = Integer.valueOf(String.valueOf(thuTable.getValueAt(row, 0)));
-                new editThuJFrame(giaoDichId).setVisible(true);
+                new editThuJFrame(homeViewPro, giaoDichId).setVisible(true);
         }
     }//GEN-LAST:event_suaThuButtonActionPerformed
 
@@ -2498,7 +2537,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
             } else {
                 int giaoDichId = Integer.valueOf(String.valueOf(soTietKiemTable.getValueAt(row, 0)));
-                new editSTKJFrame(giaoDichId).setVisible(true);
+                new editSTKJFrame(homeViewPro, giaoDichId).setVisible(true);
         }
     }//GEN-LAST:event_suaSTKButtonActionPerformed
 
@@ -2548,7 +2587,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
             } else {
                 int giaoDichId = Integer.valueOf(String.valueOf(laiSuatVayTable.getValueAt(row, 0)));
-                new editLSVJFrame(giaoDichId).setVisible(true);
+                new editLSVJFrame(homeViewPro, giaoDichId).setVisible(true);
         }
     }//GEN-LAST:event_suaLSVButtonActionPerformed
 

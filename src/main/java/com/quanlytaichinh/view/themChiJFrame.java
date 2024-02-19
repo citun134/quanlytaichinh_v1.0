@@ -66,10 +66,64 @@ public class themChiJFrame extends javax.swing.JFrame {
         thoiGianTGDTextField.setDate(date);
     }
         
+//    public void themGD(int accountId) {
+//        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        Date dateTGD = thoiGianTGDTextField.getDate();
+//        
+//        String ngayTGD = simpleDateFormat.format(dateTGD);
+//        String matHangTGD = matHangTGDTextField.getText();
+//        String thanhTienTGD = thanhTienTGDTextField.getText();
+//        String ghiChuTGD = ghiChuTGDTextField.getText();
+//
+//        try {
+//            if (!matHangTGD.isEmpty() && !thanhTienTGD.isEmpty() && !ngayTGD.isEmpty()) {
+//                if (!thanhTienTGD.matches(".*[a-zA-Z].*")) {
+//                    DecimalFormat decimalFormat = new DecimalFormat();
+//                    decimalFormat.setParseBigDecimal(true);
+//                    BigDecimal bigDecimal = (BigDecimal) decimalFormat.parse(thanhTienTGD);
+//
+//                    // Set properties of the giaoDichModel object
+//                    giaoDichModel.setDate(ngayTGD);
+//                    giaoDichModel.setMatHang(matHangTGD);
+//                    giaoDichModel.setThanhTien(bigDecimal.doubleValue());
+//                    giaoDichModel.setGhiChu(ghiChuTGD);
+//
+//                    if (anUongRadioButton.isSelected()) {
+//                        giaoDichModel.setHangMuc("Ăn Uống");
+//                    } else if (quanAoRadioButton.isSelected()) {
+//                        giaoDichModel.setHangMuc("Quần Áo");
+//                    } else if (dvSinhHoatRadioButton.isSelected()) {
+//                        giaoDichModel.setHangMuc("Dịch Vụ Sinh Hoạt");
+//                    } else if (khacRadioButton.isSelected()) {
+//                        giaoDichModel.setHangMuc("Khác");
+//                    }
+//                    giaoDichModel.setAccountId(accountId);
+//
+//                    homeViewController.addGiaoDichChi(giaoDichModel);
+//
+//                    JOptionPane.showMessageDialog(this, "Thêm thành công!");
+//                } else {
+//                    JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Thanh Tiền không hợp lệ.");
+//                }
+//            } else {
+//                JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Vui lòng nhập đầy đủ thông tin.");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(this, e.getMessage());
+//        }
+//
+//        // Clear text fields after adding a new record
+//        matHangTGDTextField.setText("");
+//        thanhTienTGDTextField.setText("");
+//        ghiChuTGDTextField.setText("");
+//    }
+    
+    
     public void themGD(int accountId) {
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date dateTGD = thoiGianTGDTextField.getDate();
-        
+
         String ngayTGD = simpleDateFormat.format(dateTGD);
         String matHangTGD = matHangTGDTextField.getText();
         String thanhTienTGD = thanhTienTGDTextField.getText();
@@ -82,26 +136,31 @@ public class themChiJFrame extends javax.swing.JFrame {
                     decimalFormat.setParseBigDecimal(true);
                     BigDecimal bigDecimal = (BigDecimal) decimalFormat.parse(thanhTienTGD);
 
-                    // Set properties of the giaoDichModel object
-                    giaoDichModel.setDate(ngayTGD);
-                    giaoDichModel.setMatHang(matHangTGD);
-                    giaoDichModel.setThanhTien(bigDecimal.doubleValue());
-                    giaoDichModel.setGhiChu(ghiChuTGD);
+                    // Check if a radio button is selected
+                    if (anUongRadioButton.isSelected() || quanAoRadioButton.isSelected() || dvSinhHoatRadioButton.isSelected() || khacRadioButton.isSelected()) {
+                        // Set properties of the giaoDichModel object
+                        giaoDichModel.setDate(ngayTGD);
+                        giaoDichModel.setMatHang(matHangTGD);
+                        giaoDichModel.setThanhTien(bigDecimal.doubleValue());
+                        giaoDichModel.setGhiChu(ghiChuTGD);
 
-                    if (anUongRadioButton.isSelected()) {
-                        giaoDichModel.setHangMuc("Ăn Uống");
-                    } else if (quanAoRadioButton.isSelected()) {
-                        giaoDichModel.setHangMuc("Quần Áo");
-                    } else if (dvSinhHoatRadioButton.isSelected()) {
-                        giaoDichModel.setHangMuc("Dịch Vụ Sinh Hoạt");
-                    } else if (khacRadioButton.isSelected()) {
-                        giaoDichModel.setHangMuc("Khác");
+                        if (anUongRadioButton.isSelected()) {
+                            giaoDichModel.setHangMuc("Ăn Uống");
+                        } else if (quanAoRadioButton.isSelected()) {
+                            giaoDichModel.setHangMuc("Quần Áo");
+                        } else if (dvSinhHoatRadioButton.isSelected()) {
+                            giaoDichModel.setHangMuc("Dịch Vụ Sinh Hoạt");
+                        } else if (khacRadioButton.isSelected()) {
+                            giaoDichModel.setHangMuc("Khác");
+                        }
+                        giaoDichModel.setAccountId(accountId);
+
+                        homeViewController.addGiaoDichChi(giaoDichModel);
+
+                        JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Vui lòng chọn một hạng mục.");
                     }
-                    giaoDichModel.setAccountId(accountId);
-
-                    homeViewController.addGiaoDichChi(giaoDichModel);
-
-                    JOptionPane.showMessageDialog(this, "Thêm thành công!");
                 } else {
                     JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Thanh Tiền không hợp lệ.");
                 }
@@ -118,6 +177,7 @@ public class themChiJFrame extends javax.swing.JFrame {
         thanhTienTGDTextField.setText("");
         ghiChuTGDTextField.setText("");
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

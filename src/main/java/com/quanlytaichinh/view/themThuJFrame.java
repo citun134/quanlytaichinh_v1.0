@@ -53,10 +53,62 @@ public class themThuJFrame extends javax.swing.JFrame {
         thoiGianThuTGDTextField.setDate(date);
     }
     
+//    public void themGD(int accountId) {
+//        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        Date dateTGD = thoiGianThuTGDTextField.getDate();
+//        
+//        String ngayTGD = simpleDateFormat.format(dateTGD);
+//        String thanhTienTGD = thanhTienThuTGDTextField.getText();
+//        String ghiChuTGD = ghiChuThuTGDTextField.getText();
+//
+//        try {
+//            if (!thanhTienTGD.isEmpty() && !ngayTGD.isEmpty()) {
+//                if (!thanhTienTGD.matches(".*[a-zA-Z].*")) {
+//                    DecimalFormat decimalFormat = new DecimalFormat();
+//                    decimalFormat.setParseBigDecimal(true);
+//                    BigDecimal bigDecimal = (BigDecimal) decimalFormat.parse(thanhTienTGD);
+//
+//                    // Set properties of the giaoDichModel object
+//                    giaoDichThuModel.setDate(ngayTGD);
+//                    giaoDichThuModel.setThanhTien(bigDecimal.doubleValue());
+//                    giaoDichThuModel.setGhiChu(ghiChuTGD);
+//
+//                    if (luongRadioButton.isSelected()) {
+//                        giaoDichThuModel.setHangMuc("Lương");
+//                    } else if (thuongRadioButton.isSelected()) {
+//                        giaoDichThuModel.setHangMuc("Thưởng");
+//                    } else if (choTangRadioButton.isSelected()) {
+//                        giaoDichThuModel.setHangMuc("Được cho/tặng");
+//                    } else if (khacThuRadioButton.isSelected()) {
+//                        giaoDichThuModel.setHangMuc("Khác");
+//                    }
+//                    giaoDichThuModel.setAccountId(accountId);
+//
+//                    homeViewController.addGiaoDichThu(giaoDichThuModel);
+//
+//                    JOptionPane.showMessageDialog(this, "Thêm thành công!");
+//                } else {
+//                    JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Thanh Tiền không hợp lệ.");
+//                }
+//            } else {
+//                JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Vui lòng nhập đầy đủ thông tin.");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(this, e.getMessage());
+//        }
+//
+//        // Clear text fields after adding a new record
+//        thanhTienThuTGDTextField.setText("");
+//        ghiChuThuTGDTextField.setText("");
+//    }
+
+    
+    
     public void themGD(int accountId) {
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date dateTGD = thoiGianThuTGDTextField.getDate();
-        
+
         String ngayTGD = simpleDateFormat.format(dateTGD);
         String thanhTienTGD = thanhTienThuTGDTextField.getText();
         String ghiChuTGD = ghiChuThuTGDTextField.getText();
@@ -68,25 +120,30 @@ public class themThuJFrame extends javax.swing.JFrame {
                     decimalFormat.setParseBigDecimal(true);
                     BigDecimal bigDecimal = (BigDecimal) decimalFormat.parse(thanhTienTGD);
 
-                    // Set properties of the giaoDichModel object
-                    giaoDichThuModel.setDate(ngayTGD);
-                    giaoDichThuModel.setThanhTien(bigDecimal.doubleValue());
-                    giaoDichThuModel.setGhiChu(ghiChuTGD);
+                    // Check if a radio button is selected
+                    if (luongRadioButton.isSelected() || thuongRadioButton.isSelected() || choTangRadioButton.isSelected() || khacThuRadioButton.isSelected()) {
+                        // Set properties of the giaoDichModel object
+                        giaoDichThuModel.setDate(ngayTGD);
+                        giaoDichThuModel.setThanhTien(bigDecimal.doubleValue());
+                        giaoDichThuModel.setGhiChu(ghiChuTGD);
 
-                    if (luongRadioButton.isSelected()) {
-                        giaoDichThuModel.setHangMuc("Lương");
-                    } else if (thuongRadioButton.isSelected()) {
-                        giaoDichThuModel.setHangMuc("Thưởng");
-                    } else if (choTangRadioButton.isSelected()) {
-                        giaoDichThuModel.setHangMuc("Được cho/tặng");
-                    } else if (khacThuRadioButton.isSelected()) {
-                        giaoDichThuModel.setHangMuc("Khác");
+                        if (luongRadioButton.isSelected()) {
+                            giaoDichThuModel.setHangMuc("Lương");
+                        } else if (thuongRadioButton.isSelected()) {
+                            giaoDichThuModel.setHangMuc("Thưởng");
+                        } else if (choTangRadioButton.isSelected()) {
+                            giaoDichThuModel.setHangMuc("Được cho/tặng");
+                        } else if (khacThuRadioButton.isSelected()) {
+                            giaoDichThuModel.setHangMuc("Khác");
+                        }
+                        giaoDichThuModel.setAccountId(accountId);
+
+                        homeViewController.addGiaoDichThu(giaoDichThuModel);
+
+                        JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Vui lòng chọn một hạng mục.");
                     }
-                    giaoDichThuModel.setAccountId(accountId);
-
-                    homeViewController.addGiaoDichThu(giaoDichThuModel);
-
-                    JOptionPane.showMessageDialog(this, "Thêm thành công!");
                 } else {
                     JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Thanh Tiền không hợp lệ.");
                 }
@@ -259,7 +316,7 @@ public class themThuJFrame extends javax.swing.JFrame {
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ghiChuThuTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11))
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(hangMucButton)
                     .addComponent(luongRadioButton)
