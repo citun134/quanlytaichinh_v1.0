@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -114,17 +115,18 @@ public class HomeViewPro extends javax.swing.JFrame {
 //        denNgayTKTextField.setDateFormatString("yyyy-MM-dd");
         tuNgayTKTextField.setDateFormatString("dd-MM-yyyy");
         denNgayTKTextField.setDateFormatString("dd-MM-yyyy");
+        
+        tkTuyChonTuDateChooser.setDateFormatString("dd-MM-yyyy");
+        tkTuyChonDenDateChooser.setDateFormatString("dd-MM-yyyy");
 
-        tuTKDateChooser.setDateFormatString("dd-MM-yyyy");
-        denTKDateChooser.setDateFormatString("dd-MM-yyyy");
 
         
         Date date = new Date();
         thoiGianTGDTextField.setDate(date);
         tuNgayTKTextField.setDate(date);
         denNgayTKTextField.setDate(date);
-        tuTKDateChooser.setDate(date);
-        denTKDateChooser.setDate(date);
+        tkTuyChonTuDateChooser.setDate(date);
+        tkTuyChonDenDateChooser.setDate(date);
 
     }
     
@@ -302,37 +304,60 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     }
 
-    public void thongKeGiaoDichChi(JPanel jpanel, int year) {
-        //Hiển thị 12 columns
+    public void thongKeGiaoDichChi(JPanel jpanel, int year, String displayMode) {
+        // Hiển thị 12 columns hoặc chia thành 4 quý
         List<GiaoDichModel> listItem = homeViewController.thongKeGiaoDichChi(logId, year);
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
                 "Tiền", dataset);
 
-        // Create a map to store the data for each month
-        Map<String, Long> monthData = new HashMap<>();
+        // Create a map to store the data for each period (month or quarter)
+        Map<String, Long> periodData = new HashMap<>();
 
-        // Initialize the map with 0 values for all 12 months
-        for (int month = 1; month <= 12; month++) {
-            monthData.put("tháng " + month, 0L);
-        }
+        if ("Tháng".equals(displayMode)) {
+            // Hiển thị 12 tháng
+            for (int month = 1; month <= 12; month++) {
+                periodData.put("tháng " + month, 0L);
+            }
 
-        // Populate the map with actual data
-        for (GiaoDichModel item : listItem) {
-//            int year = item.getYear();
-            int month = item.getMonth();
-            long totalMoney = item.getTotalMoney();
-            String key = "tháng " + month;
+            // Populate the map with actual data
+            for (GiaoDichModel item : listItem) {
+                int month = item.getMonth();
+                long totalMoney = item.getTotalMoney();
+                String key = "tháng " + month;
 
-            // Add the totalMoney to the corresponding month
-            monthData.put(key, monthData.getOrDefault(key, 0L) + totalMoney);
-        }
+                // Add the totalMoney to the corresponding month
+                periodData.put(key, periodData.getOrDefault(key, 0L) + totalMoney);
+            }
 
-        // Add the data to the dataset
-        for (int month = 1; month <= 12; month++) {
-            String key = "tháng " + month;
-            dataset.addValue(monthData.get(key), "Số tiền", key);
+            // Add the data to the dataset
+            for (int month = 1; month <= 12; month++) {
+                String key = "tháng " + month;
+                dataset.addValue(periodData.get(key), "Số tiền", key);
+            }
+        } else if ("Quý".equals(displayMode)) {
+            // Chia thành 4 quý
+            for (int quarter = 1; quarter <= 4; quarter++) {
+                periodData.put("quý " + quarter, 0L);
+            }
+
+            // Populate the map with actual data
+            for (GiaoDichModel item : listItem) {
+                int month = item.getMonth();
+                long totalMoney = item.getTotalMoney();
+                int quarter = (month - 1) / 3 + 1;
+                String key = "quý " + quarter;
+
+                // Add the totalMoney to the corresponding quarter
+                periodData.put(key, periodData.getOrDefault(key, 0L) + totalMoney);
+            }
+
+            // Add the data to the dataset
+            for (int quarter = 1; quarter <= 4; quarter++) {
+                String key = "quý " + quarter;
+                dataset.addValue(periodData.get(key), "Số tiền", key);
+            }
         }
 
         ChartPanel chartPanel = new ChartPanel(chart);
@@ -343,6 +368,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
         jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
     }
+
     
     public void thongKeGiaoDichChiSua(JPanel jpanel, String tu, String den) {
         // Hiển thị dữ liệu theo khoảng thời gian từ 'tu' đến 'den'
@@ -506,6 +532,189 @@ public class HomeViewPro extends javax.swing.JFrame {
 //        jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
 //        jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
 //    }
+    public void thongKeSoTietKiemYear(JPanel jpanel, int year, String displayMode) {
+    List<SoTietKiemModel> soTietKiemList = homeViewController.layDanhSachSoTietKiemToanBo(logId);
+
+    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian", "Tiền", dataset);
+
+    // Xác định tháng bắt đầu và kết thúc
+    int startYear = year;
+    int startMonth = 1;
+
+    int endYear = 12;
+    int endMonth = year;
+
+    // Tạo map để lưu trữ dữ liệu
+    Map<String, Double> dataMap = new TreeMap<>(new MonthYearComparator());
+
+    // Lấy dữ liệu theo tháng hoặc quý
+    if ("Tháng".equals(displayMode)) {
+        // Lặp qua tất cả các tháng trong khoảng thời gian đã chọn
+//        for (int year = startYear; year <= endYear; year++) {
+            for (int month = startMonth; month <= 12; month++) {
+                String key = String.format("%d/%02d", month, year);
+                double totalMoney = calculateTotalMoneyByMonthAndYear(soTietKiemList, month, year);
+                dataMap.put(key, totalMoney);
+
+                if (year == endYear && month == endMonth) {
+                    break; // Dừng vòng lặp khi đã đến tháng cuối cùng
+                }
+//            }
+            startMonth = 1; // Đặt lại tháng bắt đầu thành 1 cho năm tiếp theo
+        }
+    } else if ("Quý".equals(displayMode)) {
+    // Lặp qua tất cả các quý trong khoảng thời gian đã chọn
+//    for (int currentYear = startYear; currentYear <= endYear; currentYear++) {
+        for (int quarter = 1; quarter <= 4; quarter++) {
+            String key = String.format("Quý %d", quarter);
+            int startQuarterMonth = (quarter - 1) * 3 + 1;
+            int endQuarterMonth = quarter * 3;
+            
+            // Ensure endQuarterMonth does not exceed 12
+            if (endQuarterMonth > 12) {
+                endQuarterMonth = 12;
+            }
+            
+            // Calculate totalMoney for the current quarter and year
+            double totalMoney = calculateTotalMoneyByQuarter(soTietKiemList, startQuarterMonth, endQuarterMonth, year);
+            
+            // Add the calculated value to the dataset
+            dataset.addValue(totalMoney, "Số tiền", key);
+
+            if (year == endYear && quarter == (endMonth - 1) / 3 + 1) {
+                break; // Dừng vòng lặp khi đã đến quý cuối cùng
+//            }
+        }
+    }
+}else {
+        // Xử lý trường hợp không hợp lệ (displayMode khác "Tháng" hoặc "Quý")
+        throw new IllegalArgumentException("displayMode must be either \"Tháng\" or \"Quý\"");
+    }
+
+    // Thêm dữ liệu vào dataset
+    for (String key : dataMap.keySet()) {
+        double totalMoney = dataMap.get(key);
+        dataset.addValue(totalMoney, "Số tiền", key);
+    }
+
+    // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
+    CategoryPlot plot = (CategoryPlot) chart.getPlot();
+    StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
+            StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
+            new DecimalFormat("###,###,###,###")
+    );
+    plot.getRenderer().setBaseToolTipGenerator(toolTipGenerator);
+
+    ChartPanel chartPanel = new ChartPanel(chart);
+
+    // Thêm chartPanel vào JPanel
+    jpanel.removeAll();
+    jpanel.setLayout(new BorderLayout());
+    jpanel.add(chartPanel, BorderLayout.CENTER);
+    jpanel.revalidate();
+}
+
+    public void thongKeLaiSuatVayYear(JPanel jpanel, int year, String displayMode) {
+    List<LaiSuatVayModel> laiSuatVayList = homeViewController.layDanhSachLaiSuatVayToanBo(logId);
+
+    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian", "Tiền", dataset);
+
+    // Xác định tháng bắt đầu và kết thúc
+    int startYear = year;
+    int startMonth = 1;
+
+    int endYear = 12;
+    int endMonth = year;
+
+    // Tạo map để lưu trữ dữ liệu
+    Map<String, Double> dataMap = new TreeMap<>(new MonthYearComparator());
+
+    // Lấy dữ liệu theo tháng hoặc quý
+    if ("Tháng".equals(displayMode)) {
+        // Lặp qua tất cả các tháng trong khoảng thời gian đã chọn
+//        for (int year = startYear; year <= endYear; year++) {
+            for (int month = startMonth; month <= 12; month++) {
+                String key = String.format("%d/%02d", month, year);
+                double totalMoney = calculateTotalMoneyByMonthAndYearLSV(laiSuatVayList, month, year);
+                dataMap.put(key, totalMoney);   
+
+                if (year == endYear && month == endMonth) {
+                    break; // Dừng vòng lặp khi đã đến tháng cuối cùng
+                }
+//            }
+            startMonth = 1; // Đặt lại tháng bắt đầu thành 1 cho năm tiếp theo
+        }
+    } else if ("Quý".equals(displayMode)) {
+    // Lặp qua tất cả các quý trong khoảng thời gian đã chọn
+//    for (int currentYear = startYear; currentYear <= endYear; currentYear++) {
+        for (int quarter = 1; quarter <= 4; quarter++) {
+            String key = String.format("Quý %d", quarter);
+            int startQuarterMonth = (quarter - 1) * 3 + 1;
+            int endQuarterMonth = quarter * 3;
+            
+            // Ensure endQuarterMonth does not exceed 12
+            if (endQuarterMonth > 12) {
+                endQuarterMonth = 12;
+            }
+            
+            // Calculate totalMoney for the current quarter and year
+            double totalMoney = calculateTotalMoneyByQuarterLSV(laiSuatVayList, startQuarterMonth, endQuarterMonth, year);
+            
+            // Add the calculated value to the dataset
+            dataset.addValue(totalMoney, "Số tiền", key);
+
+            if (year == endYear && quarter == (endMonth - 1) / 3 + 1) {
+                break; // Dừng vòng lặp khi đã đến quý cuối cùng
+//            }
+        }
+    }
+}
+ else {
+        // Xử lý trường hợp không hợp lệ (displayMode khác "Tháng" hoặc "Quý")
+        throw new IllegalArgumentException("displayMode must be either \"Tháng\" or \"Quý\"");
+    }
+
+    // Thêm dữ liệu vào dataset
+    for (String key : dataMap.keySet()) {
+        double totalMoney = dataMap.get(key);
+        dataset.addValue(totalMoney, "Số tiền", key);
+    }
+
+    // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
+    CategoryPlot plot = (CategoryPlot) chart.getPlot();
+    StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
+            StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
+            new DecimalFormat("###,###,###,###")
+    );
+    plot.getRenderer().setBaseToolTipGenerator(toolTipGenerator);
+
+    ChartPanel chartPanel = new ChartPanel(chart);
+
+    // Thêm chartPanel vào JPanel
+    jpanel.removeAll();
+    jpanel.setLayout(new BorderLayout());
+    jpanel.add(chartPanel, BorderLayout.CENTER);
+    jpanel.revalidate();
+}    
+    
+    
+    private double calculateTotalMoneyByQuarter(List<SoTietKiemModel> soTietKiemList, int startMonth, int endMonth, int year) {
+        double totalMoney = 0;
+        for (int month = startMonth; month <= endMonth; month++) {
+            totalMoney += calculateTotalMoneyByMonthAndYear(soTietKiemList, month, year);
+        }
+        return totalMoney;
+    }
+    
+    private double calculateTotalMoneyByQuarterLSV(List<LaiSuatVayModel> laiSuatVayList, int startMonth, int endMonth, int year) {
+        double totalMoney = 0;
+        for (int month = startMonth; month <= endMonth; month++) {
+            totalMoney += calculateTotalMoneyByMonthAndYearLSV(laiSuatVayList, month, year);
+        }
+        return totalMoney;
+    }
     
     public void thongKeSoTietKiem(JPanel jpanel, String tu, String den) {
         List<SoTietKiemModel> soTietKiemList = homeViewController.layDanhSachSoTietKiemToanBo(logId);
@@ -697,7 +906,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         return totalMoney;
     }
     
-    public void thongKeGiaoDichThu(JPanel jpanel, int year) {
+    public void thongKeGiaoDichThu(JPanel jpanel, int year, String displayMode) {
         //Hiển thị 12 columns
         List<GiaoDichModel> listItem = homeViewController.thongKeGiaoDichThu(logId, year);
 
@@ -705,29 +914,52 @@ public class HomeViewPro extends javax.swing.JFrame {
         JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
                 "Tiền", dataset);
 
-        // Create a map to store the data for each month
-        Map<String, Long> monthData = new HashMap<>();
+        // Create a map to store the data for each period (month or quarter)
+        Map<String, Long> periodData = new HashMap<>();
 
-        // Initialize the map with 0 values for all 12 months
-        for (int month = 1; month <= 12; month++) {
-            monthData.put("tháng " + month, 0L);
-        }
+        if ("Tháng".equals(displayMode)) {
+            // Hiển thị 12 tháng
+            for (int month = 1; month <= 12; month++) {
+                periodData.put("tháng " + month, 0L);
+            }
 
-        // Populate the map with actual data
-        for (GiaoDichModel item : listItem) {
-//            int year = item.getYear();
-            int month = item.getMonth();
-            long totalMoney = item.getTotalMoney();
-            String key = "tháng " + month;
+            // Populate the map with actual data
+            for (GiaoDichModel item : listItem) {
+                int month = item.getMonth();
+                long totalMoney = item.getTotalMoney();
+                String key = "tháng " + month;
 
-            // Add the totalMoney to the corresponding month
-            monthData.put(key, monthData.getOrDefault(key, 0L) + totalMoney);
-        }
+                // Add the totalMoney to the corresponding month
+                periodData.put(key, periodData.getOrDefault(key, 0L) + totalMoney);
+            }
 
-        // Add the data to the dataset
-        for (int month = 1; month <= 12; month++) {
-            String key = "tháng " + month;
-            dataset.addValue(monthData.get(key), "Số tiền", key);
+            // Add the data to the dataset
+            for (int month = 1; month <= 12; month++) {
+                String key = "tháng " + month;
+                dataset.addValue(periodData.get(key), "Số tiền", key);
+            }
+        } else if ("Quý".equals(displayMode)) {
+            // Chia thành 4 quý
+            for (int quarter = 1; quarter <= 4; quarter++) {
+                periodData.put("quý " + quarter, 0L);
+            }
+
+            // Populate the map with actual data
+            for (GiaoDichModel item : listItem) {
+                int month = item.getMonth();
+                long totalMoney = item.getTotalMoney();
+                int quarter = (month - 1) / 3 + 1;
+                String key = "quý " + quarter;
+
+                // Add the totalMoney to the corresponding quarter
+                periodData.put(key, periodData.getOrDefault(key, 0L) + totalMoney);
+            }
+
+            // Add the data to the dataset
+            for (int quarter = 1; quarter <= 4; quarter++) {
+                String key = "quý " + quarter;
+                dataset.addValue(periodData.get(key), "Số tiền", key);
+            }
         }
 
         ChartPanel chartPanel = new ChartPanel(chart);
@@ -739,7 +971,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
     }
     
-    public void thongKeGiaoDichThuChi(JPanel jpanel, int year) {
+    public void thongKeGiaoDichThuChi(JPanel jpanel, int year, String displayMode) {
         //Hiển thị 12 columns
         List<GiaoDichModel> listItem = homeViewController.thongKeGiaoDichThuChi(logId, year);
 
@@ -747,29 +979,52 @@ public class HomeViewPro extends javax.swing.JFrame {
         JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
                 "Tiền", dataset);
 
-        // Create a map to store the data for each month
-        Map<String, Long> monthData = new HashMap<>();
+        // Create a map to store the data for each period (month or quarter)
+        Map<String, Long> periodData = new HashMap<>();
 
-        // Initialize the map with 0 values for all 12 months
-        for (int month = 1; month <= 12; month++) {
-            monthData.put("tháng " + month, 0L);
-        }
+        if ("Tháng".equals(displayMode)) {
+            // Hiển thị 12 tháng
+            for (int month = 1; month <= 12; month++) {
+                periodData.put("tháng " + month, 0L);
+            }
 
-        // Populate the map with actual data
-        for (GiaoDichModel item : listItem) {
-//            int year = item.getYear();
-            int month = item.getMonth();
-            long totalMoney = item.getTotalMoney();
-            String key = "tháng " + month;
+            // Populate the map with actual data
+            for (GiaoDichModel item : listItem) {
+                int month = item.getMonth();
+                long totalMoney = item.getTotalMoney();
+                String key = "tháng " + month;
 
-            // Add the totalMoney to the corresponding month
-            monthData.put(key, monthData.getOrDefault(key, 0L) + totalMoney);
-        }
+                // Add the totalMoney to the corresponding month
+                periodData.put(key, periodData.getOrDefault(key, 0L) + totalMoney);
+            }
 
-        // Add the data to the dataset
-        for (int month = 1; month <= 12; month++) {
-            String key = "tháng " + month;
-            dataset.addValue(monthData.get(key), "Số tiền", key);
+            // Add the data to the dataset
+            for (int month = 1; month <= 12; month++) {
+                String key = "tháng " + month;
+                dataset.addValue(periodData.get(key), "Số tiền", key);
+            }
+        } else if ("Quý".equals(displayMode)) {
+            // Chia thành 4 quý
+            for (int quarter = 1; quarter <= 4; quarter++) {
+                periodData.put("quý " + quarter, 0L);
+            }
+
+            // Populate the map with actual data
+            for (GiaoDichModel item : listItem) {
+                int month = item.getMonth();
+                long totalMoney = item.getTotalMoney();
+                int quarter = (month - 1) / 3 + 1;
+                String key = "quý " + quarter;
+
+                // Add the totalMoney to the corresponding quarter
+                periodData.put(key, periodData.getOrDefault(key, 0L) + totalMoney);
+            }
+
+            // Add the data to the dataset
+            for (int quarter = 1; quarter <= 4; quarter++) {
+                String key = "quý " + quarter;
+                dataset.addValue(periodData.get(key), "Số tiền", key);
+            }
         }
 
         ChartPanel chartPanel = new ChartPanel(chart);
@@ -1132,6 +1387,15 @@ public class HomeViewPro extends javax.swing.JFrame {
         dvSinhHoatRadioButton1 = new javax.swing.JRadioButton();
         khacRadioButton1 = new javax.swing.JRadioButton();
         buttonGroup2 = new javax.swing.ButtonGroup();
+        tkDialog = new javax.swing.JDialog();
+        jPanel9 = new javax.swing.JPanel();
+        tkTuyChoComboBox = new javax.swing.JComboBox<>();
+        tkTuyChonTuDateChooser = new com.toedter.calendar.JDateChooser();
+        jLabel22 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        tkTuyChonDenDateChooser = new com.toedter.calendar.JDateChooser();
+        tkTKDiaLogButton = new javax.swing.JButton();
+        tkThoatTuyChonButton = new javax.swing.JButton();
         headerPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -1181,15 +1445,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         showTKPanel = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         tkYearTKButton = new javax.swing.JButton();
-        tkChiRadioButton = new javax.swing.JRadioButton();
-        tkThuRadioButton = new javax.swing.JRadioButton();
-        tkThuChiRadioButton = new javax.swing.JRadioButton();
-        jLabel5 = new javax.swing.JLabel();
-        tuTKDateChooser = new com.toedter.calendar.JDateChooser();
-        denTKDateChooser = new com.toedter.calendar.JDateChooser();
-        jLabel21 = new javax.swing.JLabel();
-        tkSTKRadioButton = new javax.swing.JRadioButton();
-        tkLSVRadioButton = new javax.swing.JRadioButton();
+        jLabel4 = new javax.swing.JLabel();
+        yearTKTextField = new javax.swing.JTextField();
+        thangQuyComboBox = new javax.swing.JComboBox<>();
+        tkTuyChonButton = new javax.swing.JButton();
+        tkThangQuyComboBox = new javax.swing.JComboBox<>();
         giaoDichPanel = new javax.swing.JPanel();
         jTabbedPane4 = new javax.swing.JTabbedPane();
         jPanel15 = new javax.swing.JPanel();
@@ -1541,6 +1801,92 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         editChiDialog.getContentPane().add(bodyThemGiaoDichPanel1, java.awt.BorderLayout.CENTER);
 
+        jPanel9.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jPanel9.setInheritsPopupMenu(true);
+        jPanel9.setPreferredSize(new java.awt.Dimension(330, 152));
+
+        tkTuyChoComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mục chi", "Mục thu", "Mục thu&chi", "Sổ tiết kiệm", "Lãi suất vay" }));
+
+        jLabel22.setText("Từ");
+
+        jLabel23.setText("Đến");
+
+        tkTKDiaLogButton.setText("Tìm Kiếm");
+        tkTKDiaLogButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tkTKDiaLogButtonActionPerformed(evt);
+            }
+        });
+
+        tkThoatTuyChonButton.setText("Thoát");
+        tkThoatTuyChonButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tkThoatTuyChonButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap(29, Short.MAX_VALUE)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                        .addComponent(tkThoatTuyChonButton)
+                        .addContainerGap())
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(tkTuyChoComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel9Layout.createSequentialGroup()
+                                .addComponent(jLabel22)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(tkTuyChonTuDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel23)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(tkTuyChonDenDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(32, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tkTKDiaLogButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(tkTuyChoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel23)
+                    .addComponent(tkTuyChonTuDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel22)
+                    .addComponent(tkTuyChonDenDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(tkTKDiaLogButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tkThoatTuyChonButton)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout tkDialogLayout = new javax.swing.GroupLayout(tkDialog.getContentPane());
+        tkDialog.getContentPane().setLayout(tkDialogLayout);
+        tkDialogLayout.setHorizontalGroup(
+            tkDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tkDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        tkDialogLayout.setVerticalGroup(
+            tkDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tkDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 500));
 
@@ -1568,9 +1914,9 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(259, Short.MAX_VALUE)
+                .addContainerGap(315, Short.MAX_VALUE)
                 .addComponent(jLabel3)
-                .addContainerGap(259, Short.MAX_VALUE))
+                .addContainerGap(316, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1740,11 +2086,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(190, Short.MAX_VALUE)
+                .addContainerGap(246, Short.MAX_VALUE)
                 .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 186, Short.MAX_VALUE))
+                .addGap(0, 243, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tenTKButton)
@@ -1797,12 +2143,12 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1875,7 +2221,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap(175, Short.MAX_VALUE)
+                .addContainerGap(232, Short.MAX_VALUE)
                 .addComponent(jLabel13)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tuTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1883,7 +2229,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(176, Short.MAX_VALUE))
+                .addContainerGap(232, Short.MAX_VALUE))
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tienTKButton)
@@ -1914,12 +2260,12 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
+            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1980,7 +2326,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap(173, Short.MAX_VALUE)
+                .addContainerGap(229, Short.MAX_VALUE)
                 .addComponent(jLabel15)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1988,7 +2334,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(jLabel16)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(173, Short.MAX_VALUE))
+                .addContainerGap(230, Short.MAX_VALUE))
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ngayTKButton)
@@ -2019,12 +2365,12 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -2059,11 +2405,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         showTKPanel.setLayout(showTKPanelLayout);
         showTKPanelLayout.setHorizontalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 665, Short.MAX_VALUE)
+            .addGap(0, 778, Short.MAX_VALUE)
         );
         showTKPanelLayout.setVerticalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 365, Short.MAX_VALUE)
+            .addGap(0, 333, Short.MAX_VALUE)
         );
 
         jPanel8.setBackground(new java.awt.Color(255, 255, 255));
@@ -2077,34 +2423,29 @@ public class HomeViewPro extends javax.swing.JFrame {
             }
         });
 
-        buttonGroup2.add(tkChiRadioButton);
-        tkChiRadioButton.setText("Mục Chi");
-        tkChiRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        jLabel4.setText("Năm");
+
+        yearTKTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tkChiRadioButtonActionPerformed(evt);
+                yearTKTextFieldActionPerformed(evt);
             }
         });
 
-        buttonGroup2.add(tkThuRadioButton);
-        tkThuRadioButton.setText("Mục Thu");
-
-        buttonGroup2.add(tkThuChiRadioButton);
-        tkThuChiRadioButton.setText("Mục Thu & Chi");
-
-        jLabel5.setText("Từ");
-
-        jLabel21.setText("Đến");
-
-        buttonGroup2.add(tkSTKRadioButton);
-        tkSTKRadioButton.setText("Sổ Tiết Kiệm");
-        tkSTKRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        thangQuyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tháng", "Quý" }));
+        thangQuyComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tkSTKRadioButtonActionPerformed(evt);
+                thangQuyComboBoxActionPerformed(evt);
             }
         });
 
-        buttonGroup2.add(tkLSVRadioButton);
-        tkLSVRadioButton.setText("Lãi Suất Vay");
+        tkTuyChonButton.setText("Tùy Chọn");
+        tkTuyChonButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tkTuyChonButtonActionPerformed(evt);
+            }
+        });
+
+        tkThangQuyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mục chi", "Mục thu", "Mục thu&chi", "Sổ tiết kiệm", "Lãi suất vay" }));
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -2112,55 +2453,37 @@ public class HomeViewPro extends javax.swing.JFrame {
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tkChiRadioButton)
-                .addGap(18, 18, 18)
-                .addComponent(tkThuRadioButton)
-                .addGap(18, 18, 18)
-                .addComponent(tkThuChiRadioButton)
-                .addGap(18, 18, 18)
-                .addComponent(tkSTKRadioButton)
-                .addGap(18, 18, 18)
-                .addComponent(tkLSVRadioButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(137, 137, 137)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(tkYearTKButton)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(tuTKDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(78, 78, 78)
-                        .addComponent(jLabel21)))
+                    .addComponent(jLabel4)
+                    .addComponent(tkThangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(denTKDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(thangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(tkTuyChonButton))
+                    .addComponent(yearTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tkYearTKButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(tkThuChiRadioButton)
-                            .addComponent(tkSTKRadioButton)
-                            .addComponent(tkLSVRadioButton)
-                            .addComponent(tkThuRadioButton)
-                            .addComponent(tkChiRadioButton))
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel8Layout.createSequentialGroup()
-                                .addGap(11, 11, 11)
-                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel5)
-                                    .addComponent(tuTKDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel21))))
-                    .addComponent(denTKDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                .addContainerGap(38, Short.MAX_VALUE)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tkThangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(thangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tkTuyChonButton))
                 .addGap(18, 18, 18)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(yearTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tkYearTKButton)
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addGap(12, 12, 12))
         );
 
         javax.swing.GroupLayout thongKePanelLayout = new javax.swing.GroupLayout(thongKePanel);
@@ -2260,14 +2583,14 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel17Layout.createSequentialGroup()
-                .addContainerGap(31, Short.MAX_VALUE)
+                .addContainerGap(33, Short.MAX_VALUE)
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themChiButton)
                     .addComponent(suaChiButton)
                     .addComponent(xoaAllChiButton)
                     .addComponent(inMucChiButton)
                     .addComponent(xoaChiButton))
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         chiTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -2291,7 +2614,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
+            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
         );
         jPanel15Layout.setVerticalGroup(
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2372,14 +2695,14 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel18Layout.setVerticalGroup(
             jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel18Layout.createSequentialGroup()
-                .addContainerGap(31, Short.MAX_VALUE)
+                .addContainerGap(33, Short.MAX_VALUE)
                 .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themThuButton)
                     .addComponent(suaThuButton)
                     .addComponent(xoaThuButton)
                     .addComponent(xoaAllThuButton)
                     .addComponent(inMucThuButton))
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         thuTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -2403,7 +2726,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
         );
         jPanel16Layout.setVerticalGroup(
             jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2535,12 +2858,12 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
         );
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel13Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -2647,12 +2970,12 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
         );
         jPanel19Layout.setVerticalGroup(
             jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel19Layout.createSequentialGroup()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -2813,29 +3136,100 @@ public class HomeViewPro extends javax.swing.JFrame {
     }//GEN-LAST:event_denTienTKTextFieldKeyReleased
 
     private void tkYearTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkYearTKButtonActionPerformed
-//        String year = yearTextField.getText();
-//        tuTKDateChooser.setDateFormatString("yyyy-MM-dd");
-//        denTKDateChooser.setDateFormatString("yyyy-MM-dd");
-//        
-        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date tuNgayTK = tuTKDateChooser.getDate();
-        Date denNgayTK = denTKDateChooser.getDate();
+//       
         
-        String tuNgayTxt = simpleDateFormat.format(tuNgayTK);
-        String denNgayTxt = simpleDateFormat.format(denNgayTK);
+        String displayMode = (String) tkThangQuyComboBox.getSelectedItem();
+        String thangQuy = (String) thangQuyComboBox.getSelectedItem();
+        String year = yearTKTextField.getText();
         
-        if (tkChiRadioButton.isSelected()) {
-            thongKeGiaoDichChiSua(showTKPanel, tuNgayTxt, denNgayTxt);
+        if (("Mục chi".equals(displayMode))) {
+                if ("Tháng".equals(thangQuy) || "Quý".equals(thangQuy)) {
+                    try {
+                        int intYear = Integer.parseInt(year);
+
+                        // Gọi hàm thống kê với tham số year và displayMode
+                        thongKeGiaoDichChi(showTKPanel, intYear, thangQuy);
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(this, "Năm không hợp lệ!");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn chế độ thống kê là 'tháng' hoặc 'quý'");
+                }
+        }
+        if (("Lãi suất vay".equals(displayMode))) {
+//            thongKeLaiSuatVay(showTKPanel, tuNgayTxt, denNgayTxt);
+            if ("Tháng".equals(thangQuy) || "Quý".equals(thangQuy)) {
+                    try {
+                        int intYear = Integer.parseInt(year);
+
+                        // Gọi hàm thống kê với tham số year và displayMode
+                        thongKeLaiSuatVayYear(showTKPanel, intYear, thangQuy);
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(this, "Năm không hợp lệ!");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn chế độ thống kê là 'tháng' hoặc 'quý'");
+                }
+        }
+        if (("Sổ tiết kiệm".equals(displayMode))){
+//            thongKeSoTietKiem(showTKPanel, tuNgayTxt, denNgayTxt);
+            if ("Tháng".equals(thangQuy) || "Quý".equals(thangQuy)) {
+                    try {
+                        int intYear = Integer.parseInt(year);
+
+                        // Gọi hàm thống kê với tham số year và displayMode
+                        thongKeSoTietKiemYear(showTKPanel, intYear, thangQuy);
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(this, "Năm không hợp lệ!");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn chế độ thống kê là 'tháng' hoặc 'quý'");
+                }
+        }
+        if (("Mục thu&chi".equals(displayMode))) {
+//            thongKeGiaoDichThuChiSua(showTKPanel, tuNgayTxt, denNgayTxt);
+            if ("Tháng".equals(thangQuy) || "Quý".equals(thangQuy)) {
+                    try {
+                        int intYear = Integer.parseInt(year);
+
+                        // Gọi hàm thống kê với tham số year và displayMode
+                        thongKeGiaoDichThuChi(showTKPanel, intYear, thangQuy);
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(this, "Năm không hợp lệ!");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn chế độ thống kê là 'tháng' hoặc 'quý'");
+                }
         } 
-        else if (tkLSVRadioButton.isSelected()) {
-            thongKeLaiSuatVay(showTKPanel, tuNgayTxt, denNgayTxt);
-        } else if (tkSTKRadioButton.isSelected()){
-            thongKeSoTietKiem(showTKPanel, tuNgayTxt, denNgayTxt);
-        } else if (tkThuChiRadioButton.isSelected()) {
-            thongKeGiaoDichThuChiSua(showTKPanel, tuNgayTxt, denNgayTxt);
-        } else if (tkThuRadioButton.isSelected()){
-            thongKeGiaoDichThuSua(showTKPanel, tuNgayTxt, denNgayTxt);
+        if (("Mục thu".equals(displayMode))){
+//            thongKeGiaoDichThuSua(showTKPanel, tuNgayTxt, denNgayTxt);
+            if ("Tháng".equals(thangQuy) || "Quý".equals(thangQuy)) {
+                    try {
+                        int intYear = Integer.parseInt(year);
+
+                        // Gọi hàm thống kê với tham số year và displayMode
+                        thongKeGiaoDichThu(showTKPanel, intYear, thangQuy);
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(this, "Năm không hợp lệ!");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chọn chế độ thống kê là 'tháng' hoặc 'quý'");
+                }
         };
+        
+//        if ("tháng".equals(displayMode) || "quý".equals(displayMode)) {
+//            try {
+//                int intYear = Integer.parseInt(year);
+//
+//                // Gọi hàm thống kê với tham số year và displayMode
+//                thongKeGiaoDichChi(showTKPanel, intYear, displayMode);
+//            } catch (NumberFormatException e) {
+//                JOptionPane.showMessageDialog(this, "Năm không hợp lệ!");
+//            }
+//        } else {
+//            JOptionPane.showMessageDialog(this, "Chọn chế độ thống kê là 'tháng' hoặc 'quý'");
+//        }
+
 //        thongKeGiaoDichChi(showTKPanel, Integer.parseInt(year));
     }//GEN-LAST:event_tkYearTKButtonActionPerformed
 
@@ -3063,10 +3457,6 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_xoaAllLSVButtonActionPerformed
 
-    private void tkChiRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkChiRadioButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tkChiRadioButtonActionPerformed
-
     private void inMucChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inMucChiButtonActionPerformed
         // TODO add your handling code here:
         exportTableToExcel(chiTable);
@@ -3102,9 +3492,49 @@ public class HomeViewPro extends javax.swing.JFrame {
         exportTableToExcel(soTietKiemTable);
     }//GEN-LAST:event_inSTKButtonActionPerformed
 
-    private void tkSTKRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkSTKRadioButtonActionPerformed
+    private void yearTKTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yearTKTextFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_tkSTKRadioButtonActionPerformed
+    }//GEN-LAST:event_yearTKTextFieldActionPerformed
+
+    private void thangQuyComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thangQuyComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_thangQuyComboBoxActionPerformed
+
+    private void tkTuyChonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkTuyChonButtonActionPerformed
+        // TODO add your handling code here:
+        tkDialog.setVisible(true);
+        tkDialog.setSize(500, 300);
+        tkDialog.setLocationRelativeTo(null);
+    }//GEN-LAST:event_tkTuyChonButtonActionPerformed
+
+    private void tkTKDiaLogButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkTKDiaLogButtonActionPerformed
+        // TODO add your handling code here:
+        String displayMode = (String) tkTuyChoComboBox.getSelectedItem();
+        
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date tuNgayTK = tkTuyChonTuDateChooser.getDate();
+        Date denNgayTK = tkTuyChonDenDateChooser.getDate();
+        
+        String tuNgayTxt = simpleDateFormat.format(tuNgayTK);
+        String denNgayTxt = simpleDateFormat.format(denNgayTK);
+        
+        if ("Mục chi".equals(displayMode)) {
+            thongKeGiaoDichChiSua(showTKPanel, tuNgayTxt, denNgayTxt);
+        } else if ("Lãi suất vay".equals(displayMode)) {
+            thongKeLaiSuatVay(showTKPanel, tuNgayTxt, denNgayTxt);
+        } else if ("Sổ tiết kiệm".equals(displayMode)){
+            thongKeSoTietKiem(showTKPanel, tuNgayTxt, denNgayTxt);
+        } else if ("Mục thu&chi".equals(displayMode)) {
+            thongKeGiaoDichThuChiSua(showTKPanel, tuNgayTxt, denNgayTxt);
+        } else if ("Mục thu".equals(displayMode)){
+            thongKeGiaoDichThuSua(showTKPanel, tuNgayTxt, denNgayTxt);
+        };
+    }//GEN-LAST:event_tkTKDiaLogButtonActionPerformed
+
+    private void tkThoatTuyChonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkThoatTuyChonButtonActionPerformed
+        // TODO add your handling code here:
+        tkDialog.setVisible(false);
+    }//GEN-LAST:event_tkThoatTuyChonButtonActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -3149,7 +3579,6 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JTable chiTable;
     private com.toedter.calendar.JDateChooser denNgayTKTextField;
-    private com.toedter.calendar.JDateChooser denTKDateChooser;
     private javax.swing.JTextField denTienTKTextField;
     private javax.swing.JRadioButton dvSinhHoatRadioButton;
     private javax.swing.JRadioButton dvSinhHoatRadioButton1;
@@ -3183,9 +3612,10 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -3206,6 +3636,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
@@ -3239,6 +3670,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JButton tenTKButton;
     private javax.swing.JTable tenTKTable;
     private javax.swing.JTextField tenTKTextField;
+    private javax.swing.JComboBox<String> thangQuyComboBox;
     private javax.swing.JTextField thanhTienTGDTextField;
     private javax.swing.JTextField thanhTienTGDTextField1;
     private javax.swing.JButton themChiButton;
@@ -3261,14 +3693,16 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JTable tienTKTable;
     private javax.swing.JButton timKiemButton;
     private javax.swing.JPanel timKiemPanel;
-    private javax.swing.JRadioButton tkChiRadioButton;
-    private javax.swing.JRadioButton tkLSVRadioButton;
-    private javax.swing.JRadioButton tkSTKRadioButton;
-    private javax.swing.JRadioButton tkThuChiRadioButton;
-    private javax.swing.JRadioButton tkThuRadioButton;
+    private javax.swing.JDialog tkDialog;
+    private javax.swing.JButton tkTKDiaLogButton;
+    private javax.swing.JComboBox<String> tkThangQuyComboBox;
+    private javax.swing.JButton tkThoatTuyChonButton;
+    private javax.swing.JComboBox<String> tkTuyChoComboBox;
+    private javax.swing.JButton tkTuyChonButton;
+    private com.toedter.calendar.JDateChooser tkTuyChonDenDateChooser;
+    private com.toedter.calendar.JDateChooser tkTuyChonTuDateChooser;
     private javax.swing.JButton tkYearTKButton;
     private com.toedter.calendar.JDateChooser tuNgayTKTextField;
-    private com.toedter.calendar.JDateChooser tuTKDateChooser;
     private javax.swing.JTextField tuTienTKTextField;
     private javax.swing.JButton xoaAllChiButton;
     private javax.swing.JButton xoaAllLSVButton;
@@ -3278,5 +3712,6 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JButton xoaLSVButton;
     private javax.swing.JButton xoaSTKButton;
     private javax.swing.JButton xoaThuButton;
+    private javax.swing.JTextField yearTKTextField;
     // End of variables declaration//GEN-END:variables
 }

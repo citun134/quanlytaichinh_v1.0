@@ -89,7 +89,7 @@ public void themGD(int accountId) {
     String tenNganHangTGD = tenNganHangTGDTextField.getText();
     String soTienGuiTGD = soTienGuiTGDTextField.getText();
     double laiSuatTGD = laiSuatGuiTGDSlider.getValue();
-    String kyHanTGD = kyHanTGDTextField.getText();
+    String kyHanTGD = (String) kyHanTGDTextField.getSelectedItem();
 
     try {
         if (!ngayTGD.isEmpty() && !soTienGuiTGD.isEmpty() && !kyHanTGD.isEmpty()) {
@@ -149,9 +149,7 @@ public void themGD(int accountId) {
         bodyThemGiaoDichPanel = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
         soTienGuiTGDTextField = new javax.swing.JTextField();
-        kyHanTGDTextField = new javax.swing.JTextField();
         themTGDButton = new javax.swing.JButton();
         thoatTGDButton = new javax.swing.JButton();
         laiSuatGuiTGDSlider = new javax.swing.JSlider();
@@ -159,6 +157,8 @@ public void themGD(int accountId) {
         jLabel2 = new javax.swing.JLabel();
         tenNganHangTGDTextField = new javax.swing.JTextField();
         ngayGuiTGDTextField = new com.toedter.calendar.JDateChooser();
+        jLabel3 = new javax.swing.JLabel();
+        kyHanTGDTextField = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -195,9 +195,6 @@ public void themGD(int accountId) {
 
         jLabel9.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel9.setText("Lãi suất (%/năm)");
-
-        jLabel10.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jLabel10.setText("Kỳ hạn");
 
         soTienGuiTGDTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -237,41 +234,46 @@ public void themGD(int accountId) {
         jLabel2.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel2.setText("Tên ngân hàng");
 
+        jLabel3.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel3.setText("Kỳ hạn");
+
+        kyHanTGDTextField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "18", "24", "36" }));
+
         javax.swing.GroupLayout bodyThemGiaoDichPanelLayout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel);
         bodyThemGiaoDichPanel.setLayout(bodyThemGiaoDichPanelLayout);
         bodyThemGiaoDichPanelLayout.setHorizontalGroup(
             bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                .addGap(187, 187, 187)
-                .addComponent(themTGDButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(thoatTGDButton))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(thoatTGDButton))
                             .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(kyHanTGDTextField))
+                                .addComponent(laiSuatGuiTGDSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE))
                             .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(laiSuatGuiTGDSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE))))
+                                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel1))
+                                .addGap(34, 34, 34)
+                                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(tenNganHangTGDTextField)
+                                    .addComponent(soTienGuiTGDTextField)
+                                    .addComponent(ngayGuiTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1))
-                        .addGap(34, 34, 34)
-                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tenNganHangTGDTextField)
-                            .addComponent(soTienGuiTGDTextField)
-                            .addComponent(ngayGuiTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(190, 190, 190)
+                        .addComponent(themTGDButton)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel3)
+                        .addGap(89, 89, 89)
+                        .addComponent(kyHanTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         bodyThemGiaoDichPanelLayout.setVerticalGroup(
@@ -295,11 +297,11 @@ public void themGD(int accountId) {
                     .addComponent(laiSuatGuiTGDSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
                     .addComponent(kyHanTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(63, 63, 63)
                 .addComponent(themTGDButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
                 .addComponent(thoatTGDButton)
                 .addContainerGap())
         );
@@ -362,12 +364,12 @@ public void themGD(int accountId) {
     private javax.swing.JPanel bodyThemGiaoDichPanel;
     private javax.swing.JPanel headerThemGiaoDichPanel;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JTextField kyHanTGDTextField;
+    private javax.swing.JComboBox<String> kyHanTGDTextField;
     private javax.swing.JSlider laiSuatGuiTGDSlider;
     private com.toedter.calendar.JDateChooser ngayGuiTGDTextField;
     private javax.swing.JTextField soTienGuiTGDTextField;

@@ -163,7 +163,7 @@ public class themLSVJFrame extends javax.swing.JFrame {
         String tenNganHangTGD = tenNganHangLSVTGDTextField.getText();
         String giaTriBDSTGD = giaTriBDSLSVTGDTextField.getText();
         String soTienVayTGD = soTienVayLSVTGDTextField.getText();
-        String thoiGianVayTGD = thoiGianVayLSVTGDTextField.getText();
+        String thoiGianVayTGD = (String) thoiGianVayLSVTGDTextField.getSelectedItem();
         double laiSuatTGD = laiSuatLSVTGDSlider.getValue();
         String ngayTGD = simpleDateFormat.format(dateTGD);
 
@@ -213,7 +213,7 @@ public class themLSVJFrame extends javax.swing.JFrame {
         tenNganHangLSVTGDTextField.setText("");
         giaTriBDSLSVTGDTextField.setText("");
         soTienVayLSVTGDTextField.setText("");
-        thoiGianVayLSVTGDTextField.setText("");  // Set thoiGianVayTGDTextField to an empty string
+//        thoiGianVayLSVTGDTextField.set("");  // Set thoiGianVayTGDTextField to an empty string
     }
 
     /**
@@ -231,7 +231,6 @@ public class themLSVJFrame extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        thoiGianVayLSVTGDTextField = new javax.swing.JTextField();
         themTGDButton = new javax.swing.JButton();
         thoatTGDButton = new javax.swing.JButton();
         laiSuatLSVTGDSlider = new javax.swing.JSlider();
@@ -242,6 +241,7 @@ public class themLSVJFrame extends javax.swing.JFrame {
         giaTriBDSLSVTGDTextField = new javax.swing.JTextField();
         soTienVayLSVTGDTextField = new javax.swing.JTextField();
         ngayGiaiNganLSVjDateChooser = new com.toedter.calendar.JDateChooser();
+        thoiGianVayLSVTGDTextField = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -282,12 +282,6 @@ public class themLSVJFrame extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel10.setText("Ngày giải ngân");
 
-        thoiGianVayLSVTGDTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                thoiGianVayLSVTGDTextFieldActionPerformed(evt);
-            }
-        });
-
         themTGDButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         themTGDButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Accept.png"))); // NOI18N
         themTGDButton.setText("  THÊM");
@@ -323,6 +317,8 @@ public class themLSVJFrame extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel4.setText("Số tiền vay");
 
+        thoiGianVayLSVTGDTextField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "24", "36" }));
+
         javax.swing.GroupLayout bodyThemGiaoDichPanelLayout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel);
         bodyThemGiaoDichPanel.setLayout(bodyThemGiaoDichPanelLayout);
         bodyThemGiaoDichPanelLayout.setHorizontalGroup(
@@ -352,7 +348,7 @@ public class themLSVJFrame extends javax.swing.JFrame {
                         .addGap(34, 34, 34)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(soTienVayLSVTGDTextField)
-                            .addComponent(thoiGianVayLSVTGDTextField)))
+                            .addComponent(thoiGianVayLSVTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -379,7 +375,7 @@ public class themLSVJFrame extends javax.swing.JFrame {
                     .addComponent(soTienVayLSVTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(thoiGianVayLSVTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
@@ -401,10 +397,6 @@ public class themLSVJFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void thoiGianVayLSVTGDTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoiGianVayLSVTGDTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_thoiGianVayLSVTGDTextFieldActionPerformed
 
     private void themTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themTGDButtonActionPerformed
 //        System.out.println("loggoedInAccount id themSTKbutton: " + loginId);
@@ -468,6 +460,6 @@ public class themLSVJFrame extends javax.swing.JFrame {
     private javax.swing.JTextField tenNganHangLSVTGDTextField;
     private javax.swing.JButton themTGDButton;
     private javax.swing.JButton thoatTGDButton;
-    private javax.swing.JTextField thoiGianVayLSVTGDTextField;
+    private javax.swing.JComboBox<String> thoiGianVayLSVTGDTextField;
     // End of variables declaration//GEN-END:variables
 }

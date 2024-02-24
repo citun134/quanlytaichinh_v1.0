@@ -124,7 +124,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
             soTienGuiTGDTextField.setText(formattedSoTienGui.replaceAll(",", ""));
 
             laiSuatGuiTGDSlider.setValue(laiSuatGui);
-            kyHanTGDTextField.setText(formattedKyHan);
+            kyHanTGDTextField.setSelectedItem(formattedKyHan);
         } else {
             // Xử lý trường hợp không tìm thấy soTietKiemModel
             System.out.println("Không tìm thấy thông tin sổ tiết kiệm cho accountId: " + accountId);
@@ -161,7 +161,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
         String tenNganHangTGD = tenNganHangTGDTextField.getText();
         String soTienGuiTGD = soTienGuiTGDTextField.getText();
         double laiSuatTGD = laiSuatGuiTGDSlider.getValue();
-        String kyHanTGD = kyHanTGDTextField.getText();
+        String kyHanTGD = (String) kyHanTGDTextField.getSelectedItem();
         
         double soTienLai = tinhSoTienLaiNhanDuoc(Double.parseDouble(soTienGuiTGD), laiSuatTGD, kyHanTGD);
         double tongTien = tinhTongTienNhanDuoc(Double.parseDouble(soTienGuiTGD), laiSuatTGD, kyHanTGD);
@@ -217,7 +217,6 @@ public class editSTKJFrame extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         soTienGuiTGDTextField = new javax.swing.JTextField();
-        kyHanTGDTextField = new javax.swing.JTextField();
         themTGDButton = new javax.swing.JButton();
         thoatTGDButton = new javax.swing.JButton();
         laiSuatGuiTGDSlider = new javax.swing.JSlider();
@@ -225,6 +224,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         tenNganHangTGDTextField = new javax.swing.JTextField();
         ngayGuiTGDTextField = new com.toedter.calendar.JDateChooser();
+        kyHanTGDTextField = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -303,6 +303,8 @@ public class editSTKJFrame extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel2.setText("Tên ngân hàng");
 
+        kyHanTGDTextField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "18", "24", "36" }));
+
         javax.swing.GroupLayout bodyThemGiaoDichPanelLayout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel);
         bodyThemGiaoDichPanel.setLayout(bodyThemGiaoDichPanelLayout);
         bodyThemGiaoDichPanelLayout.setHorizontalGroup(
@@ -317,13 +319,10 @@ public class editSTKJFrame extends javax.swing.JFrame {
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(kyHanTGDTextField))
-                            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(laiSuatGuiTGDSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE))))
+                            .addComponent(laiSuatGuiTGDSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                            .addComponent(kyHanTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -433,7 +432,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JTextField kyHanTGDTextField;
+    private javax.swing.JComboBox<String> kyHanTGDTextField;
     private javax.swing.JSlider laiSuatGuiTGDSlider;
     private com.toedter.calendar.JDateChooser ngayGuiTGDTextField;
     private javax.swing.JTextField soTienGuiTGDTextField;
