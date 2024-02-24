@@ -1,4 +1,4 @@
-/*
+ /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
@@ -9,8 +9,6 @@ import com.quanlytaichinh.controller.LoginController;
 import com.quanlytaichinh.dao.GiaoDichDao;
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.LoginModel;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -59,7 +57,7 @@ public class themChiJFrame extends javax.swing.JFrame {
         homeViewController = new HomeViewController();
         giaoDichModel = new GiaoDichModel();
         
-        thoiGianTGDTextField.setDateFormatString("yyyy-MM-dd");
+        thoiGianTGDTextField.setDateFormatString("dd-MM-yyyy");
         
         Date date = new Date();
         

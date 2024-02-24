@@ -20,6 +20,7 @@ import static com.quanlytaichinh.view.themLSVJFrame.tinhSoTienPhaiTraHangThang;
 import static com.quanlytaichinh.view.themLSVJFrame.tinhTongSoTienPhaiTra;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -61,13 +62,42 @@ public class editLSVJFrame extends javax.swing.JFrame {
         homeViewController = new HomeViewController();
         laiSuatVayModel = new LaiSuatVayModel();
         
-        ngayGiaiNganLSVjDateChooser.setDateFormatString("yyyy-MM-dd");
-        
-        Date date = new Date();
-        
-        ngayGiaiNganLSVjDateChooser.setDate(date);
+//        ngayGiaiNganLSVjDateChooser.setDateFormatString("yyyy-MM-dd");
+//        
+//        Date date = new Date();
+//        
+//        ngayGiaiNganLSVjDateChooser.setDate(date);
         
         editGD(loginId);
+        
+        
+        // Kiểm tra nếu giaoDichModel không null và giaoDichModel.getDate() không rỗng
+if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !laiSuatVayModel.getNgayGiaiNgan().isEmpty()) {
+    try {
+        // Chuyển đổi chuỗi ngày từ giaoDichModel.getDate() thành đối tượng Date
+        SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date parsedDate = mysqlDateFormat.parse(laiSuatVayModel.getNgayGiaiNgan());
+
+        // Tạo đối tượng SimpleDateFormat cho định dạng mới "dd-MM-yyyy"
+        SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        // Set giá trị của thoiGianTGDTextField1 bằng giá trị đã chuyển đổi
+        ngayGiaiNganLSVjDateChooser.setDate(parsedDate);
+
+        // Cập nhật định dạng hiển thị của thoiGianTGDTextField1
+        ngayGiaiNganLSVjDateChooser.setDateFormatString("dd-MM-yyyy");
+
+    } catch (ParseException e) {
+        e.printStackTrace();
+    }
+} else {
+    // Nếu giaoDichModel hoặc giaoDichModel.getDate() là null hoặc rỗng, xử lý tương ứng (ví dụ: hiển thị ngày hiện tại)
+    Date currentDate = new Date();
+    ngayGiaiNganLSVjDateChooser.setDate(currentDate);
+}
+
+
+
     }
     
     public void editGD(int accountId) {

@@ -654,6 +654,119 @@ public class GiaoDichDao {
         return infor;
     }
     
+    public List<GiaoDichModel> thongKeGiaoDichChiSua(int accountId, String tu, String den) {
+        List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT YEAR(ngayChi) AS Year, MONTH(ngayChi) AS Month, " +
+                     "COALESCE(SUM(thanhTienChi), 0) AS TotalMoney " +
+                     "FROM giaoDichChi " +
+                     "WHERE account_id = ? " +
+                     "AND ngayChi BETWEEN ? AND ?" + // Add condition for the selected year
+                     "GROUP BY YEAR(ngayChi), MONTH(ngayChi) " +
+                     "ORDER BY YEAR(ngayChi), MONTH(ngayChi)";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId); // Set the value for accountId
+            preparedStatement.setString(2, tu);
+            preparedStatement.setString(3, den);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                GiaoDichModel giaoDichModel = new GiaoDichModel();
+                giaoDichModel.setYear(rs.getInt("Year"));
+                giaoDichModel.setMonth(rs.getInt("Month"));
+                giaoDichModel.setTotalMoney(rs.getInt("TotalMoney"));
+                infor.add(giaoDichModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return infor;
+    }
+    
+    public List<GiaoDichModel> thongKeGiaoDichThuSua(int accountId, String tu, String den) {
+        List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT YEAR(ngayThu) AS Year, MONTH(ngayThu) AS Month, " +
+                     "COALESCE(SUM(thanhTienThu), 0) AS TotalMoney " +
+                     "FROM giaoDichThu " +
+                     "WHERE account_id = ? " +
+                     "AND ngayThu BETWEEN ? AND ?" + // Add condition for the selected year
+                     "GROUP BY YEAR(ngayThu), MONTH(ngayThu) " +
+                     "ORDER BY YEAR(ngayThu), MONTH(ngayThu)";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId); // Set the value for accountId
+            preparedStatement.setString(2, tu);
+            preparedStatement.setString(3, den);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                GiaoDichModel giaoDichModel = new GiaoDichModel();
+                giaoDichModel.setYear(rs.getInt("Year"));
+                giaoDichModel.setMonth(rs.getInt("Month"));
+                giaoDichModel.setTotalMoney(rs.getInt("TotalMoney"));
+                infor.add(giaoDichModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return infor;
+    }
+    
+    public List<GiaoDichModel> thongKeGiaoDichThuChiSua(int accountId, String fromYear, String toYear) {
+        List<GiaoDichModel> infor = new ArrayList<>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+
+        String sql = "SELECT Year, Month, " +
+                     "COALESCE(SUM(thanhTienThu) + SUM(thanhTienChi), 0) AS TotalMoney " +
+                     "FROM ( " +
+                     "    SELECT YEAR(ngayThu) AS Year, MONTH(ngayThu) AS Month, " +
+                     "           thanhTienThu, 0 AS thanhTienChi " +
+                     "    FROM giaoDichThu " +
+                     "    WHERE account_id = ? AND (ngayThu) BETWEEN ? AND ? " +
+                     "    UNION ALL " +
+                     "    SELECT YEAR(ngayChi) AS Year, MONTH(ngayChi) AS Month, " +
+                     "           0 AS thanhTienThu, thanhTienChi " +
+                     "    FROM giaoDichChi " +
+                     "    WHERE account_id = ? AND (ngayChi) BETWEEN ? AND ? " +
+                     ") AS combined " +
+                     "GROUP BY Year, Month " +
+                     "ORDER BY Year, Month";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+            preparedStatement.setString(2, fromYear);
+            preparedStatement.setString(3, toYear);
+            preparedStatement.setInt(4, accountId);
+            preparedStatement.setString(5, fromYear);
+            preparedStatement.setString(6, toYear);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                GiaoDichModel giaoDichModel = new GiaoDichModel();
+                giaoDichModel.setYear(rs.getInt("Year"));
+                giaoDichModel.setMonth(rs.getInt("Month"));
+                giaoDichModel.setTotalMoney(rs.getInt("TotalMoney"));
+                infor.add(giaoDichModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            // Đóng kết nối sau khi sử dụng
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return infor;
+    }
+    
     public List<GiaoDichModel> thongKeGiaoDichThu(int accountId, int year) {
         List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
@@ -833,6 +946,92 @@ public class GiaoDichDao {
         }   
         return null;
     }
+    
+    public List<SoTietKiemModel> layDanhSachSoTietKiem(int accountId, String tu, String den) {
+        List<SoTietKiemModel> infor = new ArrayList<SoTietKiemModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT MONTH(ngayGui) AS Month, YEAR(ngayGui) AS Year, tongTienNhanDuoc, kyHan " +
+                     "FROM soTietKiem "+
+                     "WHERE account_id = ? " +
+                     "AND ngayGui BETWEEN ? AND ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId); // Set the value for accountId
+            preparedStatement.setString(2, tu);
+            preparedStatement.setString(3, den);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                SoTietKiemModel soTietKiemModel = new SoTietKiemModel();
+                soTietKiemModel.setYear(rs.getInt("Year"));
+                soTietKiemModel.setMonth(rs.getInt("Month"));
+                soTietKiemModel.setTongTienNhanDuoc(rs.getInt("tongTienNhanDuoc"));
+                soTietKiemModel.setKyHan(rs.getDouble("kyHan"));
+                infor.add(soTietKiemModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return infor;
+    }
+    
+    public List<SoTietKiemModel> layDanhSachSoTietKiemToanBo(int accountId) {
+        List<SoTietKiemModel> infor = new ArrayList<SoTietKiemModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT MONTH(ngayGui) AS Month, YEAR(ngayGui) AS Year, soTienLaiNhanDuoc, kyHan " +
+                     "FROM soTietKiem "+
+                     "WHERE account_id = ? " +
+                     "AND ngayGui " +
+                     "ORDER BY YEAR(ngayGui), MONTH(ngayGui);";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId); // Set the value for accountId
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                SoTietKiemModel soTietKiemModel = new SoTietKiemModel();
+                soTietKiemModel.setYear(rs.getInt("Year"));
+                soTietKiemModel.setMonth(rs.getInt("Month"));
+                soTietKiemModel.setSoTienLaiNhanDuoc(rs.getInt("soTienLaiNhanDuoc"));
+                soTietKiemModel.setKyHan(rs.getDouble("kyHan"));
+                infor.add(soTietKiemModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return infor;
+    }
+    
+    public List<LaiSuatVayModel> layDanhSachLaiSuatVayToanBo(int accountId) {
+        List<LaiSuatVayModel> infor = new ArrayList<LaiSuatVayModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT MONTH(ngayGiaiNgan) AS Month, YEAR(ngayGiaiNgan) AS Year, soTienPhaiTraHangThang, thoiGianVay " +
+                     "FROM laiSuatVay "+
+                     "WHERE account_id = ? " +
+                     "AND thoiGianVay " +
+                     "ORDER BY YEAR(ngayGiaiNgan), MONTH(ngayGiaiNgan);";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId); // Set the value for accountId
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                LaiSuatVayModel laiSuatVayModel = new LaiSuatVayModel();
+                laiSuatVayModel.setYear(rs.getInt("Year"));
+                laiSuatVayModel.setMonth(rs.getInt("Month"));
+                laiSuatVayModel.setSoTienPhaiTraHangThang(rs.getInt("soTienPhaiTraHangThang"));
+                laiSuatVayModel.setThoiGianVay(rs.getDouble("thoiGianVay"));
+                infor.add(laiSuatVayModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return infor;
+    }
+    
     
     
     

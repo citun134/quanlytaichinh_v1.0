@@ -9,6 +9,7 @@ import com.quanlytaichinh.model.GiaoDichThuModel;
 import com.quanlytaichinh.model.LaiSuatVayModel;
 import com.quanlytaichinh.model.LoginModel;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,17 +19,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.Timer;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import javax.xml.crypto.dsig.spec.XSLTTransformParameterSpec;
@@ -41,6 +48,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
+import org.jfree.chart.plot.CategoryPlot;
         
 public class HomeViewPro extends javax.swing.JFrame {
     public HomeViewController homeViewController;
@@ -101,13 +110,22 @@ public class HomeViewPro extends javax.swing.JFrame {
         displayLSV(logId);
         
         thoiGianTGDTextField.setDateFormatString("yyyy-MM-dd");
-        tuNgayTKTextField.setDateFormatString("yyyy-MM-dd");
-        denNgayTKTextField.setDateFormatString("yyyy-MM-dd");
+//        tuNgayTKTextField.setDateFormatString("yyyy-MM-dd");
+//        denNgayTKTextField.setDateFormatString("yyyy-MM-dd");
+        tuNgayTKTextField.setDateFormatString("dd-MM-yyyy");
+        denNgayTKTextField.setDateFormatString("dd-MM-yyyy");
+
+        tuTKDateChooser.setDateFormatString("dd-MM-yyyy");
+        denTKDateChooser.setDateFormatString("dd-MM-yyyy");
+
         
         Date date = new Date();
         thoiGianTGDTextField.setDate(date);
         tuNgayTKTextField.setDate(date);
         denNgayTKTextField.setDate(date);
+        tuTKDateChooser.setDate(date);
+        denTKDateChooser.setDate(date);
+
     }
     
     public void showChiTKTableUser(int accountId){
@@ -126,6 +144,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableModel.addColumn("Thành Tiền");
         defaultTableModel.addColumn("Ghi Chú");
         defaultTableModel.addColumn("Hạng Mục");
+        
+        chiTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
 
         defaultTableModel.setRowCount(0);
         setTableData(homeViewController.getAllInforUser(accountId));
@@ -146,6 +166,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableThuModel.addColumn("Thành Tiền");
         defaultTableThuModel.addColumn("Ghi Chú");
         defaultTableThuModel.addColumn("Hạng Mục");
+        
+        thuTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer()); 
 
         defaultTableThuModel.setRowCount(0);
         setThuTableData(homeViewController.getAllInforUserThu(accountId));
@@ -322,6 +344,359 @@ public class HomeViewPro extends javax.swing.JFrame {
         jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
     }
     
+    public void thongKeGiaoDichChiSua(JPanel jpanel, String tu, String den) {
+        // Hiển thị dữ liệu theo khoảng thời gian từ 'tu' đến 'den'
+        List<GiaoDichModel> listItem = homeViewController.thongKeGiaoDichChiSua(logId, tu, den);
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
+                "Tiền", dataset);
+
+        // Create a map to store the data for each month and year
+        Map<String, Long> monthYearData = new TreeMap<>(new MonthYearComparator());
+
+        // Populate the map with actual data
+        for (GiaoDichModel item : listItem) {
+            int year = item.getYear();
+            int month = item.getMonth();
+            long totalMoney = item.getTotalMoney();
+            String key = String.format("%d/%02d", month, year);
+
+            // Add the totalMoney to the corresponding month and year
+            monthYearData.put(key, monthYearData.getOrDefault(key, 0L) + totalMoney);
+        }
+
+        // Add the data to the dataset
+        for (String monthYear : monthYearData.keySet()) {
+            dataset.addValue(monthYearData.get(monthYear), "Số tiền", monthYear);
+        }
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+
+        // Thêm chartPanel vào JPanel
+        jpanel.removeAll(); // Xóa bất kỳ thành phần hiện có trong JPanel
+        jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
+        jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
+        jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+    }
+    
+    public void thongKeGiaoDichThuSua(JPanel jpanel, String tu, String den) {
+        // Hiển thị dữ liệu theo khoảng thời gian từ 'tu' đến 'den'
+        List<GiaoDichModel> listItem = homeViewController.thongKeGiaoDichThuSua(logId, tu, den);
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
+                "Tiền", dataset);
+
+        // Create a map to store the data for each month and year
+        Map<String, Long> monthYearData = new TreeMap<>(new MonthYearComparator());
+
+        // Populate the map with actual data
+        for (GiaoDichModel item : listItem) {
+            int year = item.getYear();
+            int month = item.getMonth();
+            long totalMoney = item.getTotalMoney();
+            String key = String.format("%d/%02d", month, year);
+
+            // Add the totalMoney to the corresponding month and year
+            monthYearData.put(key, monthYearData.getOrDefault(key, 0L) + totalMoney);
+        }
+
+        // Add the data to the dataset
+        for (String monthYear : monthYearData.keySet()) {
+            dataset.addValue(monthYearData.get(monthYear), "Số tiền", monthYear);
+        }
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+
+        // Thêm chartPanel vào JPanel
+        jpanel.removeAll(); // Xóa bất kỳ thành phần hiện có trong JPanel
+        jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
+        jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
+        jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+    }
+    
+    public void thongKeGiaoDichThuChiSua(JPanel jpanel, String tu, String den) {
+        // Hiển thị dữ liệu theo khoảng thời gian từ 'tu' đến 'den'
+        List<GiaoDichModel> listItem = homeViewController.thongKeGiaoDichThuChiSua(logId, tu, den);
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
+                "Tiền", dataset);
+
+        // Create a map to store the data for each month and year
+        Map<String, Long> monthYearData = new TreeMap<>(new MonthYearComparator());
+
+        // Populate the map with actual data
+        for (GiaoDichModel item : listItem) {
+            int year = item.getYear();
+            int month = item.getMonth();
+            long totalMoney = item.getTotalMoney();
+            String key = String.format("%d/%02d", month, year);
+
+            // Add the totalMoney to the corresponding month and year
+            monthYearData.put(key, monthYearData.getOrDefault(key, 0L) + totalMoney);
+        }
+
+        // Add the data to the dataset
+        for (String monthYear : monthYearData.keySet()) {
+            dataset.addValue(monthYearData.get(monthYear), "Số tiền", monthYear);
+        }
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+
+        // Thêm chartPanel vào JPanel
+        jpanel.removeAll(); // Xóa bất kỳ thành phần hiện có trong JPanel
+        jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
+        jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
+        jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+    }
+
+    class MonthYearComparator implements Comparator<String> {
+        @Override
+        public int compare(String o1, String o2) {
+            String[] parts1 = o1.split("/");
+            String[] parts2 = o2.split("/");
+
+            int year1 = Integer.parseInt(parts1[1]);
+            int month1 = Integer.parseInt(parts1[0]);
+            int year2 = Integer.parseInt(parts2[1]);
+            int month2 = Integer.parseInt(parts2[0]);
+
+            if (year1 != year2) {
+                return Integer.compare(year1, year2);
+            }
+
+            // If years are the same, compare months
+            return Integer.compare(month1, month2);
+        }
+    }
+    
+    
+//    public void thongKeSoTietKiem(JPanel jpanel, String tu, String den) {
+//        List<SoTietKiemModel> soTietKiemList = homeViewController.layDanhSachSoTietKiem(logId, tu, den);
+//
+//        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+//        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian", "Tiền", dataset);
+//
+//        // Create a map to store the data for each month and year
+//        Map<String, Double> monthYearData = new TreeMap<>(new MonthYearComparator());
+//
+//        // Populate the map with actual data
+//        for (SoTietKiemModel item : soTietKiemList) {
+//            int year = item.getYear();
+//            int month = item.getMonth();
+//            double totalMoney = calculateTotalMoneyByMonthAndYear(soTietKiemList, month, year);
+//            String key = String.format("%d/%02d", month, year);
+//
+//            // Add the totalMoney to the corresponding month and year
+//            monthYearData.put(key, totalMoney);
+//        }
+//
+//        // Add the data to the dataset
+//        for (String monthYear : monthYearData.keySet()) {
+//            dataset.addValue(monthYearData.get(monthYear), "Số tiền", monthYear);
+//        }
+//
+//        ChartPanel chartPanel = new ChartPanel(chart);
+//
+//        // Thêm chartPanel vào JPanel
+//        jpanel.removeAll(); // Xóa bất kỳ thành phần hiện có trong JPanel
+//        jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
+//        jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
+//        jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+//    }
+    
+    public void thongKeSoTietKiem(JPanel jpanel, String tu, String den) {
+        List<SoTietKiemModel> soTietKiemList = homeViewController.layDanhSachSoTietKiemToanBo(logId);
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian", "Tiền", dataset);
+
+        // Xác định tháng bắt đầu và kết thúc
+        // Lấy tháng và năm từ chuỗi tu theo định dạng yyyy-MM-dd
+        int startYear = Integer.parseInt(tu.substring(0, 4));
+        int startMonth = Integer.parseInt(tu.substring(5, 7));
+
+        // Lấy tháng và năm từ chuỗi den theo định dạng yyyy-MM-dd
+        int endYear = Integer.parseInt(den.substring(0, 4));
+        int endMonth = Integer.parseInt(den.substring(5, 7));
+
+
+        // Tạo map để lưu trữ dữ liệu cho từng tháng và năm
+        Map<String, Double> monthYearData = new TreeMap<>(new MonthYearComparator());
+
+        // Lặp qua tất cả các tháng trong khoảng thời gian đã chọn
+        for (int year = startYear; year <= endYear; year++) {
+            for (int month = startMonth; month <= 12; month++) {
+                String key = String.format("%d/%02d", month, year);
+                double totalMoney = calculateTotalMoneyByMonthAndYear(soTietKiemList, month, year);
+                monthYearData.put(key, totalMoney);
+
+                if (year == endYear && month == endMonth) {
+                    break; // Dừng vòng lặp khi đã đến tháng cuối cùng
+                }
+            }
+            startMonth = 1; // Đặt lại tháng bắt đầu thành 1 cho năm tiếp theo
+        }
+
+        // Add the data to the dataset
+//        for (String monthYear : monthYearData.keySet()) {
+//            dataset.addValue(monthYearData.get(monthYear), "Số tiền", monthYear);
+//        }
+
+        //DecimalFormat decimalFormat = new DecimalFormat("###,###,###,###.##"); // Định dạng số không có dấu phẩy và không có số thập phân
+        for (String monthYear : monthYearData.keySet()) {
+        double totalMoney = monthYearData.get(monthYear);
+        dataset.addValue(totalMoney, "Số tiền", monthYear);
+    }
+
+    // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
+                StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
+                new DecimalFormat("###,###,###,###")
+        );
+        plot.getRenderer().setBaseToolTipGenerator(toolTipGenerator);
+
+
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+
+        // Thêm chartPanel vào JPanel
+        jpanel.removeAll(); // Xóa bất kỳ thành phần hiện có trong JPanel
+        jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
+        jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
+        jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+    }
+
+
+    public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int targetMonth, int targetYear) {
+        double totalMoney = 0;
+
+        for (SoTietKiemModel item : list) {
+            int startMonth = item.getMonth();
+            int startYear = item.getYear();
+            double kyHan = item.getKyHan();
+            double tongTienNhanDuoc = item.getSoTienLaiNhanDuoc();
+
+            // Tính số tháng tăng dần dựa trên kỳ hạn
+            for (int i = 0; i < kyHan; i++) {
+                int currentMonth = startMonth + i;
+                int currentYear = startYear;
+
+                // Nếu vượt quá 12 tháng, chuyển sang năm tiếp theo
+                if (currentMonth > 12) {
+                    currentMonth -= 12;
+                    currentYear++;
+                }
+
+                // Kiểm tra xem có phải tháng và năm cần tính không
+                if (currentMonth == targetMonth && currentYear == targetYear) {
+                    totalMoney += tongTienNhanDuoc;
+                    break;  // Dừng vòng lặp khi đã cộng dồn vào tổng
+                }
+            }
+        }
+
+        return totalMoney;
+    }
+    
+    public void thongKeLaiSuatVay(JPanel jpanel, String tu, String den) {
+        List<LaiSuatVayModel> soTietKiemList = homeViewController.layDanhSachLaiSuatVayToanBo(logId);
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian", "Tiền", dataset);
+
+        // Xác định tháng bắt đầu và kết thúc
+        // Lấy tháng và năm từ chuỗi tu theo định dạng yyyy-MM-dd
+        int startYear = Integer.parseInt(tu.substring(0, 4));
+        int startMonth = Integer.parseInt(tu.substring(5, 7));
+
+        // Lấy tháng và năm từ chuỗi den theo định dạng yyyy-MM-dd
+        int endYear = Integer.parseInt(den.substring(0, 4));
+        int endMonth = Integer.parseInt(den.substring(5, 7));
+
+
+        // Tạo map để lưu trữ dữ liệu cho từng tháng và năm
+        Map<String, Double> monthYearData = new TreeMap<>(new MonthYearComparator());
+
+        // Lặp qua tất cả các tháng trong khoảng thời gian đã chọn
+        for (int year = startYear; year <= endYear; year++) {
+            for (int month = startMonth; month <= 12; month++) {
+                String key = String.format("%d/%02d", month, year);
+                double totalMoney = calculateTotalMoneyByMonthAndYearLSV(soTietKiemList, month, year);
+                monthYearData.put(key, totalMoney);
+
+                if (year == endYear && month == endMonth) {
+                    break; // Dừng vòng lặp khi đã đến tháng cuối cùng
+                }
+            }
+            startMonth = 1; // Đặt lại tháng bắt đầu thành 1 cho năm tiếp theo
+        }
+
+        // Add the data to the dataset
+//        for (String monthYear : monthYearData.keySet()) {
+//            dataset.addValue(monthYearData.get(monthYear), "Số tiền", monthYear);
+//        }
+
+        //DecimalFormat decimalFormat = new DecimalFormat("###,###,###,###.##"); // Định dạng số không có dấu phẩy và không có số thập phân
+        for (String monthYear : monthYearData.keySet()) {
+        double totalMoney = monthYearData.get(monthYear);
+        dataset.addValue(totalMoney, "Số tiền", monthYear);
+    }
+
+    // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
+                StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
+                new DecimalFormat("###,###,###,###")
+        );
+        plot.getRenderer().setBaseToolTipGenerator(toolTipGenerator);
+
+
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+
+        // Thêm chartPanel vào JPanel
+        jpanel.removeAll(); // Xóa bất kỳ thành phần hiện có trong JPanel
+        jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
+        jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
+        jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+    }
+
+
+    public double calculateTotalMoneyByMonthAndYearLSV(List<LaiSuatVayModel> list, int targetMonth, int targetYear) {
+        double totalMoney = 0;
+
+        for (LaiSuatVayModel item : list) {
+            int startMonth = item.getMonth();
+            int startYear = item.getYear();
+            double kyHan = item.getThoiGianVay();
+            double tongTienNhanDuoc = item.getSoTienPhaiTraHangThang();
+
+            // Tính số tháng tăng dần dựa trên kỳ hạn
+            for (int i = 0; i < kyHan; i++) {
+                int currentMonth = startMonth + i;
+                int currentYear = startYear;
+
+                // Nếu vượt quá 12 tháng, chuyển sang năm tiếp theo
+                if (currentMonth > 12) {
+                    currentMonth -= 12;
+                    currentYear++;
+                }
+
+                // Kiểm tra xem có phải tháng và năm cần tính không
+                if (currentMonth == targetMonth && currentYear == targetYear) {
+                    totalMoney += tongTienNhanDuoc;
+                    break;  // Dừng vòng lặp khi đã cộng dồn vào tổng
+                }
+            }
+        }
+
+        return totalMoney;
+    }
+    
     public void thongKeGiaoDichThu(JPanel jpanel, int year) {
         //Hiển thị 12 columns
         List<GiaoDichModel> listItem = homeViewController.thongKeGiaoDichThu(logId, year);
@@ -436,7 +811,7 @@ public class HomeViewPro extends javax.swing.JFrame {
             return false;
         }
     };
-    
+        
         tenTKTable.setModel(defaultTableModelTen);
 
         defaultTableModelTen.addColumn("ID");
@@ -445,7 +820,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableModelTen.addColumn("Thành Tiền");
         defaultTableModelTen.addColumn("Ghi Chú");
         defaultTableModelTen.addColumn("Hạng Mục");
-
+        
+        tenTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
 
         // Get the data from your controller or data source
         List<GiaoDichModel> allGiaoDich = homeViewController.getAllInforUserThuChi(accountId);
@@ -479,6 +855,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableModelTen.addColumn("Ghi Chú");
         defaultTableModelTen.addColumn("Hạng Mục");
         
+        tienTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+        
 
         // Get the data from your controller or data source
         List<GiaoDichModel> allGiaoDich = homeViewController.getAllInforUserThuChi(accountId);
@@ -504,7 +882,8 @@ public class HomeViewPro extends javax.swing.JFrame {
     };
     
         thoiGianTKTable.setModel(defaultTableModelTen);
-
+        
+//        thoiGianTKTable.getColumnModel().getColumn(2).setCellRenderer(new DateRenderer());
         defaultTableModelTen.addColumn("ID");
         defaultTableModelTen.addColumn("Thời Gian");
         defaultTableModelTen.addColumn("Mặt Hàng");
@@ -512,6 +891,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableModelTen.addColumn("Ghi Chú");
         defaultTableModelTen.addColumn("Hạng Mục");
 
+        thoiGianTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+        
         // Get the data from your controller or data source
         List<GiaoDichModel> allGiaoDich = homeViewController.getAllInforUserThuChi(accountId);
 
@@ -545,6 +926,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableSTKModel.addColumn("Số Tiền Lãi Nhận Được");
         defaultTableSTKModel.addColumn("Tổng Tiền Nhận Được");
         defaultTableSTKModel.addColumn("Kỳ Hạn");
+        
+        soTietKiemTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
 
         // Get the data from your controller or data source
         List<SoTietKiemModel> allGiaoDich = homeViewController.getAllInforUserSTK(accountId);
@@ -587,6 +970,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableLSVModel.addColumn("Số Tiền Trả Mỗi Tháng");
         defaultTableLSVModel.addColumn("Tổng Số Tiền ");
 
+        laiSuatVayTable.getColumnModel().getColumn(6).setCellRenderer(new DateRenderer());
 
         // Get the data from your controller or data source
         List<LaiSuatVayModel> allGiaoDich = homeViewController.getAllInforUserLSV(accountId);
@@ -683,6 +1067,27 @@ public class HomeViewPro extends javax.swing.JFrame {
         setLSVTable(homeViewController.getAllInforUserLSV(logId));
     }
     
+    private static class DateRenderer extends DefaultTableCellRenderer {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                    Date date = mysqlDateFormat.parse((String) value);
+
+                    // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                    value = desiredDateFormat.format(date);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            super.setValue(value);
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -775,12 +1180,16 @@ public class HomeViewPro extends javax.swing.JFrame {
         thongKePanel = new javax.swing.JPanel();
         showTKPanel = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
-        yearTextField = new javax.swing.JTextField();
         tkYearTKButton = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
         tkChiRadioButton = new javax.swing.JRadioButton();
         tkThuRadioButton = new javax.swing.JRadioButton();
         tkThuChiRadioButton = new javax.swing.JRadioButton();
+        jLabel5 = new javax.swing.JLabel();
+        tuTKDateChooser = new com.toedter.calendar.JDateChooser();
+        denTKDateChooser = new com.toedter.calendar.JDateChooser();
+        jLabel21 = new javax.swing.JLabel();
+        tkSTKRadioButton = new javax.swing.JRadioButton();
+        tkLSVRadioButton = new javax.swing.JRadioButton();
         giaoDichPanel = new javax.swing.JPanel();
         jTabbedPane4 = new javax.swing.JTabbedPane();
         jPanel15 = new javax.swing.JPanel();
@@ -1159,9 +1568,9 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(237, Short.MAX_VALUE)
+                .addContainerGap(259, Short.MAX_VALUE)
                 .addComponent(jLabel3)
-                .addContainerGap(236, Short.MAX_VALUE))
+                .addContainerGap(259, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1331,11 +1740,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(168, Short.MAX_VALUE)
+                .addContainerGap(190, Short.MAX_VALUE)
                 .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 163, Short.MAX_VALUE))
+                .addGap(0, 186, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tenTKButton)
@@ -1388,7 +1797,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1466,7 +1875,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap(153, Short.MAX_VALUE)
+                .addContainerGap(175, Short.MAX_VALUE)
                 .addComponent(jLabel13)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tuTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1474,7 +1883,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(153, Short.MAX_VALUE))
+                .addContainerGap(176, Short.MAX_VALUE))
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tienTKButton)
@@ -1505,7 +1914,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1571,7 +1980,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap(151, Short.MAX_VALUE)
+                .addContainerGap(173, Short.MAX_VALUE)
                 .addComponent(jLabel15)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1579,7 +1988,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addComponent(jLabel16)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(150, Short.MAX_VALUE))
+                .addContainerGap(173, Short.MAX_VALUE))
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ngayTKButton)
@@ -1610,7 +2019,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1650,20 +2059,14 @@ public class HomeViewPro extends javax.swing.JFrame {
         showTKPanel.setLayout(showTKPanelLayout);
         showTKPanelLayout.setHorizontalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 620, Short.MAX_VALUE)
+            .addGap(0, 665, Short.MAX_VALUE)
         );
         showTKPanelLayout.setVerticalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 357, Short.MAX_VALUE)
+            .addGap(0, 365, Short.MAX_VALUE)
         );
 
         jPanel8.setBackground(new java.awt.Color(255, 255, 255));
-
-        yearTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yearTextFieldActionPerformed(evt);
-            }
-        });
 
         tkYearTKButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         tkYearTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
@@ -1673,10 +2076,6 @@ public class HomeViewPro extends javax.swing.JFrame {
                 tkYearTKButtonActionPerformed(evt);
             }
         });
-
-        jLabel4.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel4.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jLabel4.setText("Năm");
 
         buttonGroup2.add(tkChiRadioButton);
         tkChiRadioButton.setText("Mục Chi");
@@ -1692,44 +2091,76 @@ public class HomeViewPro extends javax.swing.JFrame {
         buttonGroup2.add(tkThuChiRadioButton);
         tkThuChiRadioButton.setText("Mục Thu & Chi");
 
+        jLabel5.setText("Từ");
+
+        jLabel21.setText("Đến");
+
+        buttonGroup2.add(tkSTKRadioButton);
+        tkSTKRadioButton.setText("Sổ Tiết Kiệm");
+        tkSTKRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tkSTKRadioButtonActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(tkLSVRadioButton);
+        tkLSVRadioButton.setText("Lãi Suất Vay");
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(177, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tkChiRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(tkThuRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(tkThuChiRadioButton)
-                .addGap(0, 172, Short.MAX_VALUE))
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4)
                 .addGap(18, 18, 18)
-                .addComponent(yearTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tkSTKRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(tkLSVRadioButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tkYearTKButton)
+                .addGap(137, 137, 137)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(tkYearTKButton)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(tuTKDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(78, 78, 78)
+                        .addComponent(jLabel21)))
+                .addGap(18, 18, 18)
+                .addComponent(denTKDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tkChiRadioButton)
-                    .addComponent(tkThuRadioButton)
-                    .addComponent(tkThuChiRadioButton))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(yearTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(tkThuChiRadioButton)
+                            .addComponent(tkSTKRadioButton)
+                            .addComponent(tkLSVRadioButton)
+                            .addComponent(tkThuRadioButton)
+                            .addComponent(tkChiRadioButton))
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel8Layout.createSequentialGroup()
+                                .addGap(11, 11, 11)
+                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(tuTKDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel21))))
+                    .addComponent(denTKDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(tkYearTKButton)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout thongKePanelLayout = new javax.swing.GroupLayout(thongKePanel);
@@ -1860,7 +2291,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
         );
         jPanel15Layout.setVerticalGroup(
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1972,7 +2403,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
         );
         jPanel16Layout.setVerticalGroup(
             jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2104,7 +2535,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
         );
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2216,7 +2647,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
         );
         jPanel19Layout.setVerticalGroup(
             jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2381,20 +2812,30 @@ public class HomeViewPro extends javax.swing.JFrame {
 //        tableRS.setRowFilter(RowFilter.regexFilter(denTienTKTextField.getText()));
     }//GEN-LAST:event_denTienTKTextFieldKeyReleased
 
-    private void yearTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yearTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_yearTextFieldActionPerformed
-
     private void tkYearTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkYearTKButtonActionPerformed
-        String year = yearTextField.getText();
+//        String year = yearTextField.getText();
+//        tuTKDateChooser.setDateFormatString("yyyy-MM-dd");
+//        denTKDateChooser.setDateFormatString("yyyy-MM-dd");
+//        
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date tuNgayTK = tuTKDateChooser.getDate();
+        Date denNgayTK = denTKDateChooser.getDate();
+        
+        String tuNgayTxt = simpleDateFormat.format(tuNgayTK);
+        String denNgayTxt = simpleDateFormat.format(denNgayTK);
         
         if (tkChiRadioButton.isSelected()) {
-            thongKeGiaoDichChi(showTKPanel, Integer.parseInt(year));
-        } else if (tkThuRadioButton.isSelected()) {
-            thongKeGiaoDichThu(showTKPanel, Integer.parseInt(year));
-        } else if (tkThuChiRadioButton.isSelected()) {
-            thongKeGiaoDichThuChi(showTKPanel, Integer.parseInt(year));
+            thongKeGiaoDichChiSua(showTKPanel, tuNgayTxt, denNgayTxt);
         } 
+        else if (tkLSVRadioButton.isSelected()) {
+            thongKeLaiSuatVay(showTKPanel, tuNgayTxt, denNgayTxt);
+        } else if (tkSTKRadioButton.isSelected()){
+            thongKeSoTietKiem(showTKPanel, tuNgayTxt, denNgayTxt);
+        } else if (tkThuChiRadioButton.isSelected()) {
+            thongKeGiaoDichThuChiSua(showTKPanel, tuNgayTxt, denNgayTxt);
+        } else if (tkThuRadioButton.isSelected()){
+            thongKeGiaoDichThuSua(showTKPanel, tuNgayTxt, denNgayTxt);
+        };
 //        thongKeGiaoDichChi(showTKPanel, Integer.parseInt(year));
     }//GEN-LAST:event_tkYearTKButtonActionPerformed
 
@@ -2661,6 +3102,10 @@ public class HomeViewPro extends javax.swing.JFrame {
         exportTableToExcel(soTietKiemTable);
     }//GEN-LAST:event_inSTKButtonActionPerformed
 
+    private void tkSTKRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkSTKRadioButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tkSTKRadioButtonActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -2704,6 +3149,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JTable chiTable;
     private com.toedter.calendar.JDateChooser denNgayTKTextField;
+    private com.toedter.calendar.JDateChooser denTKDateChooser;
     private javax.swing.JTextField denTienTKTextField;
     private javax.swing.JRadioButton dvSinhHoatRadioButton;
     private javax.swing.JRadioButton dvSinhHoatRadioButton1;
@@ -2737,8 +3183,9 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -2815,10 +3262,13 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JButton timKiemButton;
     private javax.swing.JPanel timKiemPanel;
     private javax.swing.JRadioButton tkChiRadioButton;
+    private javax.swing.JRadioButton tkLSVRadioButton;
+    private javax.swing.JRadioButton tkSTKRadioButton;
     private javax.swing.JRadioButton tkThuChiRadioButton;
     private javax.swing.JRadioButton tkThuRadioButton;
     private javax.swing.JButton tkYearTKButton;
     private com.toedter.calendar.JDateChooser tuNgayTKTextField;
+    private com.toedter.calendar.JDateChooser tuTKDateChooser;
     private javax.swing.JTextField tuTienTKTextField;
     private javax.swing.JButton xoaAllChiButton;
     private javax.swing.JButton xoaAllLSVButton;
@@ -2828,6 +3278,5 @@ public class HomeViewPro extends javax.swing.JFrame {
     private javax.swing.JButton xoaLSVButton;
     private javax.swing.JButton xoaSTKButton;
     private javax.swing.JButton xoaThuButton;
-    private javax.swing.JTextField yearTextField;
     // End of variables declaration//GEN-END:variables
 }

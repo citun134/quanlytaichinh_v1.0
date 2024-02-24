@@ -46,7 +46,7 @@ public class themThuJFrame extends javax.swing.JFrame {
         homeViewController = new HomeViewController();
         giaoDichThuModel = new GiaoDichThuModel();
         
-        thoiGianThuTGDTextField.setDateFormatString("yyyy-MM-dd");
+        thoiGianThuTGDTextField.setDateFormatString("dd-MM-yyyy");
         
         Date date = new Date();
         

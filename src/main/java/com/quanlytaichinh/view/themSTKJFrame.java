@@ -53,7 +53,7 @@ public class themSTKJFrame extends javax.swing.JFrame {
         homeViewController = new HomeViewController();
         soTietKiemModel = new SoTietKiemModel();
         
-        ngayGuiTGDTextField.setDateFormatString("yyyy-MM-dd");
+        ngayGuiTGDTextField.setDateFormatString("dd-MM-yyyy");
         
         Date date = new Date();
         

@@ -20,6 +20,9 @@ public class LaiSuatVayModel {
     private double tongLaiPhaiTra;
     private int accountId;
     
+    private int year;
+    private int month;
+    
     public LaiSuatVayModel(){}
 
     public LaiSuatVayModel(int laiSuatVayId, String tenNganHangLSV, double giaTriBatDongSan, double soTienVay, double thoiGianVay, double laiSuat, String ngayGiaiNgan, double soTienPhaiTraHangThang, double tongLaiPhaiTra, int accountId) {
@@ -114,5 +117,23 @@ public class LaiSuatVayModel {
     public void setAccountId(int accountId) {
         this.accountId = accountId;
     }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+    
+    
 
 }

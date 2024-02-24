@@ -62,7 +62,7 @@ public class themLSVJFrame extends javax.swing.JFrame {
         homeViewController = new HomeViewController();
         laiSuatVayModel = new LaiSuatVayModel();
         
-        ngayGiaiNganLSVjDateChooser.setDateFormatString("yyyy-MM-dd");
+        ngayGiaiNganLSVjDateChooser.setDateFormatString("dd-MM-yyyy");
         
         Date date = new Date();
         

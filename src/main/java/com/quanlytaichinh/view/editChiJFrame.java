@@ -11,9 +11,12 @@ import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.LoginModel;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -51,12 +54,33 @@ public class editChiJFrame extends javax.swing.JFrame {
         giaoDichModel = new GiaoDichModel();
         
         editGD(loginId);
-        
-        thoiGianTGDTextField1.setDateFormatString("yyyy-MM-dd");
-        
-        Date date = new Date();
-        
-        thoiGianTGDTextField1.setDate(date);
+
+    // Kiểm tra nếu giaoDichModel không null và giaoDichModel.getDate() không rỗng
+    if (giaoDichModel != null && giaoDichModel.getDate() != null && !giaoDichModel.getDate().isEmpty()) {
+        try {
+            // Chuyển đổi chuỗi ngày từ giaoDichModel.getDate() thành đối tượng Date
+            SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date parsedDate = mysqlDateFormat.parse(giaoDichModel.getDate());
+
+            // Tạo đối tượng SimpleDateFormat cho định dạng mới "dd-MM-yyyy"
+            SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+            // Set giá trị của thoiGianTGDTextField1 bằng giá trị đã chuyển đổi
+            thoiGianTGDTextField1.setDate(parsedDate);
+
+            // Cập nhật định dạng hiển thị của thoiGianTGDTextField1
+            thoiGianTGDTextField1.setDateFormatString("dd-MM-yyyy");
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        } else {
+            // Nếu giaoDichModel hoặc giaoDichModel.getDate() là null hoặc rỗng, xử lý tương ứng (ví dụ: hiển thị ngày hiện tại)
+            Date currentDate = new Date();
+            thoiGianTGDTextField1.setDate(currentDate);
+        }
+
+
         
     }
     

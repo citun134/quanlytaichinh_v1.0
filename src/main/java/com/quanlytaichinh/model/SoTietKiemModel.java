@@ -4,6 +4,8 @@
  */
 package com.quanlytaichinh.model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Logger;
 
 /**
@@ -20,6 +22,9 @@ public class SoTietKiemModel {
     private double tongTienNhanDuoc;
     private double kyHan;
     private int accountId;
+    
+    private int year;
+    private int month;
     
     public SoTietKiemModel(){}
     
@@ -109,6 +114,26 @@ public class SoTietKiemModel {
     public void setAccountId(int accountId) {
         this.accountId = accountId;
     }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    
+    
+
 
    
     

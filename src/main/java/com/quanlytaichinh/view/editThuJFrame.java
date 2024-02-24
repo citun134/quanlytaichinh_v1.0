@@ -11,6 +11,7 @@ import com.quanlytaichinh.model.GiaoDichThuModel;
 import com.quanlytaichinh.model.LoginModel;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -51,11 +52,40 @@ public class editThuJFrame extends javax.swing.JFrame {
         
         editGD(loginId);
         
-        thoiGianThuTGDTextField.setDateFormatString("yyyy-MM-dd");
+//        thoiGianThuTGDTextField.setDateFormatString("yyyy-MM-dd");
+//        
+//        Date date = new Date();
+//        
+//        thoiGianThuTGDTextField.setDate(date);
         
-        Date date = new Date();
-        
-        thoiGianThuTGDTextField.setDate(date);
+// Kiểm tra nếu giaoDichModel không null và giaoDichModel.getDate() không rỗng
+    if (giaoDichThuModel != null && giaoDichThuModel.getDate() != null && !giaoDichThuModel.getDate().isEmpty()) {
+        try {
+            // Chuyển đổi chuỗi ngày từ giaoDichModel.getDate() thành đối tượng Date
+            SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date parsedDate = mysqlDateFormat.parse(giaoDichThuModel.getDate());
+
+            // Tạo đối tượng SimpleDateFormat cho định dạng mới "dd-MM-yyyy"
+            SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+            // Set giá trị của thoiGianTGDTextField1 bằng giá trị đã chuyển đổi
+            thoiGianThuTGDTextField.setDate(parsedDate);
+
+            // Cập nhật định dạng hiển thị của thoiGianTGDTextField1
+            thoiGianThuTGDTextField.setDateFormatString("dd-MM-yyyy");
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    } else {
+        // Nếu giaoDichModel hoặc giaoDichModel.getDate() là null hoặc rỗng, xử lý tương ứng (ví dụ: hiển thị ngày hiện tại)
+        Date currentDate = new Date();
+        thoiGianThuTGDTextField.setDate(currentDate);
+    }
+
+
+
+
     }
     
     public void editGD(int accountId){
@@ -64,10 +94,19 @@ public class editThuJFrame extends javax.swing.JFrame {
             
         giaoDichThuModel = homeViewController.getInforUserThu(accountId);
         
+//        SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        
         DecimalFormat df = new DecimalFormat("###,###,###,###,###");
         String formattedThanhTien = df.format(giaoDichThuModel.getThanhTien());
         
+//        try{
+            
+//            Date date = mysqlDateFormat.parse(giaoDichThuModel.getDate());
+//            String formattedDate = desiredDateFormat.format(date);
+        
         thoiGianThuTGDTextField.setDateFormatString(giaoDichThuModel.getDate());
+//        thoiGianThuTGDTextField.setDateFormatString(formattedDate);
 //        thanhTienThuTGDTextField.setText(String.valueOf(giaoDichThuModel.getThanhTien()));
         thanhTienThuTGDTextField.setText(formattedThanhTien.replaceAll(",", ""));
         ghiChuThuTGDTextField.setText(giaoDichThuModel.getGhiChu());
@@ -83,6 +122,9 @@ public class editThuJFrame extends javax.swing.JFrame {
         } else if ("Khác".equals(hangMuc)) {
             khacThuRadioButton.setSelected(true);
         }
+//        } catch(ParseException e) {
+//            e.printStackTrace();
+//        }
 //        homeViewController.updateGiaoDichThu(giaoDichThuModel);
     };
     

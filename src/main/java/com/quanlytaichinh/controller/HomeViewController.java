@@ -132,6 +132,18 @@ public class HomeViewController {
         return giaoDichDao.thongKeGiaoDichChi(accountId, year);
     }
     
+    public List<GiaoDichModel> thongKeGiaoDichChiSua(int accountId, String tu, String den){
+        return giaoDichDao.thongKeGiaoDichChiSua(accountId, tu, den);
+    }
+    
+    public List<GiaoDichModel> thongKeGiaoDichThuSua(int accountId, String tu, String den){
+        return giaoDichDao.thongKeGiaoDichThuSua(accountId, tu, den);
+    }
+    
+    public List<GiaoDichModel> thongKeGiaoDichThuChiSua(int accountId, String tu, String den){
+        return giaoDichDao.thongKeGiaoDichThuChiSua(accountId, tu, den);
+    }
+    
     public List<GiaoDichModel> thongKeGiaoDichThu(int accountId, int year){
         return giaoDichDao.thongKeGiaoDichThu(accountId, year);
     }
@@ -154,5 +166,17 @@ public class HomeViewController {
     
     public LaiSuatVayModel getInforUserLSV(int accountId){
         return giaoDichDao.getInforUserLSV(accountId);
+    }
+    
+    public List<SoTietKiemModel> layDanhSachSoTietKiem(int accountId, String tu, String den){
+        return giaoDichDao.layDanhSachSoTietKiem(accountId, tu, den);
+    }
+    
+    public List<SoTietKiemModel> layDanhSachSoTietKiemToanBo(int accountId){
+        return giaoDichDao.layDanhSachSoTietKiemToanBo(accountId);
+    }
+    
+    public List<LaiSuatVayModel> layDanhSachLaiSuatVayToanBo(int accountId){
+        return giaoDichDao.layDanhSachLaiSuatVayToanBo(accountId);
     }
 }
