@@ -60,6 +60,16 @@ public class themSTKJFrame extends javax.swing.JFrame {
         ngayGuiTGDTextField.setDate(date);
     }
     
+    public double tinhSoTienLaiNhanDuocMoiThang(double soTienGui, double laiSuat, String kyHan) {
+    // Convert kyHan từ String sang double
+        double kyHanDouble = Double.parseDouble(kyHan);
+
+        // Tính số tiền lãi nhận được
+        double soTienLaiNhanDuoc = (laiSuat / 100) * soTienGui * (kyHanDouble / 12);
+
+        return soTienLaiNhanDuoc / kyHanDouble;
+    }
+    
     public double tinhSoTienLaiNhanDuoc(double soTienGui, double laiSuat, String kyHan) {
     // Convert kyHan từ String sang double
         double kyHanDouble = Double.parseDouble(kyHan);
@@ -102,6 +112,7 @@ public void themGD(int accountId) {
 
                 double kyHan = Double.parseDouble(kyHanTGD);
 
+                double soTienLaiMoiThang = tinhSoTienLaiNhanDuocMoiThang(bigDecimal.doubleValue(), laiSuatTGD, kyHanTGD);
                 double soTienLai = tinhSoTienLaiNhanDuoc(bigDecimal.doubleValue(), laiSuatTGD, kyHanTGD);
                 double tongTien = tinhTongTienNhanDuoc(bigDecimal.doubleValue(), laiSuatTGD, kyHanTGD);
 
@@ -110,7 +121,7 @@ public void themGD(int accountId) {
                 soTietKiemModel.setSoTienGui(bigDecimal.doubleValue());
                 soTietKiemModel.setLaiSuatGui(laiSuatTGD);
                 soTietKiemModel.setKyHan(kyHan);
-                soTietKiemModel.setSoTienLaiNhanDuoc(soTienLai);
+                soTietKiemModel.setSoTienLaiNhanDuoc(soTienLaiMoiThang);
                 soTietKiemModel.setTongTienNhanDuoc(tongTien);
 
                 soTietKiemModel.setAccountId(accountId);

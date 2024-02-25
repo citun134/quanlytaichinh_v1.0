@@ -131,7 +131,15 @@ public class editSTKJFrame extends javax.swing.JFrame {
         }
     }
 
+    public double tinhSoTienLaiNhanDuocMoiThang(double soTienGui, double laiSuat, String kyHan) {
+    // Convert kyHan từ String sang double
+        double kyHanDouble = Double.parseDouble(kyHan);
 
+        // Tính số tiền lãi nhận được
+        double soTienLaiNhanDuoc = (laiSuat / 100) * soTienGui * (kyHanDouble / 12);
+
+        return soTienLaiNhanDuoc / kyHanDouble;
+    }
     
     public double tinhSoTienLaiNhanDuoc(double soTienGui, double laiSuat, String kyHan) {
     // Convert kyHan từ String sang double
@@ -163,6 +171,8 @@ public class editSTKJFrame extends javax.swing.JFrame {
         double laiSuatTGD = laiSuatGuiTGDSlider.getValue();
         String kyHanTGD = (String) kyHanTGDTextField.getSelectedItem();
         
+        double soTienLaiMoiThang = tinhSoTienLaiNhanDuocMoiThang(Double.parseDouble(soTienGuiTGD), laiSuatTGD, kyHanTGD);
+
         double soTienLai = tinhSoTienLaiNhanDuoc(Double.parseDouble(soTienGuiTGD), laiSuatTGD, kyHanTGD);
         double tongTien = tinhTongTienNhanDuoc(Double.parseDouble(soTienGuiTGD), laiSuatTGD, kyHanTGD);
 
@@ -180,7 +190,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
                 soTietKiemModel.setSoTienGui(bigDecimal.doubleValue());
                 soTietKiemModel.setLaiSuatGui(laiSuatTGD);
                 soTietKiemModel.setKyHan(kyHan);
-                soTietKiemModel.setSoTienLaiNhanDuoc(soTienLai);
+                soTietKiemModel.setSoTienLaiNhanDuoc(soTienLaiMoiThang);
                 soTietKiemModel.setTongTienNhanDuoc(tongTien);
                     
                 soTietKiemModel.setAccountId(accountId);

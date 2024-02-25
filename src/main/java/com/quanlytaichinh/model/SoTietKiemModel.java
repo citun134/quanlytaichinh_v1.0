@@ -23,6 +23,7 @@ public class SoTietKiemModel {
     private double kyHan;
     private int accountId;
     
+    private int day;
     private int year;
     private int month;
     
@@ -131,6 +132,15 @@ public class SoTietKiemModel {
         this.month = month;
     }
 
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    
     
     
 

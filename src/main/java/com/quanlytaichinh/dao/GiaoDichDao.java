@@ -979,7 +979,7 @@ public class GiaoDichDao {
     public List<SoTietKiemModel> layDanhSachSoTietKiemToanBo(int accountId) {
         List<SoTietKiemModel> infor = new ArrayList<SoTietKiemModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "SELECT MONTH(ngayGui) AS Month, YEAR(ngayGui) AS Year, soTienLaiNhanDuoc, kyHan " +
+        String sql = "SELECT DAY(ngayGui) AS Day, MONTH(ngayGui) AS Month, YEAR(ngayGui) AS Year, soTienLaiNhanDuoc, kyHan " +
                      "FROM soTietKiem "+
                      "WHERE account_id = ? " +
                      "AND ngayGui " +
@@ -994,6 +994,7 @@ public class GiaoDichDao {
                 SoTietKiemModel soTietKiemModel = new SoTietKiemModel();
                 soTietKiemModel.setYear(rs.getInt("Year"));
                 soTietKiemModel.setMonth(rs.getInt("Month"));
+                soTietKiemModel.setDay(rs.getInt("Day"));
                 soTietKiemModel.setSoTienLaiNhanDuoc(rs.getInt("soTienLaiNhanDuoc"));
                 soTietKiemModel.setKyHan(rs.getDouble("kyHan"));
                 infor.add(soTietKiemModel);
