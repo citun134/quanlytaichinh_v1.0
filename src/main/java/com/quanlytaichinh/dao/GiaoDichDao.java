@@ -5,6 +5,7 @@ import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.GiaoDichThuModel;
 import com.quanlytaichinh.model.LaiSuatVayModel;
 import com.quanlytaichinh.model.SoTietKiemModel;
+import com.quanlytaichinh.model.SoTienDaTraModel;
 import com.quanlytaichinh.model.LoginModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,6 +21,7 @@ public class GiaoDichDao {
     public SoTietKiemModel soTietKiemModel; 
     public LaiSuatVayModel laiSuatVayModel;
     public LoginModel loginModel;
+    public SoTienDaTraModel soTienDaTraModel;
     
     public void addGiaoDichChi(GiaoDichModel giaoDichModel){
         Connection connection = JDBCConnection.getJDBCConecction();
@@ -1032,6 +1034,76 @@ public class GiaoDichDao {
         }
         return infor;
     }
+    
+    
+    
+     public void addGiaoDichSTDT(SoTienDaTraModel soTienDaTraModel) {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "INSERT INTO soTienDaTraAccount (ngayTra, soTien, laiSuatVayId, account_id) VALUES (?, ?, ?, ?);";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, soTienDaTraModel.getNgayTra());
+            preparedStatement.setDouble(2, soTienDaTraModel.getSoTien());
+            preparedStatement.setInt(3, soTienDaTraModel.getLaiSuatVayId());
+            preparedStatement.setInt(4, soTienDaTraModel.getAccount_id());
+            
+            int rs = preparedStatement.executeUpdate();
+            System.out.println(rs);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+     
+    public List<SoTienDaTraModel> getAllInforUserSTDT(int accountId){
+        soTienDaTraModel = new SoTienDaTraModel();
+        List<SoTienDaTraModel> infor = new ArrayList<SoTienDaTraModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+//        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
+        String sql = "SELECT * FROM soTienDaTraAccount WHERE laiSuatVayId = ?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                SoTienDaTraModel soTienDaTraModel = new SoTienDaTraModel();
+                soTienDaTraModel.setSoTienDaTraId(rs.getInt("soTienDaTraId"));
+                soTienDaTraModel.setNgayTra(rs.getString("ngayTra"));
+                soTienDaTraModel.setSoTien(rs.getDouble("soTien"));
+                soTienDaTraModel.setLaiSuatVayId(rs.getInt("laiSuatVayId"));                
+                infor.add(soTienDaTraModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }   
+        return infor;
+    }
+    
+    public List<SoTienDaTraModel> layDanhSTDTToanBo(int accountId) {
+        List<SoTienDaTraModel> infor = new ArrayList<SoTienDaTraModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT MONTH(ngayTra) AS Month, YEAR(ngayTra) AS Year, soTien " +
+                     "FROM soTienDaTraAccount "+
+                     "WHERE account_id = ? " +
+                     "ORDER BY YEAR(ngayTra), MONTH(ngayTra);";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId); // Set the value for accountId
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                SoTienDaTraModel soTienDaTraModel = new SoTienDaTraModel();
+                soTienDaTraModel.setYear(rs.getInt("Year"));
+                soTienDaTraModel.setMonth(rs.getInt("Month"));
+                soTienDaTraModel.setSoTien(rs.getInt("soTien"));
+                infor.add(soTienDaTraModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return infor;
+    }
+    
     
     
     

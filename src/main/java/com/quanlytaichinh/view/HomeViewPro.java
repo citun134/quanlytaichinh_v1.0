@@ -7,6 +7,7 @@ import com.quanlytaichinh.model.SoTietKiemModel;
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.GiaoDichThuModel;
 import com.quanlytaichinh.model.LaiSuatVayModel;
+import com.quanlytaichinh.model.SoTienDaTraModel;
 import com.quanlytaichinh.model.LoginModel;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -32,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -64,12 +67,14 @@ public class HomeViewPro extends javax.swing.JFrame {
     public LaiSuatVayModel laiSuatVayModel;
     public LoginModel loginModel;
     public GiaoDichModel giaoDichModel;
+    public SoTienDaTraModel soTienDaTraModel;
     
     public LoginView loginView;
     public DefaultTableModel defaultTableModel;
     public DefaultTableModel defaultTableThuModel;
     public DefaultTableModel defaultTableSTKModel;
     public DefaultTableModel defaultTableLSVModel;
+    public DefaultTableModel defaultTableSTDTModel;
     public DefaultTableModel timKiemTen;
     public DefaultTableModel timKiemTien;
     public DefaultTableModel timKiemNgay;
@@ -92,6 +97,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         homeViewController = new HomeViewController();
         giaoDichModel = new GiaoDichModel();
         
+        
         logId = loginModel.getAccount_id();
         System.out.println("loggoedInAccount id: " + logId);
         
@@ -102,9 +108,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         
         showChiTKTableUser(logId);
         showThuTKTableUser(logId);
+//        showSTDTTableUser(logId);
         findUsers(logId);
         findMoney(logId);
         findDate(logId);
+        
 
         displayTen(logId);
         displayTien(logId);
@@ -120,6 +128,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         
         tkTuyChonTuDateChooser.setDateFormatString("dd-MM-yyyy");
         tkTuyChonDenDateChooser.setDateFormatString("dd-MM-yyyy");
+        ngaySTDTDateChooser.setDateFormatString("dd-MM-yyyy");
 
 
         
@@ -129,6 +138,7 @@ public class HomeViewPro extends javax.swing.JFrame {
         denNgayTKTextField.setDate(date);
         tkTuyChonTuDateChooser.setDate(date);
         tkTuyChonDenDateChooser.setDate(date);
+        ngaySTDTDateChooser.setDate(date);
 
     }
     
@@ -646,7 +656,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
 
     public void thongKeLaiSuatVayYear(JPanel jpanel, int year, String displayMode) {
-    List<LaiSuatVayModel> laiSuatVayList = homeViewController.layDanhSachLaiSuatVayToanBo(logId);
+    List<SoTienDaTraModel> laiSuatVayList = homeViewController.layDanhSTDTToanBo(logId);
 
     DefaultCategoryDataset dataset = new DefaultCategoryDataset();
     JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian", "Tiền", dataset);
@@ -655,8 +665,8 @@ public class HomeViewPro extends javax.swing.JFrame {
     int startYear = year;
     int startMonth = 1;
 
-    int endYear = 12;
-    int endMonth = year;
+    int endYear = year;
+    int endMonth = 12;
 
     // Tạo map để lưu trữ dữ liệu
     Map<String, Double> dataMap = new TreeMap<>(new MonthYearComparator());
@@ -677,27 +687,27 @@ public class HomeViewPro extends javax.swing.JFrame {
             startMonth = 1; // Đặt lại tháng bắt đầu thành 1 cho năm tiếp theo
         }
     } else if ("Quý".equals(displayMode)) {
-    // Lặp qua tất cả các quý trong khoảng thời gian đã chọn
-//    for (int currentYear = startYear; currentYear <= endYear; currentYear++) {
+    // Lặp qua tất cả các năm trong khoảng thời gian đã chọn
+    for (int currentYear = startYear; currentYear <= endYear; currentYear++) {
         for (int quarter = 1; quarter <= 4; quarter++) {
             String key = String.format("Quý %d", quarter);
             int startQuarterMonth = (quarter - 1) * 3 + 1;
             int endQuarterMonth = quarter * 3;
-            
+
             // Ensure endQuarterMonth does not exceed 12
             if (endQuarterMonth > 12) {
                 endQuarterMonth = 12;
             }
-            
-            // Calculate totalMoney for the current quarter and year
-            double totalMoney = calculateTotalMoneyByQuarterLSV(laiSuatVayList, startQuarterMonth, endQuarterMonth, year);
-            
-            // Add the calculated value to the dataset
-            dataset.addValue(totalMoney, "Số tiền", key);
 
-            if (year == endYear && quarter == (endMonth - 1) / 3 + 1) {
+            // Calculate totalMoney for the current quarter and year
+            double totalMoney = calculateTotalMoneyByQuarterLSV(laiSuatVayList, startQuarterMonth, endQuarterMonth, currentYear); // Use currentYear
+
+            // Add the calculated value to the dataset
+            dataset.addValue(totalMoney, "Số tiền", key);  // Uncomment this line
+
+            if (currentYear == endYear && quarter == (endMonth - 1) / 3 + 1) {
                 break; // Dừng vòng lặp khi đã đến quý cuối cùng
-//            }
+            }
         }
     }
 }
@@ -741,7 +751,7 @@ private double calculateTotalMoneyByQuarter(List<SoTietKiemModel> soTietKiemList
     return totalMoney;
 }
     
-    private double calculateTotalMoneyByQuarterLSV(List<LaiSuatVayModel> laiSuatVayList, int startMonth, int endMonth, int year) {
+    private double calculateTotalMoneyByQuarterLSV(List<SoTienDaTraModel> laiSuatVayList, int startMonth, int endMonth, int year) {
         double totalMoney = 0;
         for (int month = startMonth; month <= endMonth; month++) {
             totalMoney += calculateTotalMoneyByMonthAndYearLSV(laiSuatVayList, month, year);
@@ -851,99 +861,89 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
 
     
     public void thongKeLaiSuatVay(JPanel jpanel, String tu, String den) {
-        List<LaiSuatVayModel> soTietKiemList = homeViewController.layDanhSachLaiSuatVayToanBo(logId);
+    List<SoTienDaTraModel> soTietKiemList = homeViewController.layDanhSTDTToanBo(logId);
 
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian", "Tiền", dataset);
+    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ LÃI SUẤT VAY", "Thời Gian", "Tiền", dataset);
 
-        // Xác định tháng bắt đầu và kết thúc
-        // Lấy tháng và năm từ chuỗi tu theo định dạng yyyy-MM-dd
-        int startYear = Integer.parseInt(tu.substring(0, 4));
-        int startMonth = Integer.parseInt(tu.substring(5, 7));
+    // Xác định tháng bắt đầu và kết thúc
+    // Lấy tháng và năm từ chuỗi tu theo định dạng yyyy-MM-dd
+    int startYear = Integer.parseInt(tu.substring(0, 4));
+    int startMonth = Integer.parseInt(tu.substring(5, 7));
 
-        // Lấy tháng và năm từ chuỗi den theo định dạng yyyy-MM-dd
-        int endYear = Integer.parseInt(den.substring(0, 4));
-        int endMonth = Integer.parseInt(den.substring(5, 7));
+    // Lấy tháng và năm từ chuỗi den theo định dạng yyyy-MM-dd
+    int endYear = Integer.parseInt(den.substring(0, 4));
+    int endMonth = Integer.parseInt(den.substring(5, 7));
 
+    // Tạo map để lưu trữ dữ liệu cho từng tháng và năm
+    Map<String, Double> monthYearData = new TreeMap<>(new MonthYearComparator());
 
-        // Tạo map để lưu trữ dữ liệu cho từng tháng và năm
-        Map<String, Double> monthYearData = new TreeMap<>(new MonthYearComparator());
+    // Lặp qua tất cả các tháng trong khoảng thời gian đã chọn
+    for (int year = startYear; year <= endYear; year++) {
+        for (int month = startMonth; month <= 12; month++) {
+            String key = String.format("%d/%02d", month, year);
+            double totalMoney = calculateTotalMoneyByMonthAndYearLSV(soTietKiemList, month, year);
 
-        // Lặp qua tất cả các tháng trong khoảng thời gian đã chọn
-        for (int year = startYear; year <= endYear; year++) {
-            for (int month = startMonth; month <= 12; month++) {
-                String key = String.format("%d/%02d", month, year);
-                double totalMoney = calculateTotalMoneyByMonthAndYearLSV(soTietKiemList, month, year);
-                monthYearData.put(key, totalMoney);
+            // Thêm vào dataset
+            monthYearData.put(key, totalMoney);
 
-                if (year == endYear && month == endMonth) {
-                    break; // Dừng vòng lặp khi đã đến tháng cuối cùng
-                }
+            // Dừng vòng lặp khi đã đến tháng cuối cùng
+            if (year == endYear && month == endMonth) {
+                break;
             }
-            startMonth = 1; // Đặt lại tháng bắt đầu thành 1 cho năm tiếp theo
         }
 
-        // Add the data to the dataset
-//        for (String monthYear : monthYearData.keySet()) {
-//            dataset.addValue(monthYearData.get(monthYear), "Số tiền", monthYear);
-//        }
+        // Đặt lại tháng bắt đầu thành 1 cho năm tiếp theo
+        startMonth = 1;
+    }
 
-        //DecimalFormat decimalFormat = new DecimalFormat("###,###,###,###.##"); // Định dạng số không có dấu phẩy và không có số thập phân
-        for (String monthYear : monthYearData.keySet()) {
+    // Add the data to the dataset
+    for (String monthYear : monthYearData.keySet()) {
         double totalMoney = monthYearData.get(monthYear);
         dataset.addValue(totalMoney, "Số tiền", monthYear);
     }
 
     // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
-        CategoryPlot plot = (CategoryPlot) chart.getPlot();
-        StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
-                StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
-                new DecimalFormat("###,###,###,###")
-        );
-        plot.getRenderer().setBaseToolTipGenerator(toolTipGenerator);
+    CategoryPlot plot = (CategoryPlot) chart.getPlot();
+    StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
+        StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
+        new DecimalFormat("###,###,###,###")
+    );
+    plot.getRenderer().setBaseToolTipGenerator(toolTipGenerator);
+
+    ChartPanel chartPanel = new ChartPanel(chart);
+
+    // Thêm chartPanel vào JPanel
+    jpanel.removeAll(); // Xóa bất kỳ thành phần hiện có trong JPanel
+    jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
+    jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
+    jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+}
 
 
+   public double calculateTotalMoneyByMonthAndYearLSV(List<SoTienDaTraModel> list, int targetMonth, int targetYear) {
+    double totalMoney = 0;
 
-        ChartPanel chartPanel = new ChartPanel(chart);
+    for (SoTienDaTraModel item : list) {
+        int startMonth = item.getMonth();
+        int startYear = item.getYear();
+        double tongTienNhanDuoc = item.getSoTien();
 
-        // Thêm chartPanel vào JPanel
-        jpanel.removeAll(); // Xóa bất kỳ thành phần hiện có trong JPanel
-        jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
-        jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
-        jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
-    }
+        // Check if the date is within the specified range
+        if ((startYear == targetYear && startMonth == targetMonth)) {
+        totalMoney += tongTienNhanDuoc;
+    
 
-
-    public double calculateTotalMoneyByMonthAndYearLSV(List<LaiSuatVayModel> list, int targetMonth, int targetYear) {
-        double totalMoney = 0;
-
-        for (LaiSuatVayModel item : list) {
-            int startMonth = item.getMonth();
-            int startYear = item.getYear();
-            double kyHan = item.getThoiGianVay();
-            double tongTienNhanDuoc = item.getSoTienPhaiTraHangThang();
-
-            // Tính số tháng tăng dần dựa trên kỳ hạn
-            for (int i = 0; i < kyHan; i++) {
-                int currentMonth = startMonth + 1 + i;
-                int currentYear = startYear;
-
-                // Nếu vượt quá 12 tháng, chuyển sang năm tiếp theo
-                if (currentMonth > 12) {
-                    currentMonth -= 12;
-                    currentYear++;
-                }
-
-                // Kiểm tra xem có phải tháng và năm cần tính không
-                if (currentMonth == targetMonth && currentYear == targetYear) {
-                    totalMoney += tongTienNhanDuoc;
-                    break;  // Dừng vòng lặp khi đã cộng dồn vào tổng
-                }
-            }
+            // Print statement for checking values
+//            System.out.println("Adding: " + tongTienNhanDuoc);
         }
-
-        return totalMoney;
     }
+
+    System.out.println("Total Money: " + totalMoney);
+    return totalMoney;
+}
+
+
     
     public void thongKeGiaoDichThu(JPanel jpanel, int year, String displayMode) {
         //Hiển thị 12 columns
@@ -1529,10 +1529,12 @@ private LocalDate parseLocalDate(String dateString) {
         jLabel21 = new javax.swing.JLabel();
         jPanel21 = new javax.swing.JPanel();
         jLabel24 = new javax.swing.JLabel();
-        soTienTraSTKTextField = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        soTienTraLSVTextField = new javax.swing.JTextField();
+        themSoTienTraLSVButton = new javax.swing.JButton();
         jScrollPane9 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        stdtTable = new javax.swing.JTable();
+        jLabel25 = new javax.swing.JLabel();
+        ngaySTDTDateChooser = new com.toedter.calendar.JDateChooser();
         headerPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -2112,6 +2114,8 @@ private LocalDate parseLocalDate(String dateString) {
 
         stkDialog.getContentPane().add(jPanel11, java.awt.BorderLayout.PAGE_START);
 
+        lsvDialog.setSize(new java.awt.Dimension(500, 500));
+
         jLabel21.setText("Số Tiền Đã Đưa Mỗi Tháng");
 
         javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
@@ -2133,9 +2137,14 @@ private LocalDate parseLocalDate(String dateString) {
 
         jLabel24.setText("Số Tiền Trả");
 
-        jButton1.setText("Thêm");
+        themSoTienTraLSVButton.setText("Thêm");
+        themSoTienTraLSVButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                themSoTienTraLSVButtonActionPerformed(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        stdtTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -2146,24 +2155,30 @@ private LocalDate parseLocalDate(String dateString) {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane9.setViewportView(jTable1);
+        jScrollPane9.setViewportView(stdtTable);
+
+        jLabel25.setText("Ngày");
 
         javax.swing.GroupLayout jPanel21Layout = new javax.swing.GroupLayout(jPanel21);
         jPanel21.setLayout(jPanel21Layout);
         jPanel21Layout.setHorizontalGroup(
             jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
             .addGroup(jPanel21Layout.createSequentialGroup()
                 .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel21Layout.createSequentialGroup()
                         .addGap(62, 62, 62)
-                        .addComponent(jLabel24)
+                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel24)
+                            .addComponent(jLabel25))
                         .addGap(18, 18, 18)
-                        .addComponent(soTienTraSTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(ngaySTDTDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(soTienTraLSVTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)))
                     .addGroup(jPanel21Layout.createSequentialGroup()
-                        .addGap(155, 155, 155)
-                        .addComponent(jButton1)))
-                .addContainerGap(65, Short.MAX_VALUE))
+                        .addGap(187, 187, 187)
+                        .addComponent(themSoTienTraLSVButton)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel21Layout.setVerticalGroup(
             jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2172,10 +2187,15 @@ private LocalDate parseLocalDate(String dateString) {
                 .addGap(10, 10, 10)
                 .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel24)
-                    .addComponent(soTienTraSTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
-                .addContainerGap())
+                    .addComponent(soTienTraLSVTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel25)
+                    .addGroup(jPanel21Layout.createSequentialGroup()
+                        .addComponent(ngaySTDTDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(themSoTienTraLSVButton)))
+                .addGap(24, 24, 24))
         );
 
         javax.swing.GroupLayout lsvDialogLayout = new javax.swing.GroupLayout(lsvDialog.getContentPane());
@@ -3925,59 +3945,133 @@ if (row == -1) {
 
     private void inforLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inforLSVButtonActionPerformed
         // TODO add your handling code here:
-        int row = soTietKiemTable.getSelectedRow();
-if (row == -1) {
-    JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
-} else {
-    int tietKiemIdColumnIndex = 0; // Assuming TietKiemId is in the first column
-    Object tietKiemIdObject = soTietKiemTable.getValueAt(row, tietKiemIdColumnIndex);
+    int row = laiSuatVayTable.getSelectedRow();
+    if (row == -1) {
+        JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
+    } else {
+        int laiSuatVayIdColumnIndex = 0;
+        Object laiSuatVayIdObject = laiSuatVayTable.getValueAt(row, laiSuatVayIdColumnIndex);
 
-    // Check if the value is not null before proceeding
-    if (tietKiemIdObject != null) {
-        int tietKiemId = Integer.parseInt(String.valueOf(tietKiemIdObject));
+        if (laiSuatVayIdObject != null) {
+            int laiSuatVayId = Integer.parseInt(String.valueOf(laiSuatVayIdObject));
 
-        // Ensure that giaoDichDao is not null before using it
-        if (giaoDichDao != null) {
-            SoTietKiemModel soTietKiemModel = giaoDichDao.getInforUserSTK(tietKiemId);
+            if (giaoDichDao != null) {
+                LaiSuatVayModel laiSuatVayModel = giaoDichDao.getInforUserLSV(laiSuatVayId);
 
-            // Check if the fetched model is not null
-            if (soTietKiemModel != null) {
-                // Gọi phương thức để hiển thị thông tin trong inforSTKjTable
-                displayInformationInTable(soTietKiemModel);
+                if (laiSuatVayModel != null) {
+                    showSTDTTableUser(laiSuatVayId);
 
-                // Hiển thị stkDialog
-                stkDialog.setVisible(true);
-                stkDialog.setSize(500, 300);
-                stkDialog.setLocationRelativeTo(null);
+                    // Reset and set the size before displaying the dialog
+                    lsvDialog.setSize(500, 500);
+                    lsvDialog.pack();
+                    lsvDialog.setVisible(true);
+                    lsvDialog.setLocationRelativeTo(null);
+                } else {
+                    JOptionPane.showMessageDialog(HomeViewPro.this, "Không thể lấy thông tin giao dịch", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                JOptionPane.showMessageDialog(HomeViewPro.this, "Không thể lấy thông tin giao dịch", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                giaoDichDao = new GiaoDichDao();
+                LaiSuatVayModel laiSuatVayModel = giaoDichDao.getInforUserLSV(laiSuatVayId);
+
+                if (laiSuatVayModel != null) {
+                    showSTDTTableUser(laiSuatVayId);
+
+                    // Reset and set the size before displaying the dialog
+                    lsvDialog.setSize(500, 500);
+                    lsvDialog.pack();
+                    lsvDialog.setVisible(true);
+                    lsvDialog.setLocationRelativeTo(null);
+                } else {
+                    JOptionPane.showMessageDialog(HomeViewPro.this, "Không thể lấy thông tin giao dịch", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
             }
         } else {
-            // Automatically initialize giaoDichDao if it is null
-            giaoDichDao = new GiaoDichDao(); // Replace this with your initialization logic
-
-            // Continue with the rest of the code
-            SoTietKiemModel soTietKiemModel = giaoDichDao.getInforUserSTK(tietKiemId);
-
-            // Check if the fetched model is not null
-            if (soTietKiemModel != null) {
-                // Gọi phương thức để hiển thị thông tin trong inforSTKjTable
-                displayInformationInTable(soTietKiemModel);
-
-                // Hiển thị stkDialog
-                stkDialog.setVisible(true);
-                stkDialog.setSize(500, 300);
-                stkDialog.setLocationRelativeTo(null);
-            } else {
-                JOptionPane.showMessageDialog(HomeViewPro.this, "Không thể lấy thông tin giao dịch", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
+            JOptionPane.showMessageDialog(HomeViewPro.this, "Giá trị TietKiemId là null", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
-    } else {
-        JOptionPane.showMessageDialog(HomeViewPro.this, "Giá trị TietKiemId là null", "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
-}
     }//GEN-LAST:event_inforLSVButtonActionPerformed
 
+    private void themSoTienTraLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themSoTienTraLSVButtonActionPerformed
+        // TODO add your handling code here:
+        
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date dateTGD = ngaySTDTDateChooser.getDate();
+
+        int row = laiSuatVayTable.getSelectedRow();
+        int laiSuatVayIdColumnIndex = 0; // Assuming TietKiemId is in the first column
+        Object laiSuatVayIdObject = laiSuatVayTable.getValueAt(row, laiSuatVayIdColumnIndex);
+        int laiSuatVayId = Integer.parseInt(String.valueOf(laiSuatVayIdObject));
+
+        String soTienTra = soTienTraLSVTextField.getText();
+        String ngayTGD = simpleDateFormat.format(dateTGD);
+        int loginId = logId;
+
+        if (!ngayTGD.isEmpty() && !soTienTra.isEmpty()) {
+            try {
+                DecimalFormat decimalFormat = new DecimalFormat();
+                decimalFormat.setParseBigDecimal(true);
+                BigDecimal STTBigDecimal = (BigDecimal) decimalFormat.parse(soTienTra);
+
+                // Khởi tạo đối tượng SoTienDaTraModel
+                SoTienDaTraModel soTienDaTraModel = new SoTienDaTraModel();
+                soTienDaTraModel.setNgayTra(ngayTGD);
+                soTienDaTraModel.setSoTien(STTBigDecimal.doubleValue());
+                soTienDaTraModel.setLaiSuatVayId(laiSuatVayId);
+                soTienDaTraModel.setAccount_id(loginId);
+
+                homeViewController.addGiaoDichSTDT(soTienDaTraModel);
+            } catch (ParseException ex) {
+                Logger.getLogger(HomeViewPro.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        showSTDTTableUser(laiSuatVayId);
+        
+    }//GEN-LAST:event_themSoTienTraLSVButtonActionPerformed
+
+    
+    public void showSTDTTableUser(int accountId){
+        defaultTableSTDTModel = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return true;
+            }
+        };
+        
+        stdtTable.setModel(defaultTableSTDTModel);
+        
+        defaultTableSTDTModel.addColumn("Thời gian");
+        defaultTableSTDTModel.addColumn("Số Tiền");
+        
+        stdtTable.getColumnModel().getColumn(0).setCellRenderer(new DateRenderer()); 
+
+        defaultTableSTDTModel.setRowCount(0);
+        setTableSTDT(homeViewController.getAllInforUserSTDT(accountId));
+    }
+    
+    public void setTableSTDT(List<SoTienDaTraModel> allGiaoDich){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Định dạng ngày của chuỗi ngày
+
+        for(SoTienDaTraModel giaoDich: allGiaoDich){
+            DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
+
+            try {
+                // Chuyển đổi chuỗi ngày sang đối tượng Date
+                Date ngayTraDate = dateFormat.parse(giaoDich.getNgayTra());
+
+                // Định dạng số tiền và thêm vào table
+                defaultTableSTDTModel.addRow(new Object[] {
+                    dateFormat.format(ngayTraDate), df.format(giaoDich.getSoTien()), giaoDich.getLaiSuatVayId()
+                });
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    
+    
+    
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -4045,7 +4139,6 @@ if (row == -1) {
     private javax.swing.JButton inforLSVButton;
     private javax.swing.JButton inforSTKButton;
     private javax.swing.JTable inforSTKjTable;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -4063,6 +4156,7 @@ if (row == -1) {
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -4104,7 +4198,6 @@ if (row == -1) {
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTabbedPane jTabbedPane4;
-    private javax.swing.JTable jTable1;
     private javax.swing.JRadioButton khacRadioButton;
     private javax.swing.JRadioButton khacRadioButton1;
     public javax.swing.JTable laiSuatVayTable;
@@ -4112,16 +4205,18 @@ if (row == -1) {
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTextField matHangTGDTextField;
     private javax.swing.JTextField matHangTGDTextField1;
+    private com.toedter.calendar.JDateChooser ngaySTDTDateChooser;
     private javax.swing.JButton ngayTKButton;
     private javax.swing.JRadioButton quanAoRadioButton;
     private javax.swing.JRadioButton quanAoRadioButton1;
     private javax.swing.JLabel showDateLabel;
     private javax.swing.JLabel showRealTimeLabel;
     private javax.swing.JPanel showTKPanel;
-    private javax.swing.JTextField soTienTraSTKTextField;
+    private javax.swing.JTextField soTienTraLSVTextField;
     private javax.swing.JButton soTietKiemButton;
     private javax.swing.JPanel soTietKiemPanel;
     private javax.swing.JTable soTietKiemTable;
+    private javax.swing.JTable stdtTable;
     private javax.swing.JDialog stkDialog;
     private javax.swing.JButton suaChiButton;
     private javax.swing.JButton suaLSVButton;
@@ -4137,6 +4232,7 @@ if (row == -1) {
     private javax.swing.JDialog themDialog;
     private javax.swing.JButton themLSVButton;
     private javax.swing.JButton themSTKButton;
+    private javax.swing.JButton themSoTienTraLSVButton;
     private javax.swing.JButton themTGDButton;
     private javax.swing.JButton themTGDButton1;
     private javax.swing.JButton themThuButton;

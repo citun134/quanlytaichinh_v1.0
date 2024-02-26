@@ -6,6 +6,7 @@ import com.quanlytaichinh.model.GiaoDichThuModel;
 import com.quanlytaichinh.model.LaiSuatVayModel;
 import com.quanlytaichinh.model.LoginModel;
 import com.quanlytaichinh.model.SoTietKiemModel;
+import com.quanlytaichinh.model.SoTienDaTraModel;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -178,5 +179,17 @@ public class HomeViewController {
     
     public List<LaiSuatVayModel> layDanhSachLaiSuatVayToanBo(int accountId){
         return giaoDichDao.layDanhSachLaiSuatVayToanBo(accountId);
+    }
+    
+    public void addGiaoDichSTDT(SoTienDaTraModel soTienDaTraModel){
+        giaoDichDao.addGiaoDichSTDT(soTienDaTraModel);
+    }
+    
+    public List<SoTienDaTraModel> getAllInforUserSTDT(int accountId){
+        return giaoDichDao.getAllInforUserSTDT(accountId);
+    }
+    
+    public List<SoTienDaTraModel> layDanhSTDTToanBo(int accountId){
+        return giaoDichDao.layDanhSTDTToanBo(accountId);
     }
 }

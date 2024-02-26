@@ -19,6 +19,7 @@ public class LaiSuatVayModel {
     private double soTienPhaiTraHangThang;
     private double tongLaiPhaiTra;
     private int accountId;
+    private int soTienTra;
     
     private int year;
     private int month;
@@ -132,6 +133,14 @@ public class LaiSuatVayModel {
 
     public void setMonth(int month) {
         this.month = month;
+    }
+
+    public int getSoTienTra() {
+        return soTienTra;
+    }
+
+    public void setSoTienTra(int soTienTra) {
+        this.soTienTra = soTienTra;
     }
     
     

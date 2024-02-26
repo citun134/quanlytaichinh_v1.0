@@ -40,6 +40,7 @@ com\quanlytaichinh\view\HomeViewPro$1.class
 com\quanlytaichinh\view\HomeViewPro$8.class
 com\quanlytaichinh\view\editChiJFrame$2.class
 com\quanlytaichinh\view\HomeViewPro$52.class
+com\quanlytaichinh\model\SoTienDaTraModel.class
 com\quanlytaichinh\view\HomeViewPro$12.class
 com\quanlytaichinh\view\themLSVJFrame$2.class
 com\quanlytaichinh\view\editThuJFrame$2.class
@@ -49,6 +50,7 @@ com\quanlytaichinh\view\HomeViewPro$35.class
 com\quanlytaichinh\model\GiaoDichThuModel.class
 com\quanlytaichinh\view\HomeViewPro$45.class
 com\quanlytaichinh\view\LoginView$4.class
+com\quanlytaichinh\view\HomeViewPro$63.class
 com\quanlytaichinh\view\LoginView$5.class
 com\quanlytaichinh\view\editSTKJFrame$3.class
 com\quanlytaichinh\view\HomeViewPro$58.class
@@ -75,6 +77,7 @@ com\quanlytaichinh\view\HomeViewPro$14.class
 com\quanlytaichinh\view\HomeViewPro$34.class
 com\quanlytaichinh\view\HomeViewPro$44.class
 com\quanlytaichinh\view\HomeViewPro$54.class
+com\quanlytaichinh\view\HomeViewPro$64.class
 com\quanlytaichinh\view\editThuJFrame$4.class
 com\quanlytaichinh\view\HomeViewPro$57.class
 com\quanlytaichinh\view\LoginView$6.class
@@ -109,6 +112,7 @@ com\quanlytaichinh\dao\JDBCConnection.class
 com\quanlytaichinh\model\SoTietKiemModel.class
 com\quanlytaichinh\view\editChiJFrame$3.class
 com\quanlytaichinh\view\HomeViewPro$25.class
+com\quanlytaichinh\view\HomeViewPro$65.class
 com\quanlytaichinh\view\HomeViewPro$15.class
 com\quanlytaichinh\model\run_app.class
 com\quanlytaichinh\view\editThuJFrame.class
