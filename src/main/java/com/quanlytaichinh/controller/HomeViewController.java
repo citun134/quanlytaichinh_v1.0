@@ -192,4 +192,13 @@ public class HomeViewController {
     public List<SoTienDaTraModel> layDanhSTDTToanBo(int accountId){
         return giaoDichDao.layDanhSTDTToanBo(accountId);
     }
+    
+    public void deleteSTDT(int user){
+        giaoDichDao.deleteSTDT(user);
+    }
+    
+    public void updateSTDT(SoTienDaTraModel giaoDichModel) {
+        giaoDichDao.updateSTDT(giaoDichModel);
+    }
+
 }

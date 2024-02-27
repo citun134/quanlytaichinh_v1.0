@@ -16,6 +16,8 @@ import com.quanlytaichinh.model.GiaoDichThuModel;
 import com.quanlytaichinh.model.LoginModel;
 import com.quanlytaichinh.model.SoTietKiemModel;
 import com.quanlytaichinh.model.LaiSuatVayModel;
+import static com.quanlytaichinh.view.editLSVJFrame.tinhSoTienPhaiTraHangThang;
+import static com.quanlytaichinh.view.editLSVJFrame.tinhTongSoTienPhaiTra;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -147,11 +149,16 @@ public class themLSVJFrame extends javax.swing.JFrame {
         int soThangVay = (int) thoiGianVay;
 
         // Tổng số tiền phải trả
-        double tongSoTienTra = tinhSoTienPhaiTraHangThang(soTienVay, laiSuat, thoiGianVay) * soThangVay;
+        double laiSuatHangThang = (laiSuat / 100) / 12;
 
-        // Tổng số tiền phải trả - lãi giảm dần
-        // Lãi suất hàng tháng
-//        double tongSoTienTra = tinhSoTienPhaiTraHangThang(soTienVay, laiSuat, thoiGianVay) * soThangVay;
+        // Số tiền lãi phải trả hàng tháng
+        double tienLaiHangThang = soTienVay * laiSuatHangThang;
+
+        // Số tiền phải trả hàng tháng
+        double tienHangThang = soTienVay / soThangVay + tienLaiHangThang;
+
+        // Tổng số tiền phải trả
+        double tongSoTienTra = tienHangThang * soThangVay;
 
         return tongSoTienTra;
     }
@@ -180,9 +187,11 @@ public class themLSVJFrame extends javax.swing.JFrame {
 
                     // Add the condition to check if loan amount is less than or equal to property value
                     if (STVBigDecimal.doubleValue() <= BDSBigDecimal.doubleValue()) {
-                        double tienHangThang = tinhSoTienPhaiTraHangThang(STVBigDecimal.doubleValue(), laiSuatTGD, ThoiGianVayBigDecimal.doubleValue());
-                        double tinhTong = tinhTongSoTienPhaiTra(STVBigDecimal.doubleValue(), laiSuatTGD, ThoiGianVayBigDecimal.doubleValue());
-
+                        double tienHangThang = tinhSoTienPhaiTraHangThang(Double.parseDouble(soTienVayTGD),
+                laiSuatTGD, Double.parseDouble(thoiGianVayTGD));
+        
+        double tinhTong = tinhTongSoTienPhaiTra(Double.parseDouble(soTienVayTGD), 
+                laiSuatTGD, Double.parseDouble(thoiGianVayTGD));
                         laiSuatVayModel.setTenNganHangLSV(tenNganHangTGD);
                         laiSuatVayModel.setGiaTriBatDongSan(BDSBigDecimal.doubleValue());
                         laiSuatVayModel.setSoTienVay(STVBigDecimal.doubleValue());

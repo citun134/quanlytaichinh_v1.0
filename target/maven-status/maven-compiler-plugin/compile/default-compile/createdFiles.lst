@@ -3,6 +3,7 @@ com\quanlytaichinh\view\editSTKJFrame.class
 com\quanlytaichinh\view\HomeViewPro$60.class
 com\quanlytaichinh\view\LoginView$2.class
 com\quanlytaichinh\view\HomeViewPro$50.class
+com\quanlytaichinh\view\HomeViewPro$70.class
 com\quanlytaichinh\view\HomeViewPro$18.class
 com\quanlytaichinh\view\HomeViewPro$28.class
 com\quanlytaichinh\view\HomeViewPro$38.class
@@ -19,6 +20,7 @@ com\quanlytaichinh\view\themSTKJFrame$2.class
 com\quanlytaichinh\view\editLSVJFrame$1.class
 com\quanlytaichinh\view\HomeViewPro$10.class
 com\quanlytaichinh\view\HomeViewPro$48.class
+com\quanlytaichinh\view\HomeViewPro$68.class
 com\quanlytaichinh\view\LoginView$7.class
 com\quanlytaichinh\view\HomeViewPro$53.class
 com\quanlytaichinh\view\HomeViewPro$13.class
@@ -33,6 +35,7 @@ com\quanlytaichinh\view\themSTKJFrame.class
 com\quanlytaichinh\view\editSTKJFrame$2.class
 com\quanlytaichinh\view\LoginView.class
 com\quanlytaichinh\view\HomeViewPro$59.class
+com\quanlytaichinh\view\HomeViewPro$69.class
 com\quanlytaichinh\view\HomeViewPro$16.class
 com\quanlytaichinh\view\HomeViewPro$62.class
 com\quanlytaichinh\view\themChiJFrame$1.class
@@ -80,6 +83,7 @@ com\quanlytaichinh\view\HomeViewPro$54.class
 com\quanlytaichinh\view\HomeViewPro$64.class
 com\quanlytaichinh\view\editThuJFrame$4.class
 com\quanlytaichinh\view\HomeViewPro$57.class
+com\quanlytaichinh\view\HomeViewPro$67.class
 com\quanlytaichinh\view\LoginView$6.class
 com\quanlytaichinh\view\themThuJFrame$3.class
 com\quanlytaichinh\view\themLSVJFrame$4.class
@@ -119,6 +123,7 @@ com\quanlytaichinh\view\editThuJFrame.class
 com\quanlytaichinh\controller\HomeViewController.class
 com\quanlytaichinh\view\HomeViewPro$5.class
 com\quanlytaichinh\view\HomeViewPro$43.class
+com\quanlytaichinh\view\HomeViewPro$66.class
 com\quanlytaichinh\view\HomeViewPro$31.class
 com\quanlytaichinh\view\HomeViewPro.class
 com\quanlytaichinh\view\themChiJFrame$4.class

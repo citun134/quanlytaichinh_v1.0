@@ -41,6 +41,8 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.Timer;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -54,6 +56,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
         
@@ -139,6 +142,24 @@ public class HomeViewPro extends javax.swing.JFrame {
         tkTuyChonTuDateChooser.setDate(date);
         tkTuyChonDenDateChooser.setDate(date);
         ngaySTDTDateChooser.setDate(date);
+        
+        
+        stdtTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            // Kiểm tra xem sự kiện có phải là sự kiện chọn (không phải sự kiện thay đổi)
+            if (!e.getValueIsAdjusting()) {
+                getSelectedSTDTTableRowValues();
+            }
+        }
+    });
+        
+       
+        
+        
+        
+        
+        
 
     }
     
@@ -639,6 +660,12 @@ public class HomeViewPro extends javax.swing.JFrame {
 
     // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
     CategoryPlot plot = (CategoryPlot) chart.getPlot();
+    
+    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+
+        // Sử dụng DecimalFormat để định dạng số
+        DecimalFormat df = new DecimalFormat("###,###,###,###");
+        yAxis.setNumberFormatOverride(df);
     StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
             StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
             new DecimalFormat("###,###,###,###")
@@ -724,6 +751,13 @@ public class HomeViewPro extends javax.swing.JFrame {
 
     // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
     CategoryPlot plot = (CategoryPlot) chart.getPlot();
+    
+    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+
+        // Sử dụng DecimalFormat để định dạng số
+        DecimalFormat df = new DecimalFormat("###,###,###,###");
+        yAxis.setNumberFormatOverride(df);
+    
     StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
             StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
             new DecimalFormat("###,###,###,###")
@@ -813,6 +847,12 @@ private double calculateTotalMoneyByQuarter(List<SoTietKiemModel> soTietKiemList
 
     // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
     CategoryPlot plot = (CategoryPlot) chart.getPlot();
+    
+    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+
+        // Sử dụng DecimalFormat để định dạng số
+        DecimalFormat df = new DecimalFormat("###,###,###,###");
+        yAxis.setNumberFormatOverride(df);
     StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
             StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
             new DecimalFormat("###,###,###,###")
@@ -905,6 +945,12 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
 
     // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
     CategoryPlot plot = (CategoryPlot) chart.getPlot();
+    
+    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+
+        // Sử dụng DecimalFormat để định dạng số
+        DecimalFormat df = new DecimalFormat("###,###,###,###");
+        yAxis.setNumberFormatOverride(df);
     StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
         StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
         new DecimalFormat("###,###,###,###")
@@ -1387,7 +1433,7 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
 
     // Check if the column names already match, if not, set them
     if (!model.getColumnName(0).equals("Số Lần") || !model.getColumnName(1).equals("Ngày Gửi") || !model.getColumnName(2).equals("Số Tiền Lãi Nhận Được")) {
-        model.setColumnIdentifiers(new Object[]{"Số Lần", "Ngày Gửi", "Số Tiền Lãi Nhận Được"}); // Set column names
+            model.setColumnIdentifiers(new Object[]{"Số Lần", "Ngày Gửi", "Số Tiền Lãi Nhận Được"}); // Set column names
     }
 
     // Get the initial values
@@ -1428,7 +1474,7 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
                     DecimalFormat df = new DecimalFormat("###,###,###,###");
                     String formattedSoTienLai = df.format(soTienLai);
                     model.setValueAt(formattedSoTienLai, i - 1, 2);
-
+                    
                     previousDate = incrementedDate;
                 }
             }
@@ -1445,6 +1491,9 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         // Handle the case where ngayGuiString is null
         System.err.println("ngayGuiString is null.");
     }
+    
+
+
 }
 
 // Helper method to parse String to LocalDate
@@ -1459,8 +1508,72 @@ private LocalDate parseLocalDate(String dateString) {
 }
 
 
+private double calculateTotalSoTienLai(JTable table) {
+    double tongSoTienLai = 0.0;
+    DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+    // Duyệt qua từng dòng trong table model
+    for (int i = 0; i < model.getRowCount(); i++) {
+        // Lấy giá trị từ cột "Số Tiền Lãi Nhận Được" tại dòng i
+        Object soTienLaiObject = model.getValueAt(i, 2);
+
+        // Kiểm tra xem giá trị có phải là một số hay không
+        if (soTienLaiObject != null && soTienLaiObject instanceof String) {
+            String soTienLaiString = (String) soTienLaiObject;
+
+            // Loại bỏ dấu phẩy từ chuỗi trước khi chuyển đổi
+            soTienLaiString = soTienLaiString.replaceAll(",", "");
+
+            // Kiểm tra xem chuỗi có giá trị không trống
+            if (!soTienLaiString.trim().isEmpty()) {
+                try {
+                    // Chuyển đổi giá trị sang kiểu double và cộng vào tổng số tiền lãi
+                    double soTienLai = Double.parseDouble(soTienLaiString);
+                    tongSoTienLai += soTienLai;
+                } catch (NumberFormatException e) {
+                    // Xử lý lỗi nếu không thể chuyển đổi sang kiểu double
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    return tongSoTienLai;
+}
 
 
+private double calculateTotalSoTienDaTra(JTable table) {
+    double tongSoTienLai = 0.0;
+    DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+    // Duyệt qua từng dòng trong table model
+    for (int i = 0; i < model.getRowCount(); i++) {
+        // Lấy giá trị từ cột "Số Tiền Lãi Nhận Được" tại dòng i
+        Object soTienLaiObject = model.getValueAt(i, 1);
+
+        // Kiểm tra xem giá trị có phải là một số hay không
+        if (soTienLaiObject != null && soTienLaiObject instanceof String) {
+            String soTienLaiString = (String) soTienLaiObject;
+
+            // Loại bỏ dấu phẩy từ chuỗi trước khi chuyển đổi
+            soTienLaiString = soTienLaiString.replaceAll(",", "");
+
+            // Kiểm tra xem chuỗi có giá trị không trống
+            if (!soTienLaiString.trim().isEmpty()) {
+                try {
+                    // Chuyển đổi giá trị sang kiểu double và cộng vào tổng số tiền lãi
+                    double soTienLai = Double.parseDouble(soTienLaiString);
+                    tongSoTienLai += soTienLai;
+                } catch (NumberFormatException e) {
+                    // Xử lý lỗi nếu không thể chuyển đổi sang kiểu double
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    return tongSoTienLai;
+}
 
 
 
@@ -1522,11 +1635,18 @@ private LocalDate parseLocalDate(String dateString) {
         jPanel10 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         inforSTKjTable = new javax.swing.JTable();
+        thoatstkButton = new javax.swing.JButton();
         jPanel11 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        tongLaiLabel = new javax.swing.JLabel();
         lsvDialog = new javax.swing.JDialog();
         jPanel12 = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        soTienTrajLabel = new javax.swing.JLabel();
+        jLabel29 = new javax.swing.JLabel();
+        soTienNojLabel = new javax.swing.JLabel();
         jPanel21 = new javax.swing.JPanel();
         jLabel24 = new javax.swing.JLabel();
         soTienTraLSVTextField = new javax.swing.JTextField();
@@ -1535,6 +1655,9 @@ private LocalDate parseLocalDate(String dateString) {
         stdtTable = new javax.swing.JTable();
         jLabel25 = new javax.swing.JLabel();
         ngaySTDTDateChooser = new com.toedter.calendar.JDateChooser();
+        suaSTDTButton = new javax.swing.JButton();
+        xoaSTDTButton = new javax.swing.JButton();
+        thoatSTDTButton = new javax.swing.JButton();
         headerPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -2074,20 +2197,33 @@ private LocalDate parseLocalDate(String dateString) {
         inforSTKjTable.setEditingRow(1);
         jScrollPane2.setViewportView(inforSTKjTable);
 
+        thoatstkButton.setText("Thoát");
+        thoatstkButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                thoatstkButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
         jPanel10Layout.setHorizontalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(thoatstkButton)))
                 .addContainerGap())
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(thoatstkButton)
                 .addContainerGap())
         );
 
@@ -2095,21 +2231,36 @@ private LocalDate parseLocalDate(String dateString) {
 
         jLabel5.setText("SỐ TIỀN ĐÃ NHẬN ĐƯỢC MỖI THÁNG");
 
+        jLabel26.setText("Tổng lãi:");
+
+        tongLaiLabel.setText("jLabel27");
+
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
         jPanel11Layout.setHorizontalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
-                .addContainerGap(105, Short.MAX_VALUE)
-                .addComponent(jLabel5)
-                .addContainerGap(105, Short.MAX_VALUE))
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel26)
+                        .addGap(18, 18, 18)
+                        .addComponent(tongLaiLabel))
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addGap(104, 104, 104)
+                        .addComponent(jLabel5)))
+                .addContainerGap(106, Short.MAX_VALUE))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
+                .addGap(28, 28, 28)
                 .addComponent(jLabel5)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel26)
+                    .addComponent(tongLaiLabel))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
 
         stkDialog.getContentPane().add(jPanel11, java.awt.BorderLayout.PAGE_START);
@@ -2118,21 +2269,49 @@ private LocalDate parseLocalDate(String dateString) {
 
         jLabel21.setText("Số Tiền Đã Đưa Mỗi Tháng");
 
+        jLabel27.setText("Số tiền trả:");
+
+        soTienTrajLabel.setText("jLabel28");
+
+        jLabel29.setText("Số tiền nợ:");
+
+        soTienNojLabel.setText("jLabel30");
+
         javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
         jPanel12.setLayout(jPanel12Layout);
         jPanel12Layout.setHorizontalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
-                .addGap(116, 116, 116)
+                .addGap(148, 148, 148)
                 .addComponent(jLabel21)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel27)
+                .addGap(18, 18, 18)
+                .addComponent(soTienTrajLabel)
+                .addGap(134, 134, 134)
+                .addComponent(jLabel29)
+                .addGap(18, 18, 18)
+                .addComponent(soTienNojLabel)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel12Layout.setVerticalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
-                .addContainerGap(37, Short.MAX_VALUE)
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
                 .addComponent(jLabel21)
-                .addGap(36, 36, 36))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel29)
+                    .addComponent(soTienNojLabel))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel27)
+                    .addComponent(soTienTrajLabel))
+                .addContainerGap())
         );
 
         jLabel24.setText("Số Tiền Trả");
@@ -2159,6 +2338,27 @@ private LocalDate parseLocalDate(String dateString) {
 
         jLabel25.setText("Ngày");
 
+        suaSTDTButton.setText("Sửa");
+        suaSTDTButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                suaSTDTButtonActionPerformed(evt);
+            }
+        });
+
+        xoaSTDTButton.setText("Xóa");
+        xoaSTDTButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xoaSTDTButtonActionPerformed(evt);
+            }
+        });
+
+        thoatSTDTButton.setText("Thoát");
+        thoatSTDTButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                thoatSTDTButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel21Layout = new javax.swing.GroupLayout(jPanel21);
         jPanel21.setLayout(jPanel21Layout);
         jPanel21Layout.setHorizontalGroup(
@@ -2167,18 +2367,28 @@ private LocalDate parseLocalDate(String dateString) {
             .addGroup(jPanel21Layout.createSequentialGroup()
                 .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel21Layout.createSequentialGroup()
-                        .addGap(62, 62, 62)
                         .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel24)
-                            .addComponent(jLabel25))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(ngaySTDTDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(soTienTraLSVTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)))
-                    .addGroup(jPanel21Layout.createSequentialGroup()
-                        .addGap(187, 187, 187)
-                        .addComponent(themSoTienTraLSVButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel21Layout.createSequentialGroup()
+                                .addGap(62, 62, 62)
+                                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel24)
+                                    .addComponent(jLabel25))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(ngaySTDTDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(soTienTraLSVTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)))
+                            .addGroup(jPanel21Layout.createSequentialGroup()
+                                .addGap(83, 83, 83)
+                                .addComponent(themSoTienTraLSVButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(suaSTDTButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(xoaSTDTButton)))
+                        .addGap(0, 121, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel21Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(thoatSTDTButton)))
+                .addContainerGap())
         );
         jPanel21Layout.setVerticalGroup(
             jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2194,8 +2404,12 @@ private LocalDate parseLocalDate(String dateString) {
                     .addGroup(jPanel21Layout.createSequentialGroup()
                         .addComponent(ngaySTDTDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(themSoTienTraLSVButton)))
-                .addGap(24, 24, 24))
+                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(themSoTienTraLSVButton)
+                            .addComponent(suaSTDTButton)
+                            .addComponent(xoaSTDTButton))))
+                .addGap(1, 1, 1)
+                .addComponent(thoatSTDTButton))
         );
 
         javax.swing.GroupLayout lsvDialogLayout = new javax.swing.GroupLayout(lsvDialog.getContentPane());
@@ -3594,6 +3808,7 @@ private LocalDate parseLocalDate(String dateString) {
         mainPanel.add(soTietKiemPanel);
         mainPanel.revalidate();
         mainPanel.repaint(); 
+        
     }//GEN-LAST:event_soTietKiemButtonActionPerformed
 
     private void dvSinhHoatRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dvSinhHoatRadioButtonActionPerformed
@@ -3787,6 +4002,7 @@ private LocalDate parseLocalDate(String dateString) {
             if (confirm == JOptionPane.YES_OPTION){
                 int userId = Integer.parseInt(String.valueOf(laiSuatVayTable.getValueAt(row, 0)));
                 homeViewController.deleteLaiSuatVay(userId);
+                homeViewController.deleteSTDT(userId);
                 defaultTableLSVModel.setRowCount(0);
             setLSVTable(homeViewController.getAllInforUserLSV(logId));
             }
@@ -3889,12 +4105,17 @@ private LocalDate parseLocalDate(String dateString) {
 
     private void inforSTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inforSTKButtonActionPerformed
         // TODO add your handling code here:
+        
+
+        
+
         int row = soTietKiemTable.getSelectedRow();
 if (row == -1) {
     JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
 } else {
     int tietKiemIdColumnIndex = 0; // Assuming TietKiemId is in the first column
     Object tietKiemIdObject = soTietKiemTable.getValueAt(row, tietKiemIdColumnIndex);
+    
 
     // Check if the value is not null before proceeding
     if (tietKiemIdObject != null) {
@@ -3909,9 +4130,14 @@ if (row == -1) {
                 // Gọi phương thức để hiển thị thông tin trong inforSTKjTable
                 displayInformationInTable(soTietKiemModel);
 
+                double tongSoTienLai = calculateTotalSoTienLai(inforSTKjTable);
+DecimalFormat df = new DecimalFormat("###,###,###,###");
+String tongSoTienLaiFormatted = df.format(tongSoTienLai);
+tongLaiLabel.setText(tongSoTienLaiFormatted);
+                
                 // Hiển thị stkDialog
                 stkDialog.setVisible(true);
-                stkDialog.setSize(500, 300);
+                stkDialog.setSize(500, 400);
                 stkDialog.setLocationRelativeTo(null);
             } else {
                 JOptionPane.showMessageDialog(HomeViewPro.this, "Không thể lấy thông tin giao dịch", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -3927,10 +4153,16 @@ if (row == -1) {
             if (soTietKiemModel != null) {
                 // Gọi phương thức để hiển thị thông tin trong inforSTKjTable
                 displayInformationInTable(soTietKiemModel);
+                
+                double tongSoTienLai = calculateTotalSoTienLai(inforSTKjTable);
+DecimalFormat df = new DecimalFormat("###,###,###,###");
+String tongSoTienLaiFormatted = df.format(tongSoTienLai);
+tongLaiLabel.setText(tongSoTienLaiFormatted);
+                
 
                 // Hiển thị stkDialog
                 stkDialog.setVisible(true);
-                stkDialog.setSize(500, 300);
+                stkDialog.setSize(500, 400);
                 stkDialog.setLocationRelativeTo(null);
             } else {
                 JOptionPane.showMessageDialog(HomeViewPro.this, "Không thể lấy thông tin giao dịch", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -3946,20 +4178,26 @@ if (row == -1) {
     private void inforLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inforLSVButtonActionPerformed
         // TODO add your handling code here:
     int row = laiSuatVayTable.getSelectedRow();
+    
+    
     if (row == -1) {
         JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
     } else {
         int laiSuatVayIdColumnIndex = 0;
         Object laiSuatVayIdObject = laiSuatVayTable.getValueAt(row, laiSuatVayIdColumnIndex);
+        
 
         if (laiSuatVayIdObject != null) {
             int laiSuatVayId = Integer.parseInt(String.valueOf(laiSuatVayIdObject));
+
 
             if (giaoDichDao != null) {
                 LaiSuatVayModel laiSuatVayModel = giaoDichDao.getInforUserLSV(laiSuatVayId);
 
                 if (laiSuatVayModel != null) {
                     showSTDTTableUser(laiSuatVayId);
+                    
+                 updateTongSoTienLabels(laiSuatVayId);
 
                     // Reset and set the size before displaying the dialog
                     lsvDialog.setSize(500, 500);
@@ -3975,6 +4213,8 @@ if (row == -1) {
 
                 if (laiSuatVayModel != null) {
                     showSTDTTableUser(laiSuatVayId);
+                    
+                    updateTongSoTienLabels(laiSuatVayId);
 
                     // Reset and set the size before displaying the dialog
                     lsvDialog.setSize(500, 500);
@@ -3994,10 +4234,13 @@ if (row == -1) {
     private void themSoTienTraLSVButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themSoTienTraLSVButtonActionPerformed
         // TODO add your handling code here:
         
+     
+        
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date dateTGD = ngaySTDTDateChooser.getDate();
 
         int row = laiSuatVayTable.getSelectedRow();
+
         int laiSuatVayIdColumnIndex = 0; // Assuming TietKiemId is in the first column
         Object laiSuatVayIdObject = laiSuatVayTable.getValueAt(row, laiSuatVayIdColumnIndex);
         int laiSuatVayId = Integer.parseInt(String.valueOf(laiSuatVayIdObject));
@@ -4005,7 +4248,9 @@ if (row == -1) {
         String soTienTra = soTienTraLSVTextField.getText();
         String ngayTGD = simpleDateFormat.format(dateTGD);
         int loginId = logId;
-
+        
+        
+        
         if (!ngayTGD.isEmpty() && !soTienTra.isEmpty()) {
             try {
                 DecimalFormat decimalFormat = new DecimalFormat();
@@ -4027,7 +4272,192 @@ if (row == -1) {
         
         showSTDTTableUser(laiSuatVayId);
         
+        updateTongSoTienLabels(laiSuatVayId);
+        
+        soTienTraLSVTextField.setText("");
     }//GEN-LAST:event_themSoTienTraLSVButtonActionPerformed
+
+    private void suaSTDTButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaSTDTButtonActionPerformed
+        // TODO add your handling code here:
+        
+         int rowLSV = laiSuatVayTable.getSelectedRow();
+
+        int laiSuatVayId1ColumnIndex = 0; // Assuming TietKiemId is in the first column
+        Object laiSuatVayId1Object = laiSuatVayTable.getValueAt(rowLSV, laiSuatVayId1ColumnIndex);
+        int laiSuatVayId1 = Integer.parseInt(String.valueOf(laiSuatVayId1Object));
+        
+        int row = stdtTable.getSelectedRow();
+
+        int laiSuatVayIdColumnIndex = 2; // Assuming TietKiemId is in the first column
+        Object laiSuatVayIdObject = stdtTable.getValueAt(row, laiSuatVayIdColumnIndex);
+        int laiSuatVayId = Integer.parseInt(String.valueOf(laiSuatVayIdObject));
+        
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date dateTGD = ngaySTDTDateChooser.getDate();
+        
+        
+        String soTienTra = soTienTraLSVTextField.getText();
+        String ngayTGD = simpleDateFormat.format(dateTGD);
+        
+        double soTien = Double.parseDouble(soTienTra);
+        
+        if (!ngayTGD.isEmpty() && !soTienTra.isEmpty()) {
+            SoTienDaTraModel soTienDaTraModel = new SoTienDaTraModel();
+
+            soTienDaTraModel.setNgayTra(ngayTGD);
+            soTienDaTraModel.setSoTien(soTien);
+            soTienDaTraModel.setSoTienDaTraId(laiSuatVayId);
+
+            homeViewController.updateSTDT(soTienDaTraModel);
+        } else {
+            // Hiển thị thông báo lỗi nếu điều kiện không đúng
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+
+        showSTDTTableUser(laiSuatVayId1);
+        
+        updateTongSoTienLabels(laiSuatVayId1);
+    }//GEN-LAST:event_suaSTDTButtonActionPerformed
+
+    private void xoaSTDTButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaSTDTButtonActionPerformed
+        // TODO add your handling code here:
+        
+        // Lấy dòng được chọn từ bảng laiSuatVayTable
+int rowLSV = laiSuatVayTable.getSelectedRow();
+
+// Kiểm tra xem có dòng được chọn hay không
+if (rowLSV < 0) {
+    // Hiển thị thông báo nếu không có dòng nào được chọn
+    JOptionPane.showMessageDialog(this, "Vui lòng chọn một dòng để xóa.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+} else {
+    // Lấy laiSuatVayId từ dòng được chọn trong bảng laiSuatVayTable
+    int laiSuatVayId1ColumnIndex = 0; 
+    Object laiSuatVayId1Object = laiSuatVayTable.getValueAt(rowLSV, laiSuatVayId1ColumnIndex);
+    int laiSuatVayId1 = Integer.parseInt(String.valueOf(laiSuatVayId1Object));
+
+    // Hiển thị hộp thoại xác nhận xóa
+    int confirmResult = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+    
+    // Kiểm tra xem người dùng đã xác nhận xóa hay không
+    if (confirmResult == JOptionPane.YES_OPTION) {
+        // Lấy dòng được chọn từ bảng stdtTable
+        int row = stdtTable.getSelectedRow();
+
+        // Kiểm tra xem có dòng được chọn hay không
+        if (row >= 0) {
+            // Lấy laiSuatVayId từ dòng được chọn trong bảng stdtTable
+            int laiSuatVayIdColumnIndex = 2;
+            Object laiSuatVayIdObject = stdtTable.getValueAt(row, laiSuatVayIdColumnIndex);
+            int laiSuatVayId = Integer.parseInt(String.valueOf(laiSuatVayIdObject));
+
+            // Thực hiện xóa và cập nhật bảng và tổng số tiền
+            homeViewController.deleteSTDT(laiSuatVayId);
+            showSTDTTableUser(laiSuatVayId1);
+            updateTongSoTienLabels(laiSuatVayId1);
+        }
+    }
+}
+
+        
+    }//GEN-LAST:event_xoaSTDTButtonActionPerformed
+
+    private void thoatSTDTButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatSTDTButtonActionPerformed
+        // TODO add your handling code here:
+        lsvDialog.setVisible(false);
+    }//GEN-LAST:event_thoatSTDTButtonActionPerformed
+
+    private void thoatstkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatstkButtonActionPerformed
+        // TODO add your handling code here:
+        stkDialog.setVisible(false);
+    }//GEN-LAST:event_thoatstkButtonActionPerformed
+
+
+    
+    private void getSelectedSTDTTableRowValues() {
+    // Lấy chỉ số của dòng được chọn trong bảng
+    int selectedRow = stdtTable.getSelectedRow();
+
+    // Kiểm tra xem có dòng được chọn hay không
+    if (selectedRow >= 0) {
+        // Lấy giá trị của cột "Ngày Thanh Toán" từ cột 0
+        Object ngayTGDObject = stdtTable.getValueAt(selectedRow, 0);
+        Date ngayTGD = null; // Giá trị mặc định
+
+        if (ngayTGDObject instanceof Date) {
+            ngayTGD = (Date) ngayTGDObject;
+        } else if (ngayTGDObject instanceof String) {
+            try {
+                ngayTGD = new SimpleDateFormat("yyyy-MM-dd").parse((String) ngayTGDObject);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Lấy giá trị của cột "Số Tiền Trả" từ cột 1
+        Object soTienTraObject = stdtTable.getValueAt(selectedRow, 1);
+
+        double soTienTra = 0.0;
+
+        if (soTienTraObject != null) {
+    try {
+        if (soTienTraObject instanceof Number) {
+            soTienTra = ((Number) soTienTraObject).doubleValue();
+        } else if (soTienTraObject instanceof String) {
+            // Loại bỏ dấu phẩy và chuyển đổi sang double
+            soTienTra = Double.parseDouble(((String) soTienTraObject).replace(",", ""));
+        }
+
+        // Sử dụng DecimalFormat để định dạng số và hiển thị trong TextField
+        DecimalFormat df = new DecimalFormat("#########");
+        String formattedSoTienTra = df.format(soTienTra);
+        soTienTraLSVTextField.setText(formattedSoTienTra);
+    } catch (NumberFormatException ex) {
+        ex.printStackTrace();
+    }
+}
+
+        // Hiển thị giá trị lên các textfield tương ứng
+        ngaySTDTDateChooser.setDate(ngayTGD);
+//        soTienTraLSVTextField.setText(String.valueOf(soTienTra));
+    }
+}
+
+
+    
+    private void updateTongSoTienLabels(int laiSuatVayId) {
+    LaiSuatVayModel laiSuatVayModel = giaoDichDao.getInforUserLSV(laiSuatVayId);
+    if (laiSuatVayModel == null) {
+        // Xử lý trường hợp laiSuatVayModel là null
+        System.err.println("laiSuatVayModel is null");
+        return;
+    }
+
+    double tongSoTienLai = calculateTotalSoTienDaTra(stdtTable);
+    double tongLaiPhaiTra = laiSuatVayModel.getTongLaiPhaiTra();
+
+    double soTienNo = tongLaiPhaiTra - tongSoTienLai;
+
+    // Kiểm tra xem số tiền nợ có nhỏ hơn 0 hay không
+    if (soTienNo < 0) {
+        // Nếu có, hiển thị thông báo và đặt giá trị của số tiền nợ thành 0
+        JOptionPane.showMessageDialog(this, "Đã trả hết nợ ", "Thông báo", JOptionPane.WARNING_MESSAGE);
+        soTienNo = 0;
+    }
+
+    DecimalFormat df = new DecimalFormat("###,###,###,###");
+    String tongSoTienLaiFormatted = df.format(tongSoTienLai);
+    String tongSoTienNoFormatted = df.format(soTienNo);
+
+    soTienTrajLabel.setText(tongSoTienLaiFormatted);
+    soTienNojLabel.setText(tongSoTienNoFormatted);
+}
+
+
+// Gọi hàm này khi cần cập nhật c
+
+    
+    
+    
 
     
     public void showSTDTTableUser(int accountId){
@@ -4043,10 +4473,16 @@ if (row == -1) {
         defaultTableSTDTModel.addColumn("Thời gian");
         defaultTableSTDTModel.addColumn("Số Tiền");
         
+         defaultTableSTDTModel.addColumn("SoTienDaTraId");
+        stdtTable.getColumnModel().getColumn(2).setMinWidth(0);
+        stdtTable.getColumnModel().getColumn(2).setMaxWidth(0);
+        stdtTable.getColumnModel().getColumn(2).setWidth(0);
+        
         stdtTable.getColumnModel().getColumn(0).setCellRenderer(new DateRenderer()); 
 
         defaultTableSTDTModel.setRowCount(0);
         setTableSTDT(homeViewController.getAllInforUserSTDT(accountId));
+        
     }
     
     public void setTableSTDT(List<SoTienDaTraModel> allGiaoDich){
@@ -4061,7 +4497,7 @@ if (row == -1) {
 
                 // Định dạng số tiền và thêm vào table
                 defaultTableSTDTModel.addRow(new Object[] {
-                    dateFormat.format(ngayTraDate), df.format(giaoDich.getSoTien()), giaoDich.getLaiSuatVayId()
+                    dateFormat.format(ngayTraDate), df.format(giaoDich.getSoTien()), giaoDich.getSoTienDaTraId()
                 });
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -4157,6 +4593,9 @@ if (row == -1) {
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -4212,7 +4651,9 @@ if (row == -1) {
     private javax.swing.JLabel showDateLabel;
     private javax.swing.JLabel showRealTimeLabel;
     private javax.swing.JPanel showTKPanel;
+    private javax.swing.JLabel soTienNojLabel;
     private javax.swing.JTextField soTienTraLSVTextField;
+    private javax.swing.JLabel soTienTrajLabel;
     private javax.swing.JButton soTietKiemButton;
     private javax.swing.JPanel soTietKiemPanel;
     private javax.swing.JTable soTietKiemTable;
@@ -4220,6 +4661,7 @@ if (row == -1) {
     private javax.swing.JDialog stkDialog;
     private javax.swing.JButton suaChiButton;
     private javax.swing.JButton suaLSVButton;
+    private javax.swing.JButton suaSTDTButton;
     private javax.swing.JButton suaSTKButton;
     private javax.swing.JButton suaThuButton;
     private javax.swing.JButton tenTKButton;
@@ -4237,8 +4679,10 @@ if (row == -1) {
     private javax.swing.JButton themTGDButton1;
     private javax.swing.JButton themThuButton;
     private javax.swing.JButton thoatHomeButton;
+    private javax.swing.JButton thoatSTDTButton;
     private javax.swing.JButton thoatTGDButton;
     private javax.swing.JButton thoatTGDButton1;
+    private javax.swing.JButton thoatstkButton;
     private com.toedter.calendar.JDateChooser thoiGianTGDTextField;
     private com.toedter.calendar.JDateChooser thoiGianTGDTextField1;
     private javax.swing.JTable thoiGianTKTable;
@@ -4258,6 +4702,7 @@ if (row == -1) {
     private com.toedter.calendar.JDateChooser tkTuyChonDenDateChooser;
     private com.toedter.calendar.JDateChooser tkTuyChonTuDateChooser;
     private javax.swing.JButton tkYearTKButton;
+    private javax.swing.JLabel tongLaiLabel;
     private com.toedter.calendar.JDateChooser tuNgayTKTextField;
     private javax.swing.JTextField tuTienTKTextField;
     private javax.swing.JButton xoaAllChiButton;
@@ -4266,6 +4711,7 @@ if (row == -1) {
     private javax.swing.JButton xoaAllThuButton;
     private javax.swing.JButton xoaChiButton;
     private javax.swing.JButton xoaLSVButton;
+    private javax.swing.JButton xoaSTDTButton;
     private javax.swing.JButton xoaSTKButton;
     private javax.swing.JButton xoaThuButton;
     private javax.swing.JTextField yearTKTextField;

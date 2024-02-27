@@ -1104,6 +1104,38 @@ public class GiaoDichDao {
         return infor;
     }
     
+    public void deleteSTDT(int id) {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "DELETE FROM soTienDaTraAccount Where soTienDaTraId = ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void updateSTDT(SoTienDaTraModel giaoDichModel) {
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "UPDATE sotiendatraaccount SET ngayTra = ?, soTien = ? "
+                + "WHERE sotiendatraid = ?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            
+            preparedStatement.setString(1, giaoDichModel.getNgayTra());
+            preparedStatement.setDouble(2, giaoDichModel.getSoTien());
+            preparedStatement.setDouble(3, giaoDichModel.getSoTienDaTraId());
+            
+            int rs = preparedStatement.executeUpdate();
+            System.out.println(rs);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    
     
     
     
