@@ -36,11 +36,14 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -57,8 +60,11 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.CategoryItemLabelGenerator;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.data.Range;
         
 public class HomeViewPro extends javax.swing.JFrame {
     public HomeViewController homeViewController;
@@ -113,8 +119,8 @@ public class HomeViewPro extends javax.swing.JFrame {
         showThuTKTableUser(logId);
 //        showSTDTTableUser(logId);
         findUsers(logId);
-        findMoney(logId);
-        findDate(logId);
+//        findMoney(logId);
+//        findDate(logId);
         
 
         displayTen(logId);
@@ -154,7 +160,45 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     });
         
+    tongChi();
+    tongThu();
+    tongSoTietKiem();
+    tongLaiSuatVay();
+
        
+    tongMatHangChijLabel.setText("0");
+    tongTienDanhMucjLabel.setText("0");
+    tongChiDatejLabel.setText("0");
+    tongThuDatejLabel.setText("0");
+    tongTienTKjLabel.setText("0");
+   
+    
+    
+    tenTKTextField.getDocument().addDocumentListener(new DocumentListener() {
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            updateTongMatHangLabel();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            updateTongMatHangLabel();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            updateTongMatHangLabel();
+        }
+
+        private void updateTongMatHangLabel() {
+            String matHangChi = tenTKTextField.getText().trim();
+            if (matHangChi.isEmpty()) {
+                tongMatHangChijLabel.setText("0");
+            }
+        }
+    });
+    
+    
         
         
         
@@ -162,6 +206,119 @@ public class HomeViewPro extends javax.swing.JFrame {
         
 
     }
+    
+    public void tongChi() {
+        double tongChi = homeViewController.getTongChi(logId);
+        
+        double tongChiThang = homeViewController.getTongChiThangHienTai(logId);
+        
+        DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
+
+        String tongChiString = decimalFormat.format(tongChi);
+        String tongChiThangString = decimalFormat.format(tongChiThang);
+
+        // Đặt giá trị vào jLabel
+        tongChijLabel.setText(tongChiString);
+        tongChiThangLabel.setText(tongChiThangString);
+       
+        }
+    
+    public void tongThu() {
+        double tongChi = homeViewController.getTongThu(logId);
+        
+        double tongChiThang = homeViewController.getTongThuThangHienTai(logId);
+        
+        DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
+
+        String tongChiString = decimalFormat.format(tongChi);
+        String tongChiThangString = decimalFormat.format(tongChiThang);
+
+        // Đặt giá trị vào jLabel
+        tongThujLabel.setText(tongChiString);
+        tongThuThangjLabel.setText(tongChiThangString);
+       
+        }
+    
+     public void tongDanhMuc(String danhMuc) {
+        double tongDanhMucChi = homeViewController.getTongHangMucChi(logId, danhMuc);
+        double tongDanhMucThu = homeViewController.getTongHangMucThu(logId, danhMuc);
+        
+        
+        
+        DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
+
+        String tongChiString = decimalFormat.format(tongDanhMucChi);
+        String tongThuString = decimalFormat.format(tongDanhMucThu);
+        
+
+        // Đặt giá trị vào jLabel
+        if(danhMuc.equals("Ăn Uống") || danhMuc.equals("Quần Áo") || danhMuc.equals("Dịch vụ sinh hoạt") || danhMuc.equals("Khác") ){
+            tongTienDanhMucjLabel.setText(tongChiString);
+            }
+        
+        if(danhMuc.equals("Lương") || danhMuc.equals("Thưởng") || danhMuc.equals("Được cho/tặng") ){
+            tongTienDanhMucjLabel.setText(tongThuString);
+            }
+    }
+     
+     
+     
+     public void tongChiDate(String tu, String den) {
+        double tongChi = homeViewController.getTongNgayChi(logId, tu, den);
+        double tongThu = homeViewController.getTongNgayThu(logId, tu, den);
+        
+        
+        DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
+
+        String tongChiString = decimalFormat.format(tongChi);
+        String tongThuString = decimalFormat.format(tongThu);
+
+        // Đặt giá trị vào jLabel
+        tongChiDatejLabel.setText(tongChiString);
+        tongThuDatejLabel.setText(tongThuString);
+        
+       
+        }
+    
+     
+     public void tongSoTietKiem() {
+        double tonglai = homeViewController.getTongTienLai(logId);
+        
+        double tonggui = homeViewController.getTongSoTienGui(logId);
+        
+        DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
+
+        String tongChiString = decimalFormat.format(tonglai);
+        String tongChiThangString = decimalFormat.format(tonggui);
+
+        // Đặt giá trị vào jLabel
+        tongTienLaijLabel.setText(tongChiString);
+        tongTienGuijLabel.setText(tongChiThangString);
+       
+        }
+     
+     
+     public void tongLaiSuatVay() {
+        double tongvay = homeViewController.getTongSoTienVay(logId);
+        
+        double tongTienTra = homeViewController.getTongSoTienTra(logId);
+        
+        
+        double tongNo = tongTienTra - tongvay;
+        DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
+
+        String tongvayString = decimalFormat.format(tongvay);
+        String tongno = decimalFormat.format(tongNo);
+
+        // Đặt giá trị vào jLabel
+        tongTienNojLabel.setText(tongno);
+        tongTienVayjLabel.setText(tongvayString);
+       
+        }
+     
+    
+        
+        
     
     public void showChiTKTableUser(int accountId){
         defaultTableModel = new DefaultTableModel(){
@@ -178,9 +335,65 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableModel.addColumn("Mặt Hàng");
         defaultTableModel.addColumn("Thành Tiền");
         defaultTableModel.addColumn("Ghi Chú");
-        defaultTableModel.addColumn("Hạng Mục");
+        defaultTableModel.addColumn("Danh Mục");
         
-        chiTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+        
+        chiTable.getColumnModel().getColumn(0).setMinWidth(0);
+        chiTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        chiTable.getColumnModel().getColumn(0).setWidth(0);
+        
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    String dateString = (String) value;
+
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
+
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        chiTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer); 
+        chiTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        chiTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        chiTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        chiTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+        
+        
+//        chiTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+        
+        
 
         defaultTableModel.setRowCount(0);
         setTableData(homeViewController.getAllInforUser(accountId));
@@ -200,9 +413,59 @@ public class HomeViewPro extends javax.swing.JFrame {
         defaultTableThuModel.addColumn("Thời Gian");
         defaultTableThuModel.addColumn("Thành Tiền");
         defaultTableThuModel.addColumn("Ghi Chú");
-        defaultTableThuModel.addColumn("Hạng Mục");
+        defaultTableThuModel.addColumn("Danh Mục");
         
-        thuTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer()); 
+        
+        thuTable.getColumnModel().getColumn(0).setMinWidth(0);
+        thuTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        thuTable.getColumnModel().getColumn(0).setWidth(0);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    String dateString = (String) value;
+
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
+
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        thuTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer); 
+        thuTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        thuTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        thuTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        
+//        thuTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer()); 
 
         defaultTableThuModel.setRowCount(0);
         setThuTableData(homeViewController.getAllInforUserThu(accountId));
@@ -233,14 +496,18 @@ public class HomeViewPro extends javax.swing.JFrame {
     public void setSTKTable(List<SoTietKiemModel> allGiaoDich){
         for (SoTietKiemModel giaoDich : allGiaoDich) {
             DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
+            DecimalFormat decimalFormatForKyHan = new DecimalFormat("#,##.##");
+            
             String formattedSoTienGui = df.format(giaoDich.getSoTienGui());
             String formattedSoTienLaiNhanDuoc = df.format(giaoDich.getSoTienLaiNhanDuoc());
             String formattedTongTienNhanDuoc = df.format(giaoDich.getTongTienNhanDuoc());
+            String formattedLaiSuatGui = decimalFormatForKyHan.format(giaoDich.getLaiSuatGui());
+            String formattedKyHan = decimalFormatForKyHan.format(giaoDich.getKyHan());
             
             defaultTableSTKModel.addRow(new Object[]{giaoDich.getTietKiemId(), giaoDich.getNgayGui(),
-                    giaoDich.getTenNganHang(), formattedSoTienGui, giaoDich.getLaiSuatGui(),
+                    giaoDich.getTenNganHang(), formattedSoTienGui, formattedLaiSuatGui,
                     formattedSoTienLaiNhanDuoc, formattedTongTienNhanDuoc, 
-                    giaoDich.getKyHan()
+                    formattedKyHan
             });
         }
     }
@@ -248,92 +515,448 @@ public class HomeViewPro extends javax.swing.JFrame {
     public void setLSVTable(List<LaiSuatVayModel> allGiaoDich){
         for (LaiSuatVayModel giaoDich : allGiaoDich) {
             DecimalFormat df = new DecimalFormat("###,###,###,###,###"); // Định dạng số theo dấu phẩy
+            DecimalFormat decimalFormatForKyHan = new DecimalFormat("#,##.##");
+            
             String formattedGiaTriBDS = df.format(giaoDich.getGiaTriBatDongSan());
             String formattedSoTienVay = df.format(giaoDich.getSoTienVay());
             String formattedSoTienTraHangThang = df.format(giaoDich.getSoTienPhaiTraHangThang());
             String formattedTongLaiPhaiTra = df.format(giaoDich.getTongLaiPhaiTra());
+            String formattedThoiGianVay = decimalFormatForKyHan.format(giaoDich.getThoiGianVay());
+            String formattedLaiSuatVay = decimalFormatForKyHan.format(giaoDich.getLaiSuat());
+
             
             defaultTableLSVModel.addRow(new Object[]{giaoDich.getLaiSuatVayId(), giaoDich.getTenNganHangLSV(),
-                    formattedGiaTriBDS, formattedSoTienVay, giaoDich.getThoiGianVay(),
-                    giaoDich.getLaiSuat(), giaoDich.getNgayGiaiNgan(),  
+                    formattedGiaTriBDS, formattedSoTienVay, formattedThoiGianVay,
+                    formattedLaiSuatVay, giaoDich.getNgayGiaiNgan(),  
                     formattedSoTienTraHangThang, formattedTongLaiPhaiTra
             });
         }
     }
     
     public final void findUsers(int accountId){
-        List<GiaoDichModel> users = homeViewController.searchTenGiaoDich(tenTKTextField.getText(), accountId);
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú", "Hạng Mục"});
-        Object[] row = new Object[6];
-        
-        for(int i = 0; i < users.size(); i++)
-        {
-            row[0] = users.get(i).getId();
-            row[1] = users.get(i).getDate();
-            row[2] = users.get(i).getMatHang();
-            row[3] = users.get(i).getThanhTien();
-            row[4] = users.get(i).getGhiChu();
-            row[5] = users.get(i).getHangMuc();
-            model.addRow(row);
-        }
-       tenTKTable.setModel(model);
-       
-    }
-    
-    public final void findMoney(int accountId){
-        List<GiaoDichModel> users = homeViewController.searchTienGiaoDichThuChi(tuTienTKTextField.getText(), denTienTKTextField.getText(), accountId);
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú", "Hạng Mục"});
-        Object[] row = new Object[6];
-        
-        DecimalFormat df = new DecimalFormat("###,###,###,###");
-        
-        for(int i = 0; i < users.size(); i++)
-        {
-            row[0] = users.get(i).getId();
-            row[1] = users.get(i).getDate();
-            row[2] = users.get(i).getMatHang();
+//        List<GiaoDichModel> users = homeViewController.searchTenGiaoDich(tenTKTextField.getText(), accountId);
+//        DefaultTableModel model = new DefaultTableModel();
+//        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú", "Hạng Mục"});
+//        Object[] row = new Object[6];
+//        
+//        for(int i = 0; i < users.size(); i++)
+//        {
+//            row[0] = users.get(i).getId();
+//            row[1] = users.get(i).getDate();
+//            row[2] = users.get(i).getMatHang();
 //            row[3] = users.get(i).getThanhTien();
-            row[3] = df.format(users.get(i).getThanhTien());        
-            row[4] = users.get(i).getGhiChu();
-            row[5] = users.get(i).getHangMuc();
-            model.addRow(row);
+//            row[4] = users.get(i).getGhiChu();
+//            row[5] = users.get(i).getHangMuc();
+//            model.addRow(row);
+//        }
+//       tenTKTable.setModel(model);
+//   
+
+DefaultTableModel defaultTableModelTen = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
         }
-       tienTKTable.setModel(model);
+    };
+        
+        tenTKTable.setModel(defaultTableModelTen);
+
+        defaultTableModelTen.addColumn("ID");
+        defaultTableModelTen.addColumn("Thời Gian");
+        defaultTableModelTen.addColumn("Mặt Hàng");
+        defaultTableModelTen.addColumn("Thành Tiền");
+        defaultTableModelTen.addColumn("Ghi Chú");
+        defaultTableModelTen.addColumn("Danh Mục");
+        
+//        tenTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+
+        tenTKTable.getColumnModel().getColumn(0).setMinWidth(0);
+        tenTKTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        tenTKTable.getColumnModel().getColumn(0).setWidth(0);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    String dateString = (String) value;
+
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
+
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        tenTKTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer); 
+        tenTKTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        tenTKTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        tenTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        tenTKTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+        
+
+        // Get the data from your controller or data source
+        List<GiaoDichModel> allGiaoDich = homeViewController.searchTenGiaoDich(tenTKTextField.getText(), accountId);
+        // Populate both tables with the data
+        for (GiaoDichModel giaoDich : allGiaoDich) {
+            DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
+            String formattedThanhTien = df.format(giaoDich.getThanhTien());
+            
+            defaultTableModelTen.addRow(new Object[]{giaoDich.getId(), giaoDich.getDate(),
+                    giaoDich.getMatHang(),formattedThanhTien, giaoDich.getGhiChu(), giaoDich.getHangMuc()});
+        }
+
     }
     
-    public void findDate(int accountId){
-        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date tuNgayDate = tuNgayTKTextField.getDate();
-        Date denNgayDate = denNgayTKTextField.getDate();
+    public final void findMoney(int accountId, String hangMuc){
+//        List<GiaoDichModel> users = homeViewController.searchTienGiaoDichThuChi(tuTienTKTextField.getText(), denTienTKTextField.getText(), accountId);
+//        DefaultTableModel model = new DefaultTableModel();
+//        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú", "Hạng Mục"});
+//        Object[] row = new Object[6];
+//        
+//        DecimalFormat df = new DecimalFormat("###,###,###,###");
+//        
+//        for(int i = 0; i < users.size(); i++)
+//        {
+//            row[0] = users.get(i).getId();
+//            row[1] = users.get(i).getDate();
+//            row[2] = users.get(i).getMatHang();
+////            row[3] = users.get(i).getThanhTien();
+//            row[3] = df.format(users.get(i).getThanhTien());        
+//            row[4] = users.get(i).getGhiChu();
+//            row[5] = users.get(i).getHangMuc();
+//            model.addRow(row);
+//        }
+//       tienTKTable.setModel(model);
+
+DefaultTableModel defaultTableModelTen = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+    
+        tienTKTable.setModel(defaultTableModelTen);
+
+        defaultTableModelTen.addColumn("ID");
+        defaultTableModelTen.addColumn("Thời Gian");
+        defaultTableModelTen.addColumn("Mặt Hàng");
+        defaultTableModelTen.addColumn("Thành Tiền");
+        defaultTableModelTen.addColumn("Ghi Chú");
+        defaultTableModelTen.addColumn("Danh Mục");
         
-        DecimalFormat df = new DecimalFormat("###,###,###,###");
+        tienTKTable.getColumnModel().getColumn(0).setMinWidth(0);
+        tienTKTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        tienTKTable.getColumnModel().getColumn(0).setWidth(0);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-        if (tuNgayDate != null && denNgayDate != null) {
-            String tuNgayTxt = simpleDateFormat.format(tuNgayDate);
-            String denNgayTxt = simpleDateFormat.format(denNgayDate);
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    String dateString = (String) value;
 
-            List<GiaoDichModel> users = homeViewController.searchThoiGianGiaoDichThuChi(tuNgayTxt, denNgayTxt, accountId);
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
 
-            DefaultTableModel model = new DefaultTableModel();
-            model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú", "Hạng Mục"});
-            Object[] row = new Object[6];
-
-            for(int i = 0; i < users.size(); i++) {
-                row[0] = users.get(i).getId();
-                row[1] = users.get(i).getDate();
-                row[2] = users.get(i).getMatHang();
-//                row[3] = users.get(i).getThanhTien();
-                row[3] = df.format(users.get(i).getThanhTien()); 
-                row[4] = users.get(i).getGhiChu();
-                row[5] = users.get(i).getHangMuc();
-                model.addRow(row);
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-            thoiGianTKTable.setModel(model);
-        } else {
-            // Handle the case where either tuNgayTKTextField or denNgayTKTextField returned null dates
-            // You can display an error message or take appropriate action.
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        tienTKTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer); 
+        tienTKTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        tienTKTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        tienTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        tienTKTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+        
+        
+//        tienTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+        
+
+        // Get the data from your controller or data source
+        List<GiaoDichModel> allGiaoDich = homeViewController.getHangMucChi(accountId, hangMuc);
+
+        // Populate both tables with the data
+        for (GiaoDichModel giaoDich : allGiaoDich) {
+            DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
+            String formattedThanhTien = df.format(giaoDich.getThanhTien());
+            
+            defaultTableModelTen.addRow(new Object[]{giaoDich.getId(), giaoDich.getDate(),
+                    giaoDich.getMatHang(), formattedThanhTien, giaoDich.getGhiChu(), giaoDich.getHangMuc()});
+        }
+
+    }
+    
+    public final void findHangMucThu(int accountId, String hangMuc){
+//        List<GiaoDichModel> users = homeViewController.searchTienGiaoDichThuChi(tuTienTKTextField.getText(), denTienTKTextField.getText(), accountId);
+//        DefaultTableModel model = new DefaultTableModel();
+//        model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú", "Hạng Mục"});
+//        Object[] row = new Object[6];
+//        
+//        DecimalFormat df = new DecimalFormat("###,###,###,###");
+//        
+//        for(int i = 0; i < users.size(); i++)
+//        {
+//            row[0] = users.get(i).getId();
+//            row[1] = users.get(i).getDate();
+//            row[2] = users.get(i).getMatHang();
+////            row[3] = users.get(i).getThanhTien();
+//            row[3] = df.format(users.get(i).getThanhTien());        
+//            row[4] = users.get(i).getGhiChu();
+//            row[5] = users.get(i).getHangMuc();
+//            model.addRow(row);
+//        }
+//       tienTKTable.setModel(model);
+
+DefaultTableModel defaultTableModelTen = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+    
+        tienTKTable.setModel(defaultTableModelTen);
+
+        defaultTableModelTen.addColumn("ID");
+        defaultTableModelTen.addColumn("Thời Gian");
+        defaultTableModelTen.addColumn("Thành Tiền");
+        defaultTableModelTen.addColumn("Ghi Chú");
+        defaultTableModelTen.addColumn("Danh Mục");
+
+        
+        tienTKTable.getColumnModel().getColumn(0).setMinWidth(0);
+        tienTKTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        tienTKTable.getColumnModel().getColumn(0).setWidth(0);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    String dateString = (String) value;
+
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
+
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        tienTKTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer); 
+        tienTKTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        tienTKTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        tienTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+
+        
+//        tienTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+        
+
+        // Get the data from your controller or data source
+        List<GiaoDichThuModel> allGiaoDich = homeViewController.getHangMucThu(accountId, hangMuc);
+
+        // Populate both tables with the data
+        for(GiaoDichThuModel giaoDich: allGiaoDich){
+            DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
+            String formattedThanhTien = df.format(giaoDich.getThanhTien());
+            
+            defaultTableModelTen.addRow(new Object[]{giaoDich.getId(), giaoDich.getDate(),
+                     formattedThanhTien, giaoDich.getGhiChu(), giaoDich.getHangMuc()});
+        }
+
+    }
+    
+    public void findDate(String tuNgayTxt,String denNgayTxt, int accountId){
+//        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        Date tuNgayDate = tuNgayTKTextField.getDate();
+//        Date denNgayDate = denNgayTKTextField.getDate();
+//        
+//        DecimalFormat df = new DecimalFormat("###,###,###,###");
+//
+//        if (tuNgayDate != null && denNgayDate != null) {
+//            String tuNgayTxt = simpleDateFormat.format(tuNgayDate);
+//            String denNgayTxt = simpleDateFormat.format(denNgayDate);
+//
+//            List<GiaoDichModel> users = homeViewController.searchThoiGianGiaoDichThuChi(tuNgayTxt, denNgayTxt, accountId);
+//
+//            DefaultTableModel model = new DefaultTableModel();
+//            model.setColumnIdentifiers(new Object[]{"ID", "Thời Gian", "Mặt Hàng", "Thành Tiền", "Ghi Chú", "Hạng Mục"});
+//            Object[] row = new Object[6];
+//
+//            for(int i = 0; i < users.size(); i++) {
+//                row[0] = users.get(i).getId();
+//                row[1] = users.get(i).getDate();
+//                row[2] = users.get(i).getMatHang();
+////                row[3] = users.get(i).getThanhTien();
+//                row[3] = df.format(users.get(i).getThanhTien()); 
+//                row[4] = users.get(i).getGhiChu();
+//                row[5] = users.get(i).getHangMuc();
+//                model.addRow(row);
+//            }
+//            thoiGianTKTable.setModel(model);
+//        } else {
+//            // Handle the case where either tuNgayTKTextField or denNgayTKTextField returned null dates
+//            // You can display an error message or take appropriate action.
+//        }
+
+
+DefaultTableModel defaultTableModelTen = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return true;
+        }
+    };
+    
+        thoiGianTKTable.setModel(defaultTableModelTen);
+        
+//        thoiGianTKTable.getColumnModel().getColumn(2).setCellRenderer(new DateRenderer());
+        defaultTableModelTen.addColumn("ID");
+        defaultTableModelTen.addColumn("Thời Gian");
+        defaultTableModelTen.addColumn("Mặt Hàng");
+        defaultTableModelTen.addColumn("Thành Tiền");
+        defaultTableModelTen.addColumn("Ghi Chú");
+        defaultTableModelTen.addColumn("Danh Mục");
+
+        thoiGianTKTable.getColumnModel().getColumn(0).setMinWidth(0);
+        thoiGianTKTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        thoiGianTKTable.getColumnModel().getColumn(0).setWidth(0);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    String dateString = (String) value;
+
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
+
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        thoiGianTKTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer); 
+        thoiGianTKTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        thoiGianTKTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        thoiGianTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        thoiGianTKTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+//        
+    
+//        thoiGianTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+        
+        // Get the data from your controller or data source
+        List<GiaoDichModel> allGiaoDich =  homeViewController.searchThoiGianGiaoDichThuChi(tuNgayTxt, denNgayTxt, accountId);
+
+        // Populate both tables with the data
+        for (GiaoDichModel giaoDich : allGiaoDich) {
+            DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
+            String formattedThanhTien = df.format(giaoDich.getThanhTien());
+            
+            defaultTableModelTen.addRow(new Object[]{giaoDich.getId(), giaoDich.getDate(),
+                    giaoDich.getMatHang(), formattedThanhTien, giaoDich.getGhiChu(), giaoDich.getHangMuc()});
         }
     }
 
@@ -347,6 +970,8 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         // Create a map to store the data for each period (month or quarter)
         Map<String, Long> periodData = new HashMap<>();
+        
+        double tongTienTrongKhoangThoiGian = 0.0;
 
         if ("Tháng".equals(displayMode)) {
             // Hiển thị 12 tháng
@@ -362,6 +987,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
                 // Add the totalMoney to the corresponding month
                 periodData.put(key, periodData.getOrDefault(key, 0L) + totalMoney);
+                tongTienTrongKhoangThoiGian += totalMoney;
             }
 
             // Add the data to the dataset
@@ -384,6 +1010,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
                 // Add the totalMoney to the corresponding quarter
                 periodData.put(key, periodData.getOrDefault(key, 0L) + totalMoney);
+                tongTienTrongKhoangThoiGian += totalMoney;
             }
 
             // Add the data to the dataset
@@ -392,6 +1019,26 @@ public class HomeViewPro extends javax.swing.JFrame {
                 dataset.addValue(periodData.get(key), "Số tiền", key);
             }
         }
+        
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+    
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+
+        // Sử dụng DecimalFormat để định dạng số
+        DecimalFormat df = new DecimalFormat("###,###,###,###");
+        yAxis.setNumberFormatOverride(df);
+        CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(
+        StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING,
+        df
+        );
+        plot.getRenderer().setBaseItemLabelGenerator(generator);
+        plot.getRenderer().setBaseItemLabelsVisible(true);
+
+        double rangeMultiplier = 1.1; // Điều chỉnh theo nhu cầu
+        double rangeLowerBound = yAxis.getRange().getLowerBound();
+        double rangeUpperBound = yAxis.getRange().getUpperBound();
+        double adjustedUpperBound = rangeUpperBound + (rangeUpperBound - rangeLowerBound) * (rangeMultiplier - 1);
+        yAxis.setRange(new Range(rangeLowerBound, adjustedUpperBound));
 
         ChartPanel chartPanel = new ChartPanel(chart);
 
@@ -400,20 +1047,22 @@ public class HomeViewPro extends javax.swing.JFrame {
         jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
         jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
         jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+        
+//        DecimalFormat df = new DecimalFormat("###,###,###");
+        tongTienTKjLabel.setText(df.format(tongTienTrongKhoangThoiGian));
     }
 
     
-    public void thongKeGiaoDichChiSua(JPanel jpanel, String tu, String den) {
+        public void thongKeGiaoDichChiSua(JPanel jpanel, String tu, String den) {
         // Hiển thị dữ liệu theo khoảng thời gian từ 'tu' đến 'den'
         List<GiaoDichModel> listItem = homeViewController.thongKeGiaoDichChiSua(logId, tu, den);
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
-                "Tiền", dataset);
+        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian", "Tiền", dataset);
 
         // Create a map to store the data for each month and year
         Map<String, Long> monthYearData = new TreeMap<>(new MonthYearComparator());
-
+        double tongTienTrongKhoangThoiGian = 0.0;
         // Populate the map with actual data
         for (GiaoDichModel item : listItem) {
             int year = item.getYear();
@@ -423,12 +1072,36 @@ public class HomeViewPro extends javax.swing.JFrame {
 
             // Add the totalMoney to the corresponding month and year
             monthYearData.put(key, monthYearData.getOrDefault(key, 0L) + totalMoney);
+            tongTienTrongKhoangThoiGian += totalMoney;
         }
 
-        // Add the data to the dataset
+        // Add the data to the dataset for columns with non-zero values
         for (String monthYear : monthYearData.keySet()) {
-            dataset.addValue(monthYearData.get(monthYear), "Số tiền", monthYear);
+            long totalMoney = monthYearData.get(monthYear);
+            if (totalMoney != 0) {
+                dataset.addValue(totalMoney, "Số tiền", monthYear);
+            }
         }
+
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+    
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+
+        // Sử dụng DecimalFormat để định dạng số
+        DecimalFormat df = new DecimalFormat("###,###,###,###");
+        yAxis.setNumberFormatOverride(df);
+        CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(
+        StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING,
+        df
+        );
+        plot.getRenderer().setBaseItemLabelGenerator(generator);
+        plot.getRenderer().setBaseItemLabelsVisible(true);
+
+        double rangeMultiplier = 1.1; // Điều chỉnh theo nhu cầu
+        double rangeLowerBound = yAxis.getRange().getLowerBound();
+        double rangeUpperBound = yAxis.getRange().getUpperBound();
+        double adjustedUpperBound = rangeUpperBound + (rangeUpperBound - rangeLowerBound) * (rangeMultiplier - 1);
+        yAxis.setRange(new Range(rangeLowerBound, adjustedUpperBound));
 
         ChartPanel chartPanel = new ChartPanel(chart);
 
@@ -437,18 +1110,21 @@ public class HomeViewPro extends javax.swing.JFrame {
         jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
         jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
         jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+        tongTienTKjLabel.setText(df.format(tongTienTrongKhoangThoiGian));
     }
+
     
     public void thongKeGiaoDichThuSua(JPanel jpanel, String tu, String den) {
-        // Hiển thị dữ liệu theo khoảng thời gian từ 'tu' đến 'den'
+    // Hiển thị dữ liệu theo khoảng thời gian từ 'tu' đến 'den'
         List<GiaoDichModel> listItem = homeViewController.thongKeGiaoDichThuSua(logId, tu, den);
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian",
-                "Tiền", dataset);
+        JFreeChart chart = ChartFactory.createBarChart("THỐNG KÊ", "Thời Gian", "Tiền", dataset);
 
         // Create a map to store the data for each month and year
         Map<String, Long> monthYearData = new TreeMap<>(new MonthYearComparator());
+        
+        double tongTienTrongKhoangThoiGian = 0.0;
 
         // Populate the map with actual data
         for (GiaoDichModel item : listItem) {
@@ -459,13 +1135,37 @@ public class HomeViewPro extends javax.swing.JFrame {
 
             // Add the totalMoney to the corresponding month and year
             monthYearData.put(key, monthYearData.getOrDefault(key, 0L) + totalMoney);
+            tongTienTrongKhoangThoiGian += totalMoney;
         }
 
-        // Add the data to the dataset
+        // Add the data to the dataset for columns with non-zero values
         for (String monthYear : monthYearData.keySet()) {
-            dataset.addValue(monthYearData.get(monthYear), "Số tiền", monthYear);
+            long totalMoney = monthYearData.get(monthYear);
+            if (totalMoney != 0) {
+                dataset.addValue(totalMoney, "Số tiền", monthYear);
+            }
         }
 
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+    
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+
+        // Sử dụng DecimalFormat để định dạng số
+        DecimalFormat df = new DecimalFormat("###,###,###,###");
+        yAxis.setNumberFormatOverride(df);
+        CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(
+        StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING,
+        df
+        );
+        plot.getRenderer().setBaseItemLabelGenerator(generator);
+        plot.getRenderer().setBaseItemLabelsVisible(true);
+
+        double rangeMultiplier = 1.1; // Điều chỉnh theo nhu cầu
+        double rangeLowerBound = yAxis.getRange().getLowerBound();
+        double rangeUpperBound = yAxis.getRange().getUpperBound();
+        double adjustedUpperBound = rangeUpperBound + (rangeUpperBound - rangeLowerBound) * (rangeMultiplier - 1);
+        yAxis.setRange(new Range(rangeLowerBound, adjustedUpperBound));
+        
         ChartPanel chartPanel = new ChartPanel(chart);
 
         // Thêm chartPanel vào JPanel
@@ -473,7 +1173,10 @@ public class HomeViewPro extends javax.swing.JFrame {
         jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
         jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
         jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+        
+        tongTienTKjLabel.setText(df.format(tongTienTrongKhoangThoiGian));
     }
+
     
     public void thongKeGiaoDichThuChiSua(JPanel jpanel, String tu, String den) {
         // Hiển thị dữ liệu theo khoảng thời gian từ 'tu' đến 'den'
@@ -599,6 +1302,8 @@ public class HomeViewPro extends javax.swing.JFrame {
     // Tạo map để lưu trữ dữ liệu
     Map<String, Double> dataMap = new TreeMap<>(new MonthYearComparator());
 
+    double tongTienTrongKhoangThoiGian = 0.0;
+    
     // Lấy dữ liệu theo tháng hoặc quý
     if ("Tháng".equals(displayMode)) {
         // Lặp qua tất cả các tháng trong khoảng thời gian đã chọn
@@ -616,6 +1321,7 @@ public class HomeViewPro extends javax.swing.JFrame {
                 }
 
                 dataMap.put(key, totalMoney);
+                tongTienTrongKhoangThoiGian += totalMoney;
             }
         }
     } else if ("Quý".equals(displayMode)) {
@@ -644,6 +1350,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
                 // Add the calculated value to the dataset
                 dataset.addValue(totalMoney, "Số tiền", key);
+                tongTienTrongKhoangThoiGian += totalMoney;
             }
         }
     }
@@ -661,16 +1368,23 @@ public class HomeViewPro extends javax.swing.JFrame {
     // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
     CategoryPlot plot = (CategoryPlot) chart.getPlot();
     
-    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 
         // Sử dụng DecimalFormat để định dạng số
         DecimalFormat df = new DecimalFormat("###,###,###,###");
         yAxis.setNumberFormatOverride(df);
-    StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
-            StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
-            new DecimalFormat("###,###,###,###")
-    );
-    plot.getRenderer().setBaseToolTipGenerator(toolTipGenerator);
+        CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(
+        StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING,
+        df
+        );
+        plot.getRenderer().setBaseItemLabelGenerator(generator);
+        plot.getRenderer().setBaseItemLabelsVisible(true);
+
+        double rangeMultiplier = 1.1; // Điều chỉnh theo nhu cầu
+        double rangeLowerBound = yAxis.getRange().getLowerBound();
+        double rangeUpperBound = yAxis.getRange().getUpperBound();
+        double adjustedUpperBound = rangeUpperBound + (rangeUpperBound - rangeLowerBound) * (rangeMultiplier - 1);
+        yAxis.setRange(new Range(rangeLowerBound, adjustedUpperBound));
 
     ChartPanel chartPanel = new ChartPanel(chart);
 
@@ -679,6 +1393,8 @@ public class HomeViewPro extends javax.swing.JFrame {
     jpanel.setLayout(new BorderLayout());
     jpanel.add(chartPanel, BorderLayout.CENTER);
     jpanel.revalidate();
+    
+    tongTienTKjLabel.setText(df.format(tongTienTrongKhoangThoiGian));
 }
 
 
@@ -697,6 +1413,8 @@ public class HomeViewPro extends javax.swing.JFrame {
 
     // Tạo map để lưu trữ dữ liệu
     Map<String, Double> dataMap = new TreeMap<>(new MonthYearComparator());
+    
+    double tongTienTrongKhoangThoiGian = 0.0;
 
     // Lấy dữ liệu theo tháng hoặc quý
     if ("Tháng".equals(displayMode)) {
@@ -705,7 +1423,8 @@ public class HomeViewPro extends javax.swing.JFrame {
             for (int month = startMonth; month <= 12; month++) {
                 String key = String.format("%d/%02d", month, year);
                 double totalMoney = calculateTotalMoneyByMonthAndYearLSV(laiSuatVayList, month, year);
-                dataMap.put(key, totalMoney);   
+                dataMap.put(key, totalMoney);  
+                tongTienTrongKhoangThoiGian += totalMoney;
 
                 if (year == endYear && month == endMonth) {
                     break; // Dừng vòng lặp khi đã đến tháng cuối cùng
@@ -731,6 +1450,7 @@ public class HomeViewPro extends javax.swing.JFrame {
 
             // Add the calculated value to the dataset
             dataset.addValue(totalMoney, "Số tiền", key);  // Uncomment this line
+            tongTienTrongKhoangThoiGian += totalMoney;
 
             if (currentYear == endYear && quarter == (endMonth - 1) / 3 + 1) {
                 break; // Dừng vòng lặp khi đã đến quý cuối cùng
@@ -749,21 +1469,26 @@ public class HomeViewPro extends javax.swing.JFrame {
         dataset.addValue(totalMoney, "Số tiền", key);
     }
 
-    // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
     CategoryPlot plot = (CategoryPlot) chart.getPlot();
     
-    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 
         // Sử dụng DecimalFormat để định dạng số
         DecimalFormat df = new DecimalFormat("###,###,###,###");
         yAxis.setNumberFormatOverride(df);
-    
-    StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
-            StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
-            new DecimalFormat("###,###,###,###")
-    );
-    plot.getRenderer().setBaseToolTipGenerator(toolTipGenerator);
+        CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(
+        StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING,
+        df
+        );
+        plot.getRenderer().setBaseItemLabelGenerator(generator);
+        plot.getRenderer().setBaseItemLabelsVisible(true);
 
+        double rangeMultiplier = 1.1; // Điều chỉnh theo nhu cầu
+        double rangeLowerBound = yAxis.getRange().getLowerBound();
+        double rangeUpperBound = yAxis.getRange().getUpperBound();
+        double adjustedUpperBound = rangeUpperBound + (rangeUpperBound - rangeLowerBound) * (rangeMultiplier - 1);
+        yAxis.setRange(new Range(rangeLowerBound, adjustedUpperBound));
+        
     ChartPanel chartPanel = new ChartPanel(chart);
 
     // Thêm chartPanel vào JPanel
@@ -771,6 +1496,7 @@ public class HomeViewPro extends javax.swing.JFrame {
     jpanel.setLayout(new BorderLayout());
     jpanel.add(chartPanel, BorderLayout.CENTER);
     jpanel.revalidate();
+    tongTienTKjLabel.setText(df.format(tongTienTrongKhoangThoiGian));
 }    
     
     
@@ -793,7 +1519,8 @@ private double calculateTotalMoneyByQuarter(List<SoTietKiemModel> soTietKiemList
         return totalMoney;
     }
     
-    public void thongKeSoTietKiem(JPanel jpanel, String tu, String den) {
+    
+public void thongKeSoTietKiem(JPanel jpanel, String tu, String den) {
     List<SoTietKiemModel> soTietKiemList = homeViewController.layDanhSachSoTietKiemToanBo(logId);
 
     DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -812,6 +1539,12 @@ private double calculateTotalMoneyByQuarter(List<SoTietKiemModel> soTietKiemList
     int currentYear = Calendar.getInstance().get(Calendar.YEAR);
     int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
     int currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+    
+    System.out.println(currentYear);
+
+    System.out.println(currentMonth);
+
+    System.out.println(currentDay);
 
     // Tạo map để lưu trữ dữ liệu cho từng tháng và năm
     Map<String, Double> monthYearData = new TreeMap<>(new MonthYearComparator());
@@ -827,6 +1560,11 @@ private double calculateTotalMoneyByQuarter(List<SoTietKiemModel> soTietKiemList
                 // Chỉ tính totalMoney nếu tháng và năm không lớn hơn ngày hiện tại
                 if (!(year == currentYear && month > currentMonth) || (year == currentYear && month == currentMonth && startDay <= currentDay)) {
                     totalMoney = calculateTotalMoneyByMonthAndYear(soTietKiemList, month, year, currentDay);
+
+                    // Kiểm tra nếu thêm 1 tháng mà ngày, tháng, năm lớn hơn thời gian hiện tại, break luôn
+                    if (year == currentYear && month == currentMonth + 1 && startDay > currentDay) {
+                        break;
+                    }
                 }
             }
 
@@ -850,12 +1588,12 @@ private double calculateTotalMoneyByQuarter(List<SoTietKiemModel> soTietKiemList
     
     NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 
-        // Sử dụng DecimalFormat để định dạng số
-        DecimalFormat df = new DecimalFormat("###,###,###,###");
-        yAxis.setNumberFormatOverride(df);
+    // Sử dụng DecimalFormat để định dạng số
+    DecimalFormat df = new DecimalFormat("###,###,###,###");
+    yAxis.setNumberFormatOverride(df);
     StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
-            StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
-            new DecimalFormat("###,###,###,###")
+        StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
+        new DecimalFormat("###,###,###,###")
     );
     plot.getRenderer().setBaseToolTipGenerator(toolTipGenerator);
 
@@ -868,38 +1606,87 @@ private double calculateTotalMoneyByQuarter(List<SoTietKiemModel> soTietKiemList
     jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
 }
 
+
+
+
 public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int targetMonth, int targetYear, int currentDay) {
     double totalMoney = 0;
+
+    int nextMonth = targetMonth + 1;
+    int nextYear = targetYear;
+    if (nextMonth == 13) {
+        nextMonth = 1;
+        nextYear++;
+    }
 
     for (SoTietKiemModel item : list) {
         int startMonth = item.getMonth();
         int startYear = item.getYear();
         double kyHan = item.getKyHan();
-        double tongTienNhanDuoc = item.getSoTienLaiNhanDuoc();
+        double tongTienNhanDuoc = item.getSoTienLaiNhanDuoc() / kyHan;
         int itemDay = item.getDay();
 
         // Tính số tháng tăng dần dựa trên kỳ hạn
-        for (int i = 0; i < kyHan; i++) {
-            int currentMonth = startMonth + 1 + i;
+        int currentIncrement = 0;  // Start with an initial increment
+        boolean shouldContinue = true;
+
+        for (int i = 1; i <= kyHan; i++) {
+            int currentMonth = startMonth + currentIncrement + i;
             int currentYear = startYear;
+
             // Nếu vượt quá 12 tháng, chuyển sang năm tiếp theo
-            if (currentMonth > 12) {
+            while (currentMonth > 12) {
                 currentMonth -= 12;
                 currentYear++;
             }
 
+            // Tạo Calendar cho ngày hiện tại và ngày sau khi tăng bởi kỳ hạn
+            Calendar currentCalendar = Calendar.getInstance();
+            currentCalendar.set(currentYear, currentMonth - 1, itemDay);
+
+            int nam = Calendar.getInstance().get(Calendar.YEAR);
+            int thang = Calendar.getInstance().get(Calendar.MONTH) + 1;
+            int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+
+            Calendar targetCalendar = Calendar.getInstance();
+            targetCalendar.set(nam, thang, day);
+
+            // Kiểm tra xem ngày, tháng, năm sau khi tăng bởi kỳ hạn có vượt quá thời gian hiện tại không
+            if (currentCalendar.after(targetCalendar) || currentCalendar.equals(targetCalendar)) {
+                // Ngày sau khi tăng bởi kỳ hạn lớn hơn thời gian hiện tại, không cộng giá trị
+                System.out.println("break");
+                shouldContinue = false;
+                break;
+            }
+
+            System.out.println("Total Money: " + totalMoney);
+
             // Kiểm tra xem có phải tháng và năm cần tính không
-            if (currentMonth == targetMonth && currentYear == targetYear && itemDay <= currentDay) {
+            if ((currentMonth == targetMonth && currentYear == targetYear) ||
+                    (currentMonth == targetMonth && currentYear == targetYear && startMonth == currentMonth - 1) ||
+                    (currentMonth == targetMonth + 1 && currentYear == targetYear && startMonth == currentMonth - 2)) {
+
+                // Nếu tháng và năm trùng khớp, cộng giá trị
                 totalMoney += tongTienNhanDuoc;
-                break; // Dừng vòng lặp khi đã cộng dồn vào tổng
+
+                // Kiểm tra xem có nên dừng khi đến thời gian hiện tại không
+                if (!shouldContinue || (currentYear > targetYear || (currentYear == targetYear && currentMonth > targetMonth) ||
+                        (currentYear == targetYear && currentMonth == targetMonth && itemDay > currentDay))) {
+                    break;
+                }
             }
         }
     }
 
+    System.out.println("Total Money: " + totalMoney);
+
     return totalMoney;
 }
 
-    
+
+
+
+
     public void thongKeLaiSuatVay(JPanel jpanel, String tu, String den) {
     List<SoTienDaTraModel> soTietKiemList = homeViewController.layDanhSTDTToanBo(logId);
 
@@ -914,6 +1701,8 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
     // Lấy tháng và năm từ chuỗi den theo định dạng yyyy-MM-dd
     int endYear = Integer.parseInt(den.substring(0, 4));
     int endMonth = Integer.parseInt(den.substring(5, 7));
+    
+    double tongTienTrongKhoangThoiGian = 0.0;
 
     // Tạo map để lưu trữ dữ liệu cho từng tháng và năm
     Map<String, Double> monthYearData = new TreeMap<>(new MonthYearComparator());
@@ -923,9 +1712,12 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         for (int month = startMonth; month <= 12; month++) {
             String key = String.format("%d/%02d", month, year);
             double totalMoney = calculateTotalMoneyByMonthAndYearLSV(soTietKiemList, month, year);
-
-            // Thêm vào dataset
-            monthYearData.put(key, totalMoney);
+            
+            // Thêm vào dataset nếu totalMoney khác 0
+            if (totalMoney != 0) {
+                monthYearData.put(key, totalMoney);
+                tongTienTrongKhoangThoiGian += totalMoney;
+            }
 
             // Dừng vòng lặp khi đã đến tháng cuối cùng
             if (year == endYear && month == endMonth) {
@@ -943,19 +1735,25 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         dataset.addValue(totalMoney, "Số tiền", monthYear);
     }
 
-    // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
     CategoryPlot plot = (CategoryPlot) chart.getPlot();
     
-    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 
         // Sử dụng DecimalFormat để định dạng số
         DecimalFormat df = new DecimalFormat("###,###,###,###");
         yAxis.setNumberFormatOverride(df);
-    StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
-        StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
-        new DecimalFormat("###,###,###,###")
-    );
-    plot.getRenderer().setBaseToolTipGenerator(toolTipGenerator);
+        CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(
+        StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING,
+        df
+        );
+        plot.getRenderer().setBaseItemLabelGenerator(generator);
+        plot.getRenderer().setBaseItemLabelsVisible(true);
+
+        double rangeMultiplier = 1.1; // Điều chỉnh theo nhu cầu
+        double rangeLowerBound = yAxis.getRange().getLowerBound();
+        double rangeUpperBound = yAxis.getRange().getUpperBound();
+        double adjustedUpperBound = rangeUpperBound + (rangeUpperBound - rangeLowerBound) * (rangeMultiplier - 1);
+        yAxis.setRange(new Range(rangeLowerBound, adjustedUpperBound));
 
     ChartPanel chartPanel = new ChartPanel(chart);
 
@@ -964,7 +1762,10 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
     jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
     jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
     jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+    
+    tongTienTKjLabel.setText(df.format(tongTienTrongKhoangThoiGian));
 }
+
 
 
    public double calculateTotalMoneyByMonthAndYearLSV(List<SoTienDaTraModel> list, int targetMonth, int targetYear) {
@@ -1001,6 +1802,7 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
 
         // Create a map to store the data for each period (month or quarter)
         Map<String, Long> periodData = new HashMap<>();
+        double tongTienTrongKhoangThoiGian = 0.0;
 
         if ("Tháng".equals(displayMode)) {
             // Hiển thị 12 tháng
@@ -1016,6 +1818,7 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
 
                 // Add the totalMoney to the corresponding month
                 periodData.put(key, periodData.getOrDefault(key, 0L) + totalMoney);
+                tongTienTrongKhoangThoiGian += totalMoney;
             }
 
             // Add the data to the dataset
@@ -1038,6 +1841,7 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
 
                 // Add the totalMoney to the corresponding quarter
                 periodData.put(key, periodData.getOrDefault(key, 0L) + totalMoney);
+                tongTienTrongKhoangThoiGian += totalMoney;
             }
 
             // Add the data to the dataset
@@ -1047,6 +1851,27 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
             }
         }
 
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+    
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+
+        // Sử dụng DecimalFormat để định dạng số
+        DecimalFormat df = new DecimalFormat("###,###,###,###");
+        yAxis.setNumberFormatOverride(df);
+        CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(
+        StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING,
+        df
+        );
+        plot.getRenderer().setBaseItemLabelGenerator(generator);
+        plot.getRenderer().setBaseItemLabelsVisible(true);
+
+        double rangeMultiplier = 1.1; // Điều chỉnh theo nhu cầu
+        double rangeLowerBound = yAxis.getRange().getLowerBound();
+        double rangeUpperBound = yAxis.getRange().getUpperBound();
+        double adjustedUpperBound = rangeUpperBound + (rangeUpperBound - rangeLowerBound) * (rangeMultiplier - 1);
+        yAxis.setRange(new Range(rangeLowerBound, adjustedUpperBound));
+
+        
         ChartPanel chartPanel = new ChartPanel(chart);
 
         // Thêm chartPanel vào JPanel
@@ -1054,6 +1879,8 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
         jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
         jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+        
+        tongTienTKjLabel.setText(df.format(tongTienTrongKhoangThoiGian));
     }
     
     public void thongKeGiaoDichThuChi(JPanel jpanel, int year, String displayMode) {
@@ -1111,6 +1938,20 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
                 dataset.addValue(periodData.get(key), "Số tiền", key);
             }
         }
+        
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+    
+    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+
+        // Sử dụng DecimalFormat để định dạng số
+        DecimalFormat df = new DecimalFormat("###,###,###,###");
+        yAxis.setNumberFormatOverride(df);
+    StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
+        StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
+        new DecimalFormat("###,###,###,###")
+    );
+    plot.getRenderer().setBaseToolTipGenerator(toolTipGenerator);
+
 
         ChartPanel chartPanel = new ChartPanel(chart);
 
@@ -1159,9 +2000,60 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         defaultTableModelTen.addColumn("Mặt Hàng");
         defaultTableModelTen.addColumn("Thành Tiền");
         defaultTableModelTen.addColumn("Ghi Chú");
-        defaultTableModelTen.addColumn("Hạng Mục");
+        defaultTableModelTen.addColumn("Danh Mục");
         
-        tenTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+//        tenTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+
+        tenTKTable.getColumnModel().getColumn(0).setMinWidth(0);
+        tenTKTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        tenTKTable.getColumnModel().getColumn(0).setWidth(0);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    String dateString = (String) value;
+
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
+
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        tenTKTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer); 
+        tenTKTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        tenTKTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        tenTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        tenTKTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+        
 
         // Get the data from your controller or data source
         List<GiaoDichModel> allGiaoDich = homeViewController.getAllInforUserThuChi(accountId);
@@ -1193,9 +2085,60 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         defaultTableModelTen.addColumn("Mặt Hàng");
         defaultTableModelTen.addColumn("Thành Tiền");
         defaultTableModelTen.addColumn("Ghi Chú");
-        defaultTableModelTen.addColumn("Hạng Mục");
+        defaultTableModelTen.addColumn("Danh Mục");
         
-        tienTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+        tienTKTable.getColumnModel().getColumn(0).setMinWidth(0);
+        tienTKTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        tienTKTable.getColumnModel().getColumn(0).setWidth(0);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    String dateString = (String) value;
+
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
+
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        tienTKTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer); 
+        tienTKTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        tienTKTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        tienTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        tienTKTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+        
+        
+//        tienTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
         
 
         // Get the data from your controller or data source
@@ -1229,9 +2172,61 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         defaultTableModelTen.addColumn("Mặt Hàng");
         defaultTableModelTen.addColumn("Thành Tiền");
         defaultTableModelTen.addColumn("Ghi Chú");
-        defaultTableModelTen.addColumn("Hạng Mục");
+        defaultTableModelTen.addColumn("Danh Mục");
 
-        thoiGianTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+        thoiGianTKTable.getColumnModel().getColumn(0).setMinWidth(0);
+        thoiGianTKTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        thoiGianTKTable.getColumnModel().getColumn(0).setWidth(0);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    
+                    String dateString = (String) value;
+
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
+
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        thoiGianTKTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer); 
+        thoiGianTKTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        thoiGianTKTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        thoiGianTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        thoiGianTKTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+//        
+    
+//        thoiGianTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
         
         // Get the data from your controller or data source
         List<GiaoDichModel> allGiaoDich = homeViewController.getAllInforUserThuChi(accountId);
@@ -1262,12 +2257,64 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         defaultTableSTKModel.addColumn("Ngày Gửi");
         defaultTableSTKModel.addColumn("Tên Ngân Hàng");
         defaultTableSTKModel.addColumn("Số Tiền Gửi");
-        defaultTableSTKModel.addColumn("Lãi Suất Gửi");
+        defaultTableSTKModel.addColumn("Lãi Suất Gửi (%)");
         defaultTableSTKModel.addColumn("Số Tiền Lãi Nhận Được");
         defaultTableSTKModel.addColumn("Tổng Tiền Nhận Được");
-        defaultTableSTKModel.addColumn("Kỳ Hạn");
+        defaultTableSTKModel.addColumn("Kỳ Hạn (tháng)");
         
-        soTietKiemTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
+        soTietKiemTable.getColumnModel().getColumn(0).setMinWidth(0);
+        soTietKiemTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        soTietKiemTable.getColumnModel().getColumn(0).setWidth(0);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    String dateString = (String) value;
+
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
+
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        soTietKiemTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer); 
+        soTietKiemTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        soTietKiemTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        soTietKiemTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        soTietKiemTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+        soTietKiemTable.getColumnModel().getColumn(6).setCellRenderer(rightRenderer);
+        soTietKiemTable.getColumnModel().getColumn(7).setCellRenderer(rightRenderer);
+        
+//        soTietKiemTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
 
         // Get the data from your controller or data source
         List<SoTietKiemModel> allGiaoDich = homeViewController.getAllInforUserSTK(accountId);
@@ -1275,14 +2322,18 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         // Populate both tables with the data
         for (SoTietKiemModel giaoDich : allGiaoDich) {
             DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
+            DecimalFormat decimalFormatForKyHan = new DecimalFormat("#,##.##");
+            
             String formattedSoTienGui = df.format(giaoDich.getSoTienGui());
             String formattedSoTienLaiNhanDuoc = df.format(giaoDich.getSoTienLaiNhanDuoc());
             String formattedTongTienNhanDuoc = df.format(giaoDich.getTongTienNhanDuoc());
+            String formattedLaiSuatGui = decimalFormatForKyHan.format(giaoDich.getLaiSuatGui());
+            String formattedKyHan = decimalFormatForKyHan.format(giaoDich.getKyHan());
             
             defaultTableSTKModel.addRow(new Object[]{giaoDich.getTietKiemId(), giaoDich.getNgayGui(),
-                    giaoDich.getTenNganHang(), formattedSoTienGui, giaoDich.getLaiSuatGui(),
+                    giaoDich.getTenNganHang(), formattedSoTienGui, formattedLaiSuatGui,
                     formattedSoTienLaiNhanDuoc, formattedTongTienNhanDuoc, 
-                    giaoDich.getKyHan()
+                    formattedKyHan
             });
         }
     }
@@ -1304,28 +2355,87 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         defaultTableLSVModel.addColumn("Tên Ngân Hàng");
         defaultTableLSVModel.addColumn("Giá Trị BĐS");
         defaultTableLSVModel.addColumn("Số Tiền Vay");
-        defaultTableLSVModel.addColumn("Thời Gian Vay");
-        defaultTableLSVModel.addColumn("Lãi Suất");
+        defaultTableLSVModel.addColumn("Thời Gian Vay (tháng)");
+        defaultTableLSVModel.addColumn("Lãi Suất (%)");
         defaultTableLSVModel.addColumn("Ngày Giải Ngân");
         defaultTableLSVModel.addColumn("Số Tiền Trả Mỗi Tháng");
         defaultTableLSVModel.addColumn("Tổng Số Tiền ");
 
-        laiSuatVayTable.getColumnModel().getColumn(6).setCellRenderer(new DateRenderer());
+        
+        laiSuatVayTable.getColumnModel().getColumn(0).setMinWidth(0);
+        laiSuatVayTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        laiSuatVayTable.getColumnModel().getColumn(0).setWidth(0);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    String dateString = (String) value;
+
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
+
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        laiSuatVayTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer); 
+        laiSuatVayTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        laiSuatVayTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        laiSuatVayTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        laiSuatVayTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+        laiSuatVayTable.getColumnModel().getColumn(6).setCellRenderer(rightRenderer);
+        laiSuatVayTable.getColumnModel().getColumn(7).setCellRenderer(rightRenderer);
+        laiSuatVayTable.getColumnModel().getColumn(8).setCellRenderer(rightRenderer);
+        
+//        laiSuatVayTable.getColumnModel().getColumn(6).setCellRenderer(new DateRenderer());
 
         // Get the data from your controller or data source
         List<LaiSuatVayModel> allGiaoDich = homeViewController.getAllInforUserLSV(accountId);
 
         // Populate both tables with the data
         for (LaiSuatVayModel giaoDich : allGiaoDich) {
-            DecimalFormat df = new DecimalFormat("###,###,###,###"); // Định dạng số theo dấu phẩy
+            DecimalFormat df = new DecimalFormat("###,###,###,###,###"); // Định dạng số theo dấu phẩy
+            DecimalFormat decimalFormatForKyHan = new DecimalFormat("#,##.##");
+            
             String formattedGiaTriBDS = df.format(giaoDich.getGiaTriBatDongSan());
             String formattedSoTienVay = df.format(giaoDich.getSoTienVay());
             String formattedSoTienTraHangThang = df.format(giaoDich.getSoTienPhaiTraHangThang());
             String formattedTongLaiPhaiTra = df.format(giaoDich.getTongLaiPhaiTra());
+            String formattedThoiGianVay = decimalFormatForKyHan.format(giaoDich.getThoiGianVay());
+            String formattedLaiSuatVay = decimalFormatForKyHan.format(giaoDich.getLaiSuat());
+
             
             defaultTableLSVModel.addRow(new Object[]{giaoDich.getLaiSuatVayId(), giaoDich.getTenNganHangLSV(),
-                    formattedGiaTriBDS, formattedSoTienVay, giaoDich.getThoiGianVay(),
-                    giaoDich.getLaiSuat(), giaoDich.getNgayGiaiNgan(),  
+                    formattedGiaTriBDS, formattedSoTienVay, formattedThoiGianVay,
+                    formattedLaiSuatVay, giaoDich.getNgayGiaiNgan(),  
                     formattedSoTienTraHangThang, formattedTongLaiPhaiTra
             });
         }
@@ -1438,8 +2548,10 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
 
     // Get the initial values
     String ngayGuiString = soTietKiemModel.getNgayGui();
-    double soTienLai = soTietKiemModel.getSoTienLaiNhanDuoc();
+    double soTienLai = soTietKiemModel.getSoTienLaiNhanDuoc() / soTietKiemModel.getKyHan();
     int kyHan = (int) soTietKiemModel.getKyHan();
+    
+    
 
     // Ensure ngayGuiString is not null
     if (ngayGuiString != null) {
@@ -1468,7 +2580,7 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
                 } else {
                     // Set values directly in the table model
                     model.setValueAt(i, i - 1, 0);
-                    model.setValueAt(DateTimeFormatter.ofPattern("dd-MM-yyyy").format(incrementedDate), i - 1, 1);
+                    model.setValueAt(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(incrementedDate), i - 1, 1);
 
                     // Format soTienLai with DecimalFormat
                     DecimalFormat df = new DecimalFormat("###,###,###,###");
@@ -1491,6 +2603,50 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         // Handle the case where ngayGuiString is null
         System.err.println("ngayGuiString is null.");
     }
+    
+    DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    String dateString = (String) value;
+
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
+
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        inforSTKjTable.getColumnModel().getColumn(0).setCellRenderer(rightRenderer); 
+        inforSTKjTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer);
+        inforSTKjTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
     
 
 
@@ -1675,24 +2831,15 @@ private double calculateTotalSoTienDaTra(JTable table) {
         mainPanel = new javax.swing.JPanel();
         timKiemPanel = new javax.swing.JPanel();
         jTabbedPane2 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel12 = new javax.swing.JLabel();
-        tenTKTextField = new javax.swing.JTextField();
-        tenTKButton = new javax.swing.JButton();
-        inTenButton = new javax.swing.JButton();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        tenTKTable = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
         tienTKTable = new javax.swing.JTable();
         jPanel6 = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
-        tuTienTKTextField = new javax.swing.JTextField();
-        jLabel14 = new javax.swing.JLabel();
-        denTienTKTextField = new javax.swing.JTextField();
         tienTKButton = new javax.swing.JButton();
         inTienButton = new javax.swing.JButton();
+        hangMucComboBox = new javax.swing.JComboBox<>();
+        jLabel14 = new javax.swing.JLabel();
+        tongTienDanhMucjLabel = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         thoiGianTKTable = new javax.swing.JTable();
@@ -1703,6 +2850,20 @@ private double calculateTotalSoTienDaTra(JTable table) {
         tuNgayTKTextField = new com.toedter.calendar.JDateChooser();
         denNgayTKTextField = new com.toedter.calendar.JDateChooser();
         inNgayThangNamButton = new javax.swing.JButton();
+        jLabel33 = new javax.swing.JLabel();
+        tongChiDatejLabel = new javax.swing.JLabel();
+        jLabel34 = new javax.swing.JLabel();
+        tongThuDatejLabel = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
+        tenTKTextField = new javax.swing.JTextField();
+        tenTKButton = new javax.swing.JButton();
+        inTenButton = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
+        tongMatHangChijLabel = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tenTKTable = new javax.swing.JTable();
         thongKePanel = new javax.swing.JPanel();
         showTKPanel = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
@@ -1712,6 +2873,8 @@ private double calculateTotalSoTienDaTra(JTable table) {
         thangQuyComboBox = new javax.swing.JComboBox<>();
         tkTuyChonButton = new javax.swing.JButton();
         tkThangQuyComboBox = new javax.swing.JComboBox<>();
+        jLabel39 = new javax.swing.JLabel();
+        tongTienTKjLabel = new javax.swing.JLabel();
         giaoDichPanel = new javax.swing.JPanel();
         jTabbedPane4 = new javax.swing.JTabbedPane();
         jPanel15 = new javax.swing.JPanel();
@@ -1721,6 +2884,10 @@ private double calculateTotalSoTienDaTra(JTable table) {
         xoaChiButton = new javax.swing.JButton();
         xoaAllChiButton = new javax.swing.JButton();
         inMucChiButton = new javax.swing.JButton();
+        jLabel28 = new javax.swing.JLabel();
+        tongChiThangLabel = new javax.swing.JLabel();
+        jLabel30 = new javax.swing.JLabel();
+        tongChijLabel = new javax.swing.JLabel();
         jScrollPane7 = new javax.swing.JScrollPane();
         chiTable = new javax.swing.JTable();
         jPanel16 = new javax.swing.JPanel();
@@ -1730,6 +2897,10 @@ private double calculateTotalSoTienDaTra(JTable table) {
         xoaThuButton = new javax.swing.JButton();
         xoaAllThuButton = new javax.swing.JButton();
         inMucThuButton = new javax.swing.JButton();
+        jLabel31 = new javax.swing.JLabel();
+        tongThuThangjLabel = new javax.swing.JLabel();
+        jLabel32 = new javax.swing.JLabel();
+        tongThujLabel = new javax.swing.JLabel();
         jScrollPane8 = new javax.swing.JScrollPane();
         thuTable = new javax.swing.JTable();
         soTietKiemPanel = new javax.swing.JPanel();
@@ -1742,6 +2913,10 @@ private double calculateTotalSoTienDaTra(JTable table) {
         xoaAllSTKButton = new javax.swing.JButton();
         inSTKButton = new javax.swing.JButton();
         inforSTKButton = new javax.swing.JButton();
+        jLabel35 = new javax.swing.JLabel();
+        tongTienLaijLabel = new javax.swing.JLabel();
+        jLabel36 = new javax.swing.JLabel();
+        tongTienGuijLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         soTietKiemTable = new javax.swing.JTable();
         jPanel19 = new javax.swing.JPanel();
@@ -1752,6 +2927,10 @@ private double calculateTotalSoTienDaTra(JTable table) {
         xoaAllLSVButton = new javax.swing.JButton();
         inLSVButton = new javax.swing.JButton();
         inforLSVButton = new javax.swing.JButton();
+        jLabel37 = new javax.swing.JLabel();
+        tongTienNojLabel = new javax.swing.JLabel();
+        jLabel38 = new javax.swing.JLabel();
+        tongTienVayjLabel = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
         laiSuatVayTable = new javax.swing.JTable();
 
@@ -2069,7 +3248,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel9.setInheritsPopupMenu(true);
         jPanel9.setPreferredSize(new java.awt.Dimension(330, 152));
 
-        tkTuyChoComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mục chi", "Mục thu", "Mục thu&chi", "Sổ tiết kiệm", "Lãi suất vay" }));
+        tkTuyChoComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mục chi", "Mục thu", "Sổ tiết kiệm", "Lãi suất vay" }));
 
         jLabel22.setText("Từ");
 
@@ -2299,18 +3478,19 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel12Layout.setVerticalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jLabel21)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
-                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel29)
-                    .addComponent(soTienNojLabel))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel27)
-                    .addComponent(soTienTrajLabel))
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel12Layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(jLabel21)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                        .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel29)
+                            .addComponent(soTienNojLabel)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel27)
+                            .addComponent(soTienTrajLabel))))
                 .addContainerGap())
         );
 
@@ -2460,9 +3640,9 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(315, Short.MAX_VALUE)
+                .addContainerGap(329, Short.MAX_VALUE)
                 .addComponent(jLabel3)
-                .addContainerGap(316, Short.MAX_VALUE))
+                .addContainerGap(329, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2582,126 +3762,6 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jTabbedPane2.setBackground(new java.awt.Color(255, 255, 255));
         jTabbedPane2.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel12.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jLabel12.setText("Mặt hàng");
-
-        tenTKTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tenTKTextFieldActionPerformed(evt);
-            }
-        });
-        tenTKTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                tenTKTextFieldKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                tenTKTextFieldKeyTyped(evt);
-            }
-        });
-
-        tenTKButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        tenTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
-        tenTKButton.setText("  Tìm kiếm");
-        tenTKButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tenTKButtonActionPerformed(evt);
-            }
-        });
-        tenTKButton.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                tenTKButtonKeyReleased(evt);
-            }
-        });
-
-        inTenButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        inTenButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Print preview.png"))); // NOI18N
-        inTenButton.setText("In");
-        inTenButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inTenButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(246, Short.MAX_VALUE)
-                .addComponent(jLabel12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 243, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tenTKButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(inTenButton)
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(7, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel12))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tenTKButton)
-                    .addComponent(inTenButton))
-                .addContainerGap(8, Short.MAX_VALUE))
-        );
-
-        jScrollPane3.setBackground(new java.awt.Color(255, 255, 255));
-        jScrollPane3.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jScrollPane3.setPreferredSize(new java.awt.Dimension(452, 100));
-
-        tenTKTable.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        tenTKTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        tenTKTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tenTKTableMouseClicked(evt);
-            }
-        });
-        jScrollPane3.setViewportView(tenTKTable);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        jTabbedPane2.addTab("Tên", jPanel1);
-
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
 
         jScrollPane6.setBackground(new java.awt.Color(255, 255, 255));
@@ -2720,24 +3780,6 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jScrollPane6.setViewportView(tienTKTable);
 
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel13.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jLabel13.setText("Từ");
-
-        tuTienTKTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                tuTienTKTextFieldKeyReleased(evt);
-            }
-        });
-
-        jLabel14.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jLabel14.setText("Đến");
-
-        denTienTKTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                denTienTKTextFieldKeyReleased(evt);
-            }
-        });
 
         tienTKButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         tienTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
@@ -2762,40 +3804,55 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
+        hangMucComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ăn Uống", "Quần Áo", "Dịch vụ sinh hoạt", "Lương", "Thưởng", "Được cho/tặng", "Khác" }));
+
+        jLabel14.setText("Tổng tiền:");
+
+        tongTienDanhMucjLabel.setText("jLabel33");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap(232, Short.MAX_VALUE)
-                .addComponent(jLabel13)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tuTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel14)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(232, Short.MAX_VALUE))
-            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(tongTienDanhMucjLabel)
+                        .addContainerGap(679, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(hangMucComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tienTKButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(inTienButton))
+                .addComponent(inTienButton)
+                .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(tuTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14)
-                    .addComponent(denTienTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tienTKButton)
-                    .addComponent(inTienButton))
-                .addContainerGap(8, Short.MAX_VALUE))
+                    .addComponent(tongTienDanhMucjLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(hangMucComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(tienTKButton)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(inTienButton)
+                        .addContainerGap())))
         );
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -2806,18 +3863,18 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 805, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        jTabbedPane2.addTab("Tiền", jPanel4);
+        jTabbedPane2.addTab("Danh Mục", jPanel4);
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -2867,62 +3924,229 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
+        jLabel33.setText("Số tiền chi:");
+
+        tongChiDatejLabel.setText("jLabel34");
+
+        jLabel34.setText("Số tiền thu:");
+
+        tongThuDatejLabel.setText("jLabel35");
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap(229, Short.MAX_VALUE)
-                .addComponent(jLabel15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17)
-                .addComponent(jLabel16)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(230, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel33)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tongChiDatejLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel34)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tongThuDatejLabel)))
+                .addGap(665, 665, 665))
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(ngayTKButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(inNgayThangNamButton))
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(ngayTKButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(inNgayThangNamButton)))
+                .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel33)
+                            .addComponent(tongChiDatejLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel34)
+                            .addComponent(tongThuDatejLabel))
+                        .addGap(4, 4, 4)
+                        .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ngayTKButton)
                     .addComponent(inNgayThangNamButton))
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+            .addComponent(jScrollPane4)
+            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
         jTabbedPane2.addTab("Ngày, Tháng, Năm", jPanel5);
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel12.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel12.setText("Mặt hàng");
+
+        tenTKTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tenTKTextFieldActionPerformed(evt);
+            }
+        });
+        tenTKTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tenTKTextFieldKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tenTKTextFieldKeyTyped(evt);
+            }
+        });
+
+        tenTKButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        tenTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
+        tenTKButton.setText("  Tìm kiếm");
+        tenTKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tenTKButtonActionPerformed(evt);
+            }
+        });
+        tenTKButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tenTKButtonKeyReleased(evt);
+            }
+        });
+
+        inTenButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        inTenButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Print preview.png"))); // NOI18N
+        inTenButton.setText("In");
+        inTenButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inTenButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel13.setText("Tổng tiền");
+
+        tongMatHangChijLabel.setText("jLabel14");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(tongMatHangChijLabel))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel12)
+                        .addGap(18, 18, 18)
+                        .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tenTKButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(inTenButton)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(tongMatHangChijLabel))
+                .addGap(5, 5, 5)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(tenTKButton))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(inTenButton)))
+                .addContainerGap())
+        );
+
+        jScrollPane3.setBackground(new java.awt.Color(255, 255, 255));
+        jScrollPane3.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(452, 100));
+
+        tenTKTable.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        tenTKTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tenTKTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tenTKTableMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(tenTKTable);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 805, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane2.addTab("Tên", jPanel1);
 
         javax.swing.GroupLayout timKiemPanelLayout = new javax.swing.GroupLayout(timKiemPanel);
         timKiemPanel.setLayout(timKiemPanelLayout);
@@ -2951,11 +4175,11 @@ private double calculateTotalSoTienDaTra(JTable table) {
         showTKPanel.setLayout(showTKPanelLayout);
         showTKPanelLayout.setHorizontalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 778, Short.MAX_VALUE)
+            .addGap(0, 805, Short.MAX_VALUE)
         );
         showTKPanelLayout.setVerticalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 333, Short.MAX_VALUE)
+            .addGap(0, 357, Short.MAX_VALUE)
         );
 
         jPanel8.setBackground(new java.awt.Color(255, 255, 255));
@@ -2991,7 +4215,11 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
-        tkThangQuyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mục chi", "Mục thu", "Mục thu&chi", "Sổ tiết kiệm", "Lãi suất vay" }));
+        tkThangQuyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mục chi", "Mục thu", "Sổ tiết kiệm", "Lãi suất vay" }));
+
+        jLabel39.setText("Tổng tiền:");
+
+        tongTienTKjLabel.setText("jLabel40");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -3000,24 +4228,35 @@ private double calculateTotalSoTienDaTra(JTable table) {
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                        .addComponent(tkThangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)))
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tkYearTKButton)
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel4)
-                            .addComponent(tkThangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(thangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel8Layout.createSequentialGroup()
-                                .addComponent(thangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(tkTuyChonButton))
-                            .addComponent(yearTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(tkYearTKButton))
+                        .addComponent(tkTuyChonButton))
+                    .addComponent(yearTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel39)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tongTienTKjLabel)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                .addContainerGap(38, Short.MAX_VALUE)
+                .addContainerGap()
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel39)
+                    .addComponent(tongTienTKjLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tkThangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(thangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -3026,7 +4265,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(yearTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(tkYearTKButton)
                 .addGap(12, 12, 12))
         );
@@ -3108,14 +4347,32 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
+        jLabel28.setText("Số tiền chi của tháng:");
+
+        tongChiThangLabel.setText("jLabel30");
+
+        jLabel30.setText("Tổng chi:");
+
+        tongChijLabel.setText("jLabel31");
+
         javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
         jPanel17.setLayout(jPanel17Layout);
         jPanel17Layout.setHorizontalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel17Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jLabel28)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tongChiThangLabel)
+                .addGap(154, 154, 154)
+                .addComponent(jLabel30)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tongChijLabel)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel17Layout.createSequentialGroup()
+                .addContainerGap(127, Short.MAX_VALUE)
                 .addComponent(inMucChiButton)
-                .addGap(18, 18, 18)
+                .addGap(24, 24, 24)
                 .addComponent(themChiButton)
                 .addGap(18, 18, 18)
                 .addComponent(suaChiButton)
@@ -3123,30 +4380,36 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addComponent(xoaChiButton)
                 .addGap(18, 18, 18)
                 .addComponent(xoaAllChiButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 180, Short.MAX_VALUE))
         );
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel17Layout.createSequentialGroup()
-                .addContainerGap(33, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel28)
+                    .addComponent(tongChiThangLabel)
+                    .addComponent(tongChijLabel)
+                    .addComponent(jLabel30))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(inMucChiButton)
                     .addComponent(themChiButton)
                     .addComponent(suaChiButton)
-                    .addComponent(xoaAllChiButton)
-                    .addComponent(inMucChiButton)
-                    .addComponent(xoaChiButton))
-                .addContainerGap(37, Short.MAX_VALUE))
+                    .addComponent(xoaChiButton)
+                    .addComponent(xoaAllChiButton))
+                .addGap(21, 21, 21))
         );
 
         chiTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
             }
         ));
         jScrollPane7.setViewportView(chiTable);
@@ -3159,14 +4422,14 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addContainerGap()
                 .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+            .addComponent(jScrollPane7)
         );
         jPanel15Layout.setVerticalGroup(
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -3220,6 +4483,14 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
+        jLabel31.setText("Số tiền thu của tháng:");
+
+        tongThuThangjLabel.setText("jLabel32");
+
+        jLabel32.setText("Tổng thu:");
+
+        tongThujLabel.setText("jLabel33");
+
         javax.swing.GroupLayout jPanel18Layout = new javax.swing.GroupLayout(jPanel18);
         jPanel18.setLayout(jPanel18Layout);
         jPanel18Layout.setHorizontalGroup(
@@ -3236,18 +4507,34 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addGap(18, 18, 18)
                 .addComponent(xoaAllThuButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel18Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel31)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tongThuThangjLabel)
+                .addGap(77, 77, 77)
+                .addComponent(jLabel32)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tongThujLabel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel18Layout.setVerticalGroup(
             jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel18Layout.createSequentialGroup()
-                .addContainerGap(33, Short.MAX_VALUE)
+                .addContainerGap()
+                .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel31)
+                    .addComponent(tongThuThangjLabel)
+                    .addComponent(jLabel32)
+                    .addComponent(tongThujLabel))
+                .addGap(70, 70, 70)
                 .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themThuButton)
                     .addComponent(suaThuButton)
                     .addComponent(xoaThuButton)
                     .addComponent(xoaAllThuButton)
                     .addComponent(inMucThuButton))
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         thuTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -3271,7 +4558,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addContainerGap()
                 .addComponent(jPanel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 805, Short.MAX_VALUE)
         );
         jPanel16Layout.setVerticalGroup(
             jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3352,12 +4639,20 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
-        inforSTKButton.setText("Info");
+        inforSTKButton.setText("Thông tin");
         inforSTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inforSTKButtonActionPerformed(evt);
             }
         });
+
+        jLabel35.setText("Số tiền lãi:");
+
+        tongTienLaijLabel.setText("jLabel36");
+
+        jLabel36.setText("Số tiền gửi:");
+
+        tongTienGuijLabel.setText("jLabel37");
 
         javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
         jPanel14.setLayout(jPanel14Layout);
@@ -3377,11 +4672,27 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addGap(18, 18, 18)
                 .addComponent(inforSTKButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel14Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel35)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tongTienLaijLabel)
+                .addGap(90, 90, 90)
+                .addComponent(jLabel36)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tongTienGuijLabel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel14Layout.setVerticalGroup(
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel14Layout.createSequentialGroup()
-                .addContainerGap(43, Short.MAX_VALUE)
+                .addContainerGap()
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel35)
+                    .addComponent(tongTienLaijLabel)
+                    .addComponent(jLabel36)
+                    .addComponent(tongTienGuijLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themSTKButton)
                     .addComponent(suaSTKButton)
@@ -3413,12 +4724,12 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addContainerGap()
                 .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 805, Short.MAX_VALUE)
         );
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel13Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -3474,12 +4785,20 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
-        inforLSVButton.setText("Infor");
+        inforLSVButton.setText("Thông tin");
         inforLSVButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inforLSVButtonActionPerformed(evt);
             }
         });
+
+        jLabel37.setText("Số tiền nợ:");
+
+        tongTienNojLabel.setText("jLabel38");
+
+        jLabel38.setText("Số tiền vay:");
+
+        tongTienVayjLabel.setText("jLabel39");
 
         javax.swing.GroupLayout jPanel20Layout = new javax.swing.GroupLayout(jPanel20);
         jPanel20.setLayout(jPanel20Layout);
@@ -3499,11 +4818,26 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addGap(18, 18, 18)
                 .addComponent(inforLSVButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel20Layout.createSequentialGroup()
+                .addComponent(jLabel37)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tongTienNojLabel)
+                .addGap(37, 37, 37)
+                .addComponent(jLabel38)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tongTienVayjLabel)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel20Layout.setVerticalGroup(
             jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel20Layout.createSequentialGroup()
-                .addContainerGap(43, Short.MAX_VALUE)
+                .addContainerGap()
+                .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel37)
+                    .addComponent(tongTienNojLabel)
+                    .addComponent(jLabel38)
+                    .addComponent(tongTienVayjLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themLSVButton)
                     .addComponent(suaLSVButton)
@@ -3535,12 +4869,12 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addContainerGap()
                 .addComponent(jPanel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 805, Short.MAX_VALUE)
         );
         jPanel19Layout.setVerticalGroup(
             jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel19Layout.createSequentialGroup()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -3629,7 +4963,39 @@ private double calculateTotalSoTienDaTra(JTable table) {
 
     private void tienTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tienTKButtonActionPerformed
         try {
-            findMoney(logId);
+             String displayMode = (String) hangMucComboBox.getSelectedItem();
+            if("Ăn Uống".equals(displayMode)){
+               
+            findMoney(logId, displayMode);
+            tongDanhMuc( displayMode);
+            } else if("Quần Áo".equals(displayMode)){
+            
+            findMoney(logId, displayMode);
+            tongDanhMuc( displayMode);
+            } else if("Dịch vụ sinh hoạt".equals(displayMode)){
+            
+            findMoney(logId, displayMode);
+            tongDanhMuc( displayMode);
+            } else if("Khác".equals(displayMode)){
+            
+            findMoney(logId, displayMode);
+            tongDanhMuc( displayMode);
+//            findHangMucThu(logId, displayMode);
+            
+            }else if("Lương".equals(displayMode)){
+            findHangMucThu(logId, displayMode);
+            tongDanhMuc( displayMode);
+
+            }else if("Thưởng".equals(displayMode)){
+            findHangMucThu(logId, displayMode);
+            tongDanhMuc( displayMode);
+            
+            }else if("Được cho/tặng".equals(displayMode)){
+            findHangMucThu(logId, displayMode);
+            tongDanhMuc( displayMode);
+            }
+            
+//            findMoney(logId, hangMuc);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -3647,7 +5013,19 @@ private double calculateTotalSoTienDaTra(JTable table) {
     private void tenTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tenTKButtonActionPerformed
         // TODO add your handling code here:
         try {
-            
+            String matHangChi = tenTKTextField.getText();
+    if (matHangChi.isEmpty()) {
+        tongMatHangChijLabel.setText("0");
+    } else {
+        double tongMatHangChi = homeViewController.getTongMatHangChi(logId, matHangChi);
+
+        // Sử dụng DecimalFormat để định dạng chuỗi số
+        DecimalFormat df = new DecimalFormat("###,###,###");
+        String formattedNumber = df.format(tongMatHangChi);
+
+        tongMatHangChijLabel.setText(formattedNumber);
+    }
+
             findUsers(logId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -3665,7 +5043,13 @@ private double calculateTotalSoTienDaTra(JTable table) {
     private void ngayTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ngayTKButtonActionPerformed
         // TODO add your handling code here:
         try {
-            findDate(logId);
+                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date tuNgayDate = tuNgayTKTextField.getDate();
+        Date denNgayDate = denNgayTKTextField.getDate();
+                   String tuNgayTxt = simpleDateFormat.format(tuNgayDate);
+            String denNgayTxt = simpleDateFormat.format(denNgayDate);
+            findDate(tuNgayTxt, denNgayTxt,logId);
+            tongChiDate(tuNgayTxt, denNgayTxt);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -3681,24 +5065,6 @@ private double calculateTotalSoTienDaTra(JTable table) {
         // TODO add your handling code here:
         
     }//GEN-LAST:event_ngayTKButtonKeyReleased
-
-    private void tuTienTKTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tuTienTKTextFieldKeyReleased
-        // TODO add your handling code here:
-        displayTien(logId);
-//        DefaultTableModel obj = (DefaultTableModel) tienTKTable.getModel();
-//        TableRowSorter<DefaultTableModel> tableRS = new TableRowSorter<>(obj);
-//        tienTKTable.setRowSorter(tableRS);
-//        tableRS.setRowFilter(RowFilter.regexFilter(tuTienTKTextField.getText()));
-    }//GEN-LAST:event_tuTienTKTextFieldKeyReleased
-
-    private void denTienTKTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_denTienTKTextFieldKeyReleased
-        // TODO add your handling code here:
-        displayTien(logId);
-//        DefaultTableModel obj = (DefaultTableModel) tienTKTable.getModel();
-//        TableRowSorter<DefaultTableModel> tableRS = new TableRowSorter<>(obj);
-//        tienTKTable.setRowSorter(tableRS);
-//        tableRS.setRowFilter(RowFilter.regexFilter(denTienTKTextField.getText()));
-    }//GEN-LAST:event_denTienTKTextFieldKeyReleased
 
     private void tkYearTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkYearTKButtonActionPerformed
 //       
@@ -3839,6 +5205,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 // Cập nhật bảng sau khi xóa
                 defaultTableModel.setRowCount(0);
                 setTableData(homeViewController.getAllInforUser(logId));
+                tongChi();
         }
     }//GEN-LAST:event_xoaAllChiButtonActionPerformed
 
@@ -3847,17 +5214,20 @@ private double calculateTotalSoTienDaTra(JTable table) {
 //        themChiJFrame themChiFrame = new themChiJFrame(logId);
         System.out.println("button chi"+logId);
 //        themChiFrame.setVisible(true);
+
         new themChiJFrame(homeViewPro, logId).setVisible(true);
+        tongChi();
     }//GEN-LAST:event_themChiButtonActionPerformed
 
     private void suaChiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaChiButtonActionPerformed
         // TODO add your handling code here:
-        int row = soTietKiemTable.getSelectedRow();
+        int row = chiTable.getSelectedRow();
             if (row == -1) {
                 JOptionPane.showMessageDialog(HomeViewPro.this, "Vui lòng chọn giao dịch trước", "Lỗi", JOptionPane.ERROR_MESSAGE);
             } else {
                 int giaoDichId = Integer.valueOf(String.valueOf(chiTable.getValueAt(row, 0)));
                 new editChiJFrame(homeViewPro, giaoDichId).setVisible(true);
+                tongChi();
             }
     }//GEN-LAST:event_suaChiButtonActionPerformed
 
@@ -3873,6 +5243,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 homeViewController.deleteGiaoDichChi(userId);
                 defaultTableModel.setRowCount(0);
                 setTableData(homeViewController.getAllInforUser(logId));
+                tongChi();
             }
         }
     }//GEN-LAST:event_xoaChiButtonActionPerformed
@@ -3881,6 +5252,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
         // TODO add your handling code here:
         System.out.println("button thu " + logId);
         new themThuJFrame(homeViewPro, logId).setVisible(true);
+        tongThu();
     }//GEN-LAST:event_themThuButtonActionPerformed
 
     private void suaThuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaThuButtonActionPerformed
@@ -3891,6 +5263,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
             } else {
                 int giaoDichId = Integer.valueOf(String.valueOf(thuTable.getValueAt(row, 0)));
                 new editThuJFrame(homeViewPro, giaoDichId).setVisible(true);
+                tongThu();
         }
     }//GEN-LAST:event_suaThuButtonActionPerformed
 
@@ -3906,6 +5279,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 homeViewController.deleteGiaoDichThu(userId);
                 defaultTableThuModel.setRowCount(0);
                 setThuTableData(homeViewController.getAllInforUserThu(logId));
+                tongThu();
             }
         }
     }//GEN-LAST:event_xoaThuButtonActionPerformed
@@ -3922,6 +5296,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 // Cập nhật bảng sau khi xóa
                 defaultTableThuModel.setRowCount(0);
                 setThuTableData(homeViewController.getAllInforUserThu(logId));
+                tongThu();
         }
     }//GEN-LAST:event_xoaAllThuButtonActionPerformed
 
@@ -3929,6 +5304,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
         // TODO add your handling code here:
         System.out.println("button them stk " + logId);
         new themSTKJFrame(homeViewPro, logId).setVisible(true);
+//        tongSoTietKiem();
     }//GEN-LAST:event_themSTKButtonActionPerformed
 
     private void suaSTKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suaSTKButtonActionPerformed
@@ -3939,6 +5315,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
             } else {
                 int giaoDichId = Integer.valueOf(String.valueOf(soTietKiemTable.getValueAt(row, 0)));
                 new editSTKJFrame(homeViewPro, giaoDichId).setVisible(true);
+//                tongSoTietKiem();
         }
     }//GEN-LAST:event_suaSTKButtonActionPerformed
 
@@ -3954,6 +5331,8 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 homeViewController.deleteSoTietKiem(userId);
                 defaultTableSTKModel.setRowCount(0);
                 setSTKTable(homeViewController.getAllInforUserSTK(logId));
+                tongSoTietKiem();
+               
             }
         }
     }//GEN-LAST:event_xoaSTKButtonActionPerformed
@@ -3970,6 +5349,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 // Cập nhật bảng sau khi xóa
             defaultTableSTKModel.setRowCount(0);
             setSTKTable(homeViewController.getAllInforUserSTK(logId));
+            tongSoTietKiem();
         }
     }//GEN-LAST:event_xoaAllSTKButtonActionPerformed
 
@@ -3977,7 +5357,6 @@ private double calculateTotalSoTienDaTra(JTable table) {
         // TODO add your handling code here:
 //        HomeViewPro homeViewProInstance = new HomeViewPro(loginModel);
 //        themLSVJFrame frame = new themLSVJFrame(logId, homeViewProInstance);
-        
         new themLSVJFrame(homeViewPro,logId).setVisible(true);
     }//GEN-LAST:event_themLSVButtonActionPerformed
 
@@ -3989,6 +5368,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
             } else {
                 int giaoDichId = Integer.valueOf(String.valueOf(laiSuatVayTable.getValueAt(row, 0)));
                 new editLSVJFrame(homeViewPro, giaoDichId).setVisible(true);
+                tongLaiSuatVay();
         }
     }//GEN-LAST:event_suaLSVButtonActionPerformed
 
@@ -4005,6 +5385,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 homeViewController.deleteSTDT(userId);
                 defaultTableLSVModel.setRowCount(0);
             setLSVTable(homeViewController.getAllInforUserLSV(logId));
+            tongLaiSuatVay();
             }
         }
     }//GEN-LAST:event_xoaLSVButtonActionPerformed
@@ -4021,6 +5402,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 // Cập nhật bảng sau khi xóa
             defaultTableLSVModel.setRowCount(0);
             setLSVTable(homeViewController.getAllInforUserLSV(logId));
+            tongLaiSuatVay();
         }
     }//GEN-LAST:event_xoaAllLSVButtonActionPerformed
 
@@ -4134,6 +5516,8 @@ if (row == -1) {
 DecimalFormat df = new DecimalFormat("###,###,###,###");
 String tongSoTienLaiFormatted = df.format(tongSoTienLai);
 tongLaiLabel.setText(tongSoTienLaiFormatted);
+
+
                 
                 // Hiển thị stkDialog
                 stkDialog.setVisible(true);
@@ -4474,11 +5858,59 @@ if (rowLSV < 0) {
         defaultTableSTDTModel.addColumn("Số Tiền");
         
          defaultTableSTDTModel.addColumn("SoTienDaTraId");
+//        stdtTable.getColumnModel().getColumn(2).setMinWidth(0);
+//        stdtTable.getColumnModel().getColumn(2).setMaxWidth(0);
+//        stdtTable.getColumnModel().getColumn(2).setWidth(0);
+//        
+//        stdtTable.getColumnModel().getColumn(0).setCellRenderer(new DateRenderer()); 
+
         stdtTable.getColumnModel().getColumn(2).setMinWidth(0);
         stdtTable.getColumnModel().getColumn(2).setMaxWidth(0);
         stdtTable.getColumnModel().getColumn(2).setWidth(0);
         
-        stdtTable.getColumnModel().getColumn(0).setCellRenderer(new DateRenderer()); 
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
+        private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        protected void setValue(Object value) {
+            try {
+                if (value instanceof String) {
+                    String dateString = (String) value;
+
+                    // Kiểm tra định dạng của chuỗi ngày
+                    if (isValidMySQLDateFormat(dateString)) {
+                        // Chuyển đổi chuỗi ngày từ MySQL Date sang Date
+                        Date date = mysqlDateFormat.parse(dateString);
+
+                        // Chuyển đổi Date sang chuỗi ngày theo định dạng mong muốn
+                        value = desiredDateFormat.format(date);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            setHorizontalAlignment(JLabel.RIGHT); // Căn giữ liệu bên phải
+            super.setValue(value);
+        }
+
+        // Hàm kiểm tra định dạng chuỗi ngày MySQL
+            private boolean isValidMySQLDateFormat(String dateString) {
+                try {
+                    // Thực hiện kiểm tra bằng biểu thức chính quy hoặc các phương thức khác
+                    // Trả về true nếu đúng định dạng, ngược lại trả về false
+                    mysqlDateFormat.parse(dateString);
+                    return true;
+                } catch (ParseException ex) {
+                    return false;
+                }
+            }
+        };
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);       
+        stdtTable.getColumnModel().getColumn(0).setCellRenderer(rightRenderer); 
+        stdtTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer);
+        
 
         defaultTableSTDTModel.setRowCount(0);
         setTableSTDT(homeViewController.getAllInforUserSTDT(accountId));
@@ -4552,7 +5984,6 @@ if (rowLSV < 0) {
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JTable chiTable;
     private com.toedter.calendar.JDateChooser denNgayTKTextField;
-    private javax.swing.JTextField denTienTKTextField;
     private javax.swing.JRadioButton dvSinhHoatRadioButton;
     private javax.swing.JRadioButton dvSinhHoatRadioButton1;
     private javax.swing.JDialog editChiDialog;
@@ -4562,6 +5993,7 @@ if (rowLSV < 0) {
     private javax.swing.JPanel giaoDichPanel;
     private javax.swing.JLabel hangMucButton;
     private javax.swing.JLabel hangMucButton1;
+    private javax.swing.JComboBox<String> hangMucComboBox;
     private javax.swing.JPanel headerPanel;
     private javax.swing.JPanel headerThemGiaoDichPanel;
     private javax.swing.JPanel headerThemGiaoDichPanel1;
@@ -4595,8 +6027,19 @@ if (rowLSV < 0) {
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
+    private javax.swing.JLabel jLabel34;
+    private javax.swing.JLabel jLabel35;
+    private javax.swing.JLabel jLabel36;
+    private javax.swing.JLabel jLabel37;
+    private javax.swing.JLabel jLabel38;
+    private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -4702,9 +6145,21 @@ if (rowLSV < 0) {
     private com.toedter.calendar.JDateChooser tkTuyChonDenDateChooser;
     private com.toedter.calendar.JDateChooser tkTuyChonTuDateChooser;
     private javax.swing.JButton tkYearTKButton;
+    private javax.swing.JLabel tongChiDatejLabel;
+    private javax.swing.JLabel tongChiThangLabel;
+    private javax.swing.JLabel tongChijLabel;
     private javax.swing.JLabel tongLaiLabel;
+    private javax.swing.JLabel tongMatHangChijLabel;
+    private javax.swing.JLabel tongThuDatejLabel;
+    private javax.swing.JLabel tongThuThangjLabel;
+    private javax.swing.JLabel tongThujLabel;
+    private javax.swing.JLabel tongTienDanhMucjLabel;
+    private javax.swing.JLabel tongTienGuijLabel;
+    private javax.swing.JLabel tongTienLaijLabel;
+    private javax.swing.JLabel tongTienNojLabel;
+    private javax.swing.JLabel tongTienTKjLabel;
+    private javax.swing.JLabel tongTienVayjLabel;
     private com.toedter.calendar.JDateChooser tuNgayTKTextField;
-    private javax.swing.JTextField tuTienTKTextField;
     private javax.swing.JButton xoaAllChiButton;
     private javax.swing.JButton xoaAllLSVButton;
     private javax.swing.JButton xoaAllSTKButton;

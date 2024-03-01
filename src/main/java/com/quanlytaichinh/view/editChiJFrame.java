@@ -351,6 +351,7 @@ public class editChiJFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         themGD(loginId);
         homeViewPro.refreshTableChiData();
+        homeViewPro.tongChi();
     }//GEN-LAST:event_themTGDButton1ActionPerformed
 
     private void thoatTGDButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatTGDButton1ActionPerformed

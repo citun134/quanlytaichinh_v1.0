@@ -366,6 +366,7 @@ public class themChiJFrame extends javax.swing.JFrame {
         System.out.println("loggoedInAccount id thembutton: " + loginId);
         themGD(loginId);
         homeViewPro.refreshTableChiData();
+        homeViewPro.tongChi();
     }//GEN-LAST:event_themTGDButtonActionPerformed
 
     private void thoatTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatTGDButtonActionPerformed

@@ -10,13 +10,19 @@ import com.quanlytaichinh.dao.GiaoDichDao;
 import com.quanlytaichinh.model.GiaoDichThuModel;
 import com.quanlytaichinh.model.LoginModel;
 import com.quanlytaichinh.model.SoTietKiemModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 /**
  *
@@ -38,6 +44,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
     public SimpleDateFormat simpleDateFormat;
     public HomeViewPro homeViewPro;
     
+    public Map<String, Double> interestRates;
     public int loginId;
     
     public editSTKJFrame() {
@@ -87,8 +94,169 @@ public class editSTKJFrame extends javax.swing.JFrame {
             Date currentDate = new Date();
             ngayGuiTGDTextField.setDate(currentDate);
         }
+        
+        
+        interestRates = new HashMap<>();
+        interestRates.put("1", 0.02);
+        interestRates.put("2", 0.02);
+        interestRates.put("3", 0.023);
+        interestRates.put("4", 0.023);
+        interestRates.put("5", 0.023);
+        interestRates.put("6", 0.033);
+        interestRates.put("7", 0.033);
+        interestRates.put("8", 0.033);
+        interestRates.put("9", 0.033);
+        interestRates.put("10", 0.033);
+        interestRates.put("11", 0.033);
+        interestRates.put("12", 0.048);
+        interestRates.put("13", 0.048);
+        interestRates.put("15", 0.048);
+        interestRates.put("18", 0.048);
+        interestRates.put("24", 0.05);
+        interestRates.put("36", 0.05);
+        
+        kyHanTGDTextField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Xử lý sự kiện khi một mục được chọn
+                // Get the selected item
+                String kyHanTGD = kyHanTGDTextField.getSelectedItem().toString().trim();
 
+                // Check if the interestRates map contains the key
+                if (interestRates.containsKey(kyHanTGD)) {
+                    // Get the corresponding value from interestRates map
+                    double laiSuatTGD = interestRates.get(kyHanTGD);
+
+                    // Now you can use laiSuatTGD as needed
+                    updateInterestLabel();
+                } else {
+                    // Handle the case where kyHanTGD is not found in the map
+                }
+            }
+        });
+        
+//            .setText("2.0%");
+        
+//        soTienLaijLabel.setText("0");
+//        tongLaijLabel.setText("0");
+        
+        double sotienlai = soTietKiemModel.getSoTienLaiNhanDuoc();
+            double tongSoTien = soTietKiemModel.getTongTienNhanDuoc();
+            
+            DecimalFormat df = new DecimalFormat("###,###,###,###");
+            
+            soTienLaijLabel.setText(df.format(sotienlai));
+            tongLaijLabel.setText(df.format(tongSoTien));
+        
+        
+        soTienGuiTGDTextField.getDocument().addDocumentListener(new DocumentListener() {
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            updateLabels();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            updateLabels();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            updateLabels();
     }
+    
+    
+
+    private void updateLabels() {
+        String soTienGuiStr = soTienGuiTGDTextField.getText().trim();
+        String kyHanTGD = (String) kyHanTGDTextField.getSelectedItem();
+
+        if (!soTienGuiStr.isEmpty()) {
+            double soTienGui = Double.parseDouble(soTienGuiStr);
+            double laiSuatTGD = interestRates.get(kyHanTGD)*100;
+
+            double soTienLai = tinhSoTienLaiNhanDuoc(soTienGui, laiSuatTGD, kyHanTGD);
+            double tongTien = tinhTongTienNhanDuoc(soTienGui, laiSuatTGD, kyHanTGD);
+
+            // Sử dụng DecimalFormat để định dạng số
+            DecimalFormat df = new DecimalFormat("###,###,###,###");
+
+            soTienLaijLabel.setText(df.format(soTienLai));
+            tongLaijLabel.setText(df.format(tongTien));
+        } else {
+            // Xử lý khi soTienGuiStr trống
+            soTienLaijLabel.setText("0");
+            tongLaijLabel.setText("0");
+        }
+    }
+    });
+        kyHanTGDTextField.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        updateLabels();
+    }
+    
+    private void updateLabels() {
+        String soTienGuiStr = soTienGuiTGDTextField.getText().trim();
+        String kyHanTGD = (String) kyHanTGDTextField.getSelectedItem();
+        
+        double sotienlai = soTietKiemModel.getSoTienLaiNhanDuoc();
+            double tongSoTien = soTietKiemModel.getTongTienNhanDuoc();
+            
+            DecimalFormat df = new DecimalFormat("###,###,###,###");
+            
+//            soTienLaijLabel.setText(df.format(sotienlai));
+//            tongLaijLabel.setText(df.format(tongSoTien));
+
+        if (!soTienGuiStr.isEmpty()) {
+            double soTienGui = Double.parseDouble(soTienGuiStr);
+            double laiSuatTGD = interestRates.get(kyHanTGD)*100;
+
+            double soTienLai = tinhSoTienLaiNhanDuoc(soTienGui, laiSuatTGD, kyHanTGD);
+            double tongTien = tinhTongTienNhanDuoc(soTienGui, laiSuatTGD, kyHanTGD);
+
+            // Sử dụng DecimalFormat để định dạng số
+//            DecimalFormat df = new DecimalFormat("###,###,###,###");
+
+            soTienLaijLabel.setText(df.format(soTienLai));
+            tongLaijLabel.setText(df.format(tongTien));
+        } else {
+            // Xử lý khi soTienGuiStr trống
+//            double sotienlai = soTietKiemModel.getSoTienLaiNhanDuoc();
+//            double tongSoTien = soTietKiemModel.getTongTienNhanDuoc();
+//            
+//            DecimalFormat df = new DecimalFormat("###,###,###,###");
+//            
+            soTienLaijLabel.setText(df.format("0"));
+            tongLaijLabel.setText(df.format("0"));
+        }
+    }
+    });
+
+        
+      
+        
+        
+        
+    }             
+          
+    
+     private void updateInterestLabel() {
+        // Lấy giá trị được chọn từ combobox
+        String selectedInterest = (String) kyHanTGDTextField.getSelectedItem();
+
+        double laiSuatTGD = 0.0;
+        
+        // Kiểm tra xem giá trị có hợp lệ không và cập nhật label
+        if (interestRates.containsKey(selectedInterest)) {
+            double interestRate = interestRates.get(selectedInterest);
+            String formattedInterestRate = String.format("%.1f%%", interestRate *100);
+            editSoLaijLabel.setText(formattedInterestRate);
+            laiSuatTGD = interestRates.get(selectedInterest);
+        } else {
+            editSoLaijLabel.setText("Invalid interest rate");
+        }
+     }
     
 //    public void editGD(int accountId){
 //        soTietKiemModel = homeViewController.getInforUserSTK(accountId);
@@ -115,15 +283,17 @@ public class editSTKJFrame extends javax.swing.JFrame {
             DecimalFormat df = new DecimalFormat("###,###,###,###,###"); // Định dạng số theo dấu phẩy
             String formattedSoTienGui = df.format(soTietKiemModel.getSoTienGui());
             String formattedKyHan = df.format(soTietKiemModel.getKyHan());
-            int laiSuatGui = (int) soTietKiemModel.getLaiSuatGui();
+            String laiSuatGui = String.valueOf(soTietKiemModel.getLaiSuatGui());
 
             ngayGuiTGDTextField.setDateFormatString(soTietKiemModel.getNgayGui());
-            tenNganHangTGDTextField.setText(soTietKiemModel.getTenNganHang());
+            tenNganHangTGDTextField.setSelectedItem(soTietKiemModel.getTenNganHang());
 
             // Xóa dấu phẩy trước khi đặt giá trị vào JTextField
             soTienGuiTGDTextField.setText(formattedSoTienGui.replaceAll(",", ""));
+            String formattedInterestRate = String.format("%.1f%%", Double.parseDouble(laiSuatGui));
+            editSoLaijLabel.setText(formattedInterestRate);
 
-            laiSuatGuiTGDSlider.setValue(laiSuatGui);
+            
             kyHanTGDTextField.setSelectedItem(formattedKyHan);
         } else {
             // Xử lý trường hợp không tìm thấy soTietKiemModel
@@ -138,7 +308,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
         // Tính số tiền lãi nhận được
         double soTienLaiNhanDuoc = (laiSuat / 100) * soTienGui * (kyHanDouble / 12);
 
-        return soTienLaiNhanDuoc / kyHanDouble;
+        return soTienLaiNhanDuoc;
     }
     
     public double tinhSoTienLaiNhanDuoc(double soTienGui, double laiSuat, String kyHan) {
@@ -166,10 +336,15 @@ public class editSTKJFrame extends javax.swing.JFrame {
         Date dateTGD = ngayGuiTGDTextField.getDate();
         
         String ngayTGD = simpleDateFormat.format(dateTGD);
-        String tenNganHangTGD = tenNganHangTGDTextField.getText();
+        String tenNganHangTGD = (String) tenNganHangTGDTextField.getSelectedItem();
         String soTienGuiTGD = soTienGuiTGDTextField.getText();
-        double laiSuatTGD = laiSuatGuiTGDSlider.getValue();
         String kyHanTGD = (String) kyHanTGDTextField.getSelectedItem();
+    double laiSuatTGD = 0.0; // Giá trị mặc định hoặc giá trị khác nếu cần
+
+    if (interestRates.containsKey(kyHanTGD)) {
+        laiSuatTGD = interestRates.get(kyHanTGD)*100.0;
+        System.out.println(laiSuatTGD);
+    }
         
         double soTienLaiMoiThang = tinhSoTienLaiNhanDuocMoiThang(Double.parseDouble(soTienGuiTGD), laiSuatTGD, kyHanTGD);
 
@@ -208,7 +383,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
         }
 
         // Clear text fields after adding a new record
-        tenNganHangTGDTextField.setText("");
+//        tenNganHangTGDTextField.setText("");
         soTienGuiTGDTextField.setText("");
     }
     /**
@@ -229,12 +404,16 @@ public class editSTKJFrame extends javax.swing.JFrame {
         soTienGuiTGDTextField = new javax.swing.JTextField();
         themTGDButton = new javax.swing.JButton();
         thoatTGDButton = new javax.swing.JButton();
-        laiSuatGuiTGDSlider = new javax.swing.JSlider();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        tenNganHangTGDTextField = new javax.swing.JTextField();
         ngayGuiTGDTextField = new com.toedter.calendar.JDateChooser();
         kyHanTGDTextField = new javax.swing.JComboBox<>();
+        tenNganHangTGDTextField = new javax.swing.JComboBox<>();
+        editSoLaijLabel = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        soTienLaijLabel = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        tongLaijLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -249,9 +428,9 @@ public class editSTKJFrame extends javax.swing.JFrame {
         headerThemGiaoDichPanel1Layout.setHorizontalGroup(
             headerThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(headerThemGiaoDichPanel1Layout.createSequentialGroup()
-                .addContainerGap(172, Short.MAX_VALUE)
+                .addContainerGap(128, Short.MAX_VALUE)
                 .addComponent(jLabel7)
-                .addContainerGap(171, Short.MAX_VALUE))
+                .addContainerGap(129, Short.MAX_VALUE))
         );
         headerThemGiaoDichPanel1Layout.setVerticalGroup(
             headerThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -300,13 +479,6 @@ public class editSTKJFrame extends javax.swing.JFrame {
             }
         });
 
-        laiSuatGuiTGDSlider.setBackground(new java.awt.Color(255, 255, 255));
-        laiSuatGuiTGDSlider.setMajorTickSpacing(2);
-        laiSuatGuiTGDSlider.setMaximum(10);
-        laiSuatGuiTGDSlider.setMinorTickSpacing(1);
-        laiSuatGuiTGDSlider.setPaintLabels(true);
-        laiSuatGuiTGDSlider.setPaintTicks(true);
-
         jLabel1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel1.setText("Ngày gửi");
 
@@ -315,6 +487,23 @@ public class editSTKJFrame extends javax.swing.JFrame {
 
         kyHanTGDTextField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "18", "24", "36" }));
 
+        tenNganHangTGDTextField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BIDV", "Vietcombank", "Agribank", "Vietinbank", "MB", "Techcombank", "ACB", "BaoVietBank", "Sacombank", "Saigonbank", "SHB", "TPBank" }));
+        tenNganHangTGDTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tenNganHangTGDTextFieldActionPerformed(evt);
+            }
+        });
+
+        editSoLaijLabel.setText("jLabel3");
+
+        jLabel3.setText("Số tiền lãi:");
+
+        soTienLaijLabel.setText("jLabel4");
+
+        jLabel5.setText("Tổng tiền:");
+
+        tongLaijLabel.setText("jLabel6");
+
         javax.swing.GroupLayout bodyThemGiaoDichPanelLayout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel);
         bodyThemGiaoDichPanel.setLayout(bodyThemGiaoDichPanelLayout);
         bodyThemGiaoDichPanelLayout.setHorizontalGroup(
@@ -322,17 +511,18 @@ public class editSTKJFrame extends javax.swing.JFrame {
             .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(thoatTGDButton))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(laiSuatGuiTGDSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
-                            .addComponent(kyHanTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(editSoLaijLabel)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(kyHanTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -340,13 +530,25 @@ public class editSTKJFrame extends javax.swing.JFrame {
                             .addComponent(jLabel1))
                         .addGap(34, 34, 34)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tenNganHangTGDTextField)
                             .addComponent(soTienGuiTGDTextField)
-                            .addComponent(ngayGuiTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(ngayGuiTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(tenNganHangTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(themTGDButton)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(soTienLaijLabel)
+                        .addGap(75, 75, 75)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tongLaijLabel)
+                        .addGap(0, 204, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(thoatTGDButton)))
                 .addContainerGap())
         );
         bodyThemGiaoDichPanelLayout.setVerticalGroup(
@@ -357,24 +559,30 @@ public class editSTKJFrame extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ngayGuiTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(tenNganHangTGDTextField)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tenNganHangTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(soTienGuiTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(laiSuatGuiTGDSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(kyHanTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(kyHanTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(16, 16, 16)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(editSoLaijLabel))
+                .addGap(28, 28, 28)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(soTienLaijLabel)
+                    .addComponent(jLabel5)
+                    .addComponent(tongLaijLabel))
+                .addGap(52, 52, 52)
                 .addComponent(themTGDButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(thoatTGDButton)
                 .addContainerGap())
         );
@@ -392,11 +600,17 @@ public class editSTKJFrame extends javax.swing.JFrame {
 //        System.out.println("loggoedInAccount id themSTKbutton: " + loginId);
         themGD(loginId);
         homeViewPro.refreshTableSTKData();
+        homeViewPro.tongSoTietKiem();
+
     }//GEN-LAST:event_themTGDButtonActionPerformed
 
     private void thoatTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatTGDButtonActionPerformed
         this.dispose();
     }//GEN-LAST:event_thoatTGDButtonActionPerformed
+
+    private void tenNganHangTGDTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tenNganHangTGDTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tenNganHangTGDTextFieldActionPerformed
 
     /**
      * @param args the command line arguments
@@ -435,19 +649,23 @@ public class editSTKJFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bodyThemGiaoDichPanel;
+    private javax.swing.JLabel editSoLaijLabel;
     private javax.swing.JPanel headerThemGiaoDichPanel1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JComboBox<String> kyHanTGDTextField;
-    private javax.swing.JSlider laiSuatGuiTGDSlider;
     private com.toedter.calendar.JDateChooser ngayGuiTGDTextField;
     private javax.swing.JTextField soTienGuiTGDTextField;
-    private javax.swing.JTextField tenNganHangTGDTextField;
+    private javax.swing.JLabel soTienLaijLabel;
+    private javax.swing.JComboBox<String> tenNganHangTGDTextField;
     private javax.swing.JButton themTGDButton;
     private javax.swing.JButton thoatTGDButton;
+    private javax.swing.JLabel tongLaijLabel;
     // End of variables declaration//GEN-END:variables
 }

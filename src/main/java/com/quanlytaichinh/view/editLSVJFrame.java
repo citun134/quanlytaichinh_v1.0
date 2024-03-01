@@ -16,15 +16,22 @@ import com.quanlytaichinh.model.GiaoDichThuModel;
 import com.quanlytaichinh.model.LoginModel;
 import com.quanlytaichinh.model.SoTietKiemModel;
 import com.quanlytaichinh.model.LaiSuatVayModel;
+import static com.quanlytaichinh.view.themLSVJFrame.soTienNo;
 import static com.quanlytaichinh.view.themLSVJFrame.tinhSoTienPhaiTraHangThang;
 import static com.quanlytaichinh.view.themLSVJFrame.tinhTongSoTienPhaiTra;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 public class editLSVJFrame extends javax.swing.JFrame {
@@ -45,6 +52,7 @@ public class editLSVJFrame extends javax.swing.JFrame {
     
     private DefaultTableModel defaultTableSTKModel;
     
+    public Map<String, Double> interestRates;
     public int loginId;
     
     public editLSVJFrame() {
@@ -72,33 +80,190 @@ public class editLSVJFrame extends javax.swing.JFrame {
         
         
         // Kiểm tra nếu giaoDichModel không null và giaoDichModel.getDate() không rỗng
-if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !laiSuatVayModel.getNgayGiaiNgan().isEmpty()) {
-    try {
-        // Chuyển đổi chuỗi ngày từ giaoDichModel.getDate() thành đối tượng Date
-        SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date parsedDate = mysqlDateFormat.parse(laiSuatVayModel.getNgayGiaiNgan());
+    if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !laiSuatVayModel.getNgayGiaiNgan().isEmpty()) {
+        try {
+            // Chuyển đổi chuỗi ngày từ giaoDichModel.getDate() thành đối tượng Date
+            SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date parsedDate = mysqlDateFormat.parse(laiSuatVayModel.getNgayGiaiNgan());
 
-        // Tạo đối tượng SimpleDateFormat cho định dạng mới "dd-MM-yyyy"
-        SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            // Tạo đối tượng SimpleDateFormat cho định dạng mới "dd-MM-yyyy"
+            SimpleDateFormat desiredDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-        // Set giá trị của thoiGianTGDTextField1 bằng giá trị đã chuyển đổi
-        ngayGiaiNganLSVjDateChooser.setDate(parsedDate);
+            // Set giá trị của thoiGianTGDTextField1 bằng giá trị đã chuyển đổi
+            ngayGiaiNganLSVjDateChooser.setDate(parsedDate);
 
-        // Cập nhật định dạng hiển thị của thoiGianTGDTextField1
-        ngayGiaiNganLSVjDateChooser.setDateFormatString("dd-MM-yyyy");
+            // Cập nhật định dạng hiển thị của thoiGianTGDTextField1
+            ngayGiaiNganLSVjDateChooser.setDateFormatString("dd-MM-yyyy");
 
-    } catch (ParseException e) {
-        e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    } else {
+        // Nếu giaoDichModel hoặc giaoDichModel.getDate() là null hoặc rỗng, xử lý tương ứng (ví dụ: hiển thị ngày hiện tại)
+        Date currentDate = new Date();
+        ngayGiaiNganLSVjDateChooser.setDate(currentDate);
     }
-} else {
-    // Nếu giaoDichModel hoặc giaoDichModel.getDate() là null hoặc rỗng, xử lý tương ứng (ví dụ: hiển thị ngày hiện tại)
-    Date currentDate = new Date();
-    ngayGiaiNganLSVjDateChooser.setDate(currentDate);
-}
+    
+    
+    
+    interestRates = new HashMap<>();
+        interestRates.put("1", 0.065);
+        interestRates.put("2", 0.065);
+        interestRates.put("3", 0.066);
+        interestRates.put("4", 0.067);
+        interestRates.put("5", 0.067);
+        interestRates.put("6", 0.068);
+        interestRates.put("7", 0.069);
+        interestRates.put("8", 0.069);
+        interestRates.put("9", 0.070);
+        interestRates.put("10", 0.071);
+        interestRates.put("11", 0.071);
+        interestRates.put("12", 0.072);
+        interestRates.put("13", 0.073);
+        interestRates.put("15", 0.073);
+        interestRates.put("18", 0.075);
+        interestRates.put("24", 0.078);
+        interestRates.put("36", 0.08);
+        
+//        laiSuatVayjLabel.setText("6.5%");
+        
+        tongSoTienjLabel.setText("0");
+        soTienNojLabel.setText("0");
+        
+        double sotienvay = laiSuatVayModel.getSoTienVay();
+            double tongSoTien = laiSuatVayModel.getTongLaiPhaiTra();
+            double tienNo = tongSoTien - sotienvay;
+            DecimalFormat df = new DecimalFormat("###,###,###,###");
+            
+            soTienNojLabel.setText(df.format(tienNo));
+            tongSoTienjLabel.setText(df.format(tongSoTien));
+        
+        
+        thoiGianVayLSVTGDTextField.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Xử lý sự kiện khi một mục được chọn
+            // Get the selected item
+            String kyHanTGD = thoiGianVayLSVTGDTextField.getSelectedItem().toString().trim();
+
+            // Check if the interestRates map contains the key
+            if (interestRates.containsKey(kyHanTGD)) {
+                // Get the corresponding value from interestRates map
+                double laiSuatTGD = interestRates.get(kyHanTGD);
+
+                // Now you can use laiSuatTGD as needed
+                updateInterestLabel();
+            } else {
+                // Handle the case where kyHanTGD is not found in the map
+            }
+        }
+    });
+        
+        
+        soTienVayLSVTGDTextField.getDocument().addDocumentListener(new DocumentListener() {
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            updateLabels();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            updateLabels();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            updateLabels();
+        }
+
+        private void updateLabels() {
+            String soTienGuiStr = soTienVayLSVTGDTextField.getText().trim();
+            String kyHanTGD = (String) thoiGianVayLSVTGDTextField.getSelectedItem();
+
+            if (!soTienGuiStr.isEmpty()) {
+                double soTienGui = Double.parseDouble(soTienGuiStr);
+                double kyHan = Double.parseDouble(kyHanTGD);
+                double laiSuatTGD = interestRates.get(kyHanTGD)*100;
+                
+                double tongSoTienPhaiTra = tinhTongSoTienPhaiTra(soTienGui, laiSuatTGD, kyHan);
+                double tienNo = soTienNo(tongSoTienPhaiTra, soTienGui);
+
+                
+                
+                // Sử dụng DecimalFormat để định dạng số
+                DecimalFormat df = new DecimalFormat("###,###,###,###");
+
+                tongSoTienjLabel.setText(df.format(tongSoTienPhaiTra));
+                soTienNojLabel.setText(df.format(tienNo));
+            } else {
+                // Xử lý khi soTienGuiStr trống
+//                soLaijLabel.setText("0");
+                tongSoTienjLabel.setText("0");
+                soTienNojLabel.setText("0");
+            }
+        }
+        });
+        
+        thoiGianVayLSVTGDTextField.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            updateLabels();
+        }
+
+        private void updateLabels() {
+            String soTienGuiStr = soTienVayLSVTGDTextField.getText().trim();
+            String kyHanTGD = (String) thoiGianVayLSVTGDTextField.getSelectedItem();
+
+            if (!soTienGuiStr.isEmpty()) {
+                double soTienGui = Double.parseDouble(soTienGuiStr);
+                double kyHan = Double.parseDouble(kyHanTGD);
+                double laiSuatTGD = interestRates.get(kyHanTGD)*100;
+
+                double tongSoTienPhaiTra = tinhTongSoTienPhaiTra(soTienGui, laiSuatTGD, kyHan);
+                double tienNo = soTienNo(tongSoTienPhaiTra, soTienGui);
+
+                // Sử dụng DecimalFormat để định dạng số
+                DecimalFormat df = new DecimalFormat("###,###,###,###");
+
+                tongSoTienjLabel.setText(df.format(tongSoTienPhaiTra));
+                
+                soTienNojLabel.setText(df.format(tienNo));
+            } else {
+                // Xử lý khi soTienGuiStr trống
+//                soLaijLabel.setText("0");
+                tongSoTienjLabel.setText("0");
+                soTienNojLabel.setText("0");
+
+            }
+        }
+        });
+
+        
 
 
 
     }
+    
+    
+    
+    private void updateInterestLabel() {
+        // Lấy giá trị được chọn từ combobox
+        String selectedInterest = (String) thoiGianVayLSVTGDTextField.getSelectedItem();
+
+        double laiSuatTGD = 0.0;
+        
+        // Kiểm tra xem giá trị có hợp lệ không và cập nhật label
+        if (interestRates.containsKey(selectedInterest)) {
+            double interestRate = interestRates.get(selectedInterest);
+            String formattedInterestRate = String.format("%.1f%%", interestRate *100);
+            laiSuatVayjLabel.setText(formattedInterestRate);
+            laiSuatTGD = interestRates.get(selectedInterest);
+        } else {
+            laiSuatVayjLabel.setText("Invalid interest rate");
+        }
+    }
+    
+    
     
     public void editGD(int accountId) {
         laiSuatVayModel = homeViewController.getInforUserLSV(accountId);
@@ -109,16 +274,20 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
             String formattedSoTienVay = df.format(laiSuatVayModel.getSoTienVay());
             String formattedSoTienTraHangThang = df.format(laiSuatVayModel.getSoTienPhaiTraHangThang());
             String formattedTongLaiPhaiTra = df.format(laiSuatVayModel.getTongLaiPhaiTra());
-            int laiSuatVay = (int) laiSuatVayModel.getLaiSuat();
+            String thoiGianVay = df.format(laiSuatVayModel.getThoiGianVay());
+            
+            String laiSuatVay = String.valueOf(laiSuatVayModel.getLaiSuat());
 
-            tenNganHangLSVTGDTextField.setText(laiSuatVayModel.getTenNganHangLSV());
+            tenNganHangLSVTGDTextField.setSelectedItem(laiSuatVayModel.getTenNganHangLSV());
 
             // Xóa dấu phẩy trước khi đặt giá trị vào JTextField
             giaTriBDSLSVTGDTextField.setText(formattedGiaTriBDS.replaceAll(",", ""));
             soTienVayLSVTGDTextField.setText(formattedSoTienVay.replaceAll(",", ""));
-            thoiGianVayLSVTGDTextField.setSelectedItem(String.valueOf(laiSuatVayModel.getThoiGianVay()));
+            thoiGianVayLSVTGDTextField.setSelectedItem(thoiGianVay);
+            String formattedInterestRate = String.format("%.1f%%", Double.parseDouble(laiSuatVay));
             
-            laiSuatLSVTGDSlider.setValue(laiSuatVay);
+            laiSuatVayjLabel.setText(formattedInterestRate);
+            
             ngayGiaiNganLSVjDateChooser.setDateFormatString(laiSuatVayModel.getNgayGiaiNgan());
         } else {
             // Xử lý trường hợp không tìm thấy soTietKiemModel
@@ -126,7 +295,7 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
         }
     }
     
-    public static double tinhSoTienPhaiTraHangThang(double soTienVay, double laiSuat, double thoiGianVay) {
+     public static double tinhSoTienPhaiTraHangThang(double soTienVay, double laiSuat, double thoiGianVay) {
         int soThangVay = (int) thoiGianVay;
 
         // Lãi suất hàng tháng
@@ -135,7 +304,7 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
         // Số tiền hàng tháng cố định
 //        double soTienHangThang = (soTienVay * laiSuatHangThang) / (1 - Math.pow(1 + laiSuatHangThang, -soThangVay));
         // Số tiền hàng tháng cố định - lãi giảm dần
-        double soTienHangThang = (soTienVay / soThangVay) + (soTienVay * laiSuatHangThang);
+        double soTienHangThang = soTienVay / soThangVay + soTienVay * laiSuatHangThang;
 
         return soTienHangThang;
     }
@@ -162,46 +331,66 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
         return tongSoTienTra;
     }
     
+    public static double soTienNo(double tongSoTienTra, double soTienVay) {
+        return tongSoTienTra - soTienVay;
+    }
+    
     public void themGD(int accountId) {
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date dateTGD = ngayGiaiNganLSVjDateChooser.getDate();
-        
-        String tenNganHangTGD = tenNganHangLSVTGDTextField.getText();
+
+        String tenNganHangTGD = (String) tenNganHangLSVTGDTextField.getSelectedItem();
         String giaTriBDSTGD = giaTriBDSLSVTGDTextField.getText();
         String soTienVayTGD = soTienVayLSVTGDTextField.getText();
         String thoiGianVayTGD = (String) thoiGianVayLSVTGDTextField.getSelectedItem();
-        double laiSuatTGD = laiSuatLSVTGDSlider.getValue();
-        String ngayTGD = simpleDateFormat.format(dateTGD);
         
+        double laiSuatTGD = 0.0; // Giá trị mặc định hoặc giá trị khác nếu cần
+
+    if (interestRates.containsKey(thoiGianVayTGD)) {
+        laiSuatTGD = interestRates.get(thoiGianVayTGD)*100.0;
+        System.out.println(laiSuatTGD);
+    }
+        
+        String ngayTGD = simpleDateFormat.format(dateTGD);
+
+        try {
+            if (!ngayTGD.isEmpty() && !giaTriBDSTGD.isEmpty() && !soTienVayTGD.isEmpty() && !thoiGianVayTGD.isEmpty()) {
+                DecimalFormat decimalFormat = new DecimalFormat();
+                decimalFormat.setParseBigDecimal(true);
+
+                // Check if the strings are not empty before parsing
+                if (!giaTriBDSTGD.trim().isEmpty() && !soTienVayTGD.trim().isEmpty() && !thoiGianVayTGD.trim().isEmpty()) {
+                    BigDecimal BDSBigDecimal = (BigDecimal) decimalFormat.parse(giaTriBDSTGD);
+                    BigDecimal STVBigDecimal = (BigDecimal) decimalFormat.parse(soTienVayTGD);
+                    BigDecimal ThoiGianVayBigDecimal = (BigDecimal) decimalFormat.parse(thoiGianVayTGD);
+
+                    // Add the condition to check if loan amount is less than or equal to property value
+                    if (STVBigDecimal.doubleValue() <= BDSBigDecimal.doubleValue()) {
         double tienHangThang = tinhSoTienPhaiTraHangThang(Double.parseDouble(soTienVayTGD),
                 laiSuatTGD, Double.parseDouble(thoiGianVayTGD));
         
         double tinhTong = tinhTongSoTienPhaiTra(Double.parseDouble(soTienVayTGD), 
                 laiSuatTGD, Double.parseDouble(thoiGianVayTGD));
-        
-        try {
-            if (!ngayTGD.isEmpty()) {
-                DecimalFormat decimalFormat = new DecimalFormat();
-                decimalFormat.setParseBigDecimal(true);
-                BigDecimal BDSBigDecimal = (BigDecimal) decimalFormat.parse(giaTriBDSTGD);
-                BigDecimal STVBigDecimal = (BigDecimal) decimalFormat.parse(soTienVayTGD);
-                BigDecimal ThoiGianVayBigDecimal = (BigDecimal) decimalFormat.parse(thoiGianVayTGD);
-                
-                laiSuatVayModel.setTenNganHangLSV(tenNganHangTGD);
-                laiSuatVayModel.setGiaTriBatDongSan(BDSBigDecimal.doubleValue());
-                laiSuatVayModel.setSoTienVay(STVBigDecimal.doubleValue());
-                laiSuatVayModel.setThoiGianVay(ThoiGianVayBigDecimal.doubleValue());
-                laiSuatVayModel.setLaiSuat(laiSuatTGD);
-                laiSuatVayModel.setNgayGiaiNgan(ngayTGD);
-                laiSuatVayModel.setSoTienPhaiTraHangThang(tienHangThang);
-                laiSuatVayModel.setTongLaiPhaiTra(tinhTong);
-                   
-                laiSuatVayModel.setAccountId(accountId);
+                        laiSuatVayModel.setTenNganHangLSV(tenNganHangTGD);
+                        laiSuatVayModel.setGiaTriBatDongSan(BDSBigDecimal.doubleValue());
+                        laiSuatVayModel.setSoTienVay(STVBigDecimal.doubleValue());
+                        laiSuatVayModel.setThoiGianVay(ThoiGianVayBigDecimal.doubleValue());
+                        laiSuatVayModel.setLaiSuat(laiSuatTGD);
+                        laiSuatVayModel.setNgayGiaiNgan(ngayTGD);
+                        laiSuatVayModel.setSoTienPhaiTraHangThang(tienHangThang);
+                        laiSuatVayModel.setTongLaiPhaiTra(tinhTong);
 
-                homeViewController.updateLaiSuatVay(laiSuatVayModel);
+                        laiSuatVayModel.setAccountId(accountId);
 
-                JOptionPane.showMessageDialog(this, "Thêm thành công!");
-                
+                        homeViewController.updateLaiSuatVay(laiSuatVayModel);
+
+                        JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Số tiền vay phải nhỏ hơn hoặc bằng giá trị BĐS!");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Vui lòng nhập đầy đủ thông tin.");
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Thêm Thất Bại! Vui lòng nhập đầy đủ thông tin.");
             }
@@ -209,6 +398,10 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
+//        tenNganHangLSVTGDTextField.setText("");
+        giaTriBDSLSVTGDTextField.setText("");
+        soTienVayLSVTGDTextField.setText("");
+//        thoiGianVayLSVTGDTextField.set("");  // Set thoiGianVayTGDTextField to an empty string
     }
     
     /**
@@ -228,15 +421,19 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
         jLabel10 = new javax.swing.JLabel();
         themTGDButton = new javax.swing.JButton();
         thoatTGDButton = new javax.swing.JButton();
-        laiSuatLSVTGDSlider = new javax.swing.JSlider();
         jLabel2 = new javax.swing.JLabel();
-        tenNganHangLSVTGDTextField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         giaTriBDSLSVTGDTextField = new javax.swing.JTextField();
         soTienVayLSVTGDTextField = new javax.swing.JTextField();
         ngayGiaiNganLSVjDateChooser = new com.toedter.calendar.JDateChooser();
         thoiGianVayLSVTGDTextField = new javax.swing.JComboBox<>();
+        tenNganHangLSVTGDTextField = new javax.swing.JComboBox<>();
+        laiSuatVayjLabel = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        soTienNojLabel = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        tongSoTienjLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -296,13 +493,6 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
             }
         });
 
-        laiSuatLSVTGDSlider.setBackground(new java.awt.Color(255, 255, 255));
-        laiSuatLSVTGDSlider.setMajorTickSpacing(2);
-        laiSuatLSVTGDSlider.setMaximum(10);
-        laiSuatLSVTGDSlider.setMinorTickSpacing(1);
-        laiSuatLSVTGDSlider.setPaintLabels(true);
-        laiSuatLSVTGDSlider.setPaintTicks(true);
-
         jLabel2.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel2.setText("Tên ngân hàng");
 
@@ -313,6 +503,18 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
         jLabel4.setText("Số tiền vay");
 
         thoiGianVayLSVTGDTextField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "18", "24", "36" }));
+
+        tenNganHangLSVTGDTextField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BIDV", "Vietcombank", "Agribank", "Vietinbank", "MB", "Techcombank", "ACB", "BaoVietBank", "Sacombank", "Saigonbank", "SHB", "TPBank" }));
+
+        laiSuatVayjLabel.setText("jLabel1");
+
+        jLabel1.setText("Số tiền nợ:");
+
+        soTienNojLabel.setText("jLabel5");
+
+        jLabel6.setText("Tổng số tiền:");
+
+        tongSoTienjLabel.setText("jLabel11");
 
         javax.swing.GroupLayout bodyThemGiaoDichPanelLayout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel);
         bodyThemGiaoDichPanel.setLayout(bodyThemGiaoDichPanelLayout);
@@ -331,7 +533,7 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
                         .addGap(19, 19, 19)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(giaTriBDSLSVTGDTextField)
-                            .addComponent(tenNganHangLSVTGDTextField)))
+                            .addComponent(tenNganHangLSVTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(themTGDButton)
@@ -345,13 +547,23 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
                             .addComponent(soTienVayLSVTGDTextField)
                             .addComponent(thoiGianVayLSVTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34)
+                        .addComponent(ngayGiaiNganLSVjDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE))
+                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(laiSuatLSVTGDSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
-                            .addComponent(ngayGiaiNganLSVjDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(laiSuatVayjLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(soTienNojLabel)
+                        .addGap(97, 97, 97)
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(tongSoTienjLabel)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         bodyThemGiaoDichPanelLayout.setVerticalGroup(
@@ -375,15 +587,21 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
                     .addComponent(thoiGianVayLSVTGDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(laiSuatLSVTGDSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ngayGiaiNganLSVjDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(laiSuatVayjLabel))
+                .addGap(18, 18, 18)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(soTienNojLabel)
+                    .addComponent(jLabel6)
+                    .addComponent(tongSoTienjLabel))
+                .addGap(20, 20, 20)
                 .addComponent(themTGDButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addComponent(thoatTGDButton)
                 .addContainerGap())
         );
@@ -397,6 +615,7 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
         //        System.out.println("loggoedInAccount id themSTKbutton: " + loginId);
         themGD(loginId);
         homeViewPro.refreshTableLSVData();
+        homeViewPro.tongLaiSuatVay();
     }//GEN-LAST:event_themTGDButtonActionPerformed
 
     private void thoatTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatTGDButtonActionPerformed
@@ -442,19 +661,23 @@ if (laiSuatVayModel != null && laiSuatVayModel.getNgayGiaiNgan() != null && !lai
     private javax.swing.JPanel bodyThemGiaoDichPanel;
     private javax.swing.JTextField giaTriBDSLSVTGDTextField;
     private javax.swing.JPanel headerThemGiaoDichPanel1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JSlider laiSuatLSVTGDSlider;
+    private javax.swing.JLabel laiSuatVayjLabel;
     private com.toedter.calendar.JDateChooser ngayGiaiNganLSVjDateChooser;
+    private javax.swing.JLabel soTienNojLabel;
     private javax.swing.JTextField soTienVayLSVTGDTextField;
-    private javax.swing.JTextField tenNganHangLSVTGDTextField;
+    private javax.swing.JComboBox<String> tenNganHangLSVTGDTextField;
     private javax.swing.JButton themTGDButton;
     private javax.swing.JButton thoatTGDButton;
     private javax.swing.JComboBox<String> thoiGianVayLSVTGDTextField;
+    private javax.swing.JLabel tongSoTienjLabel;
     // End of variables declaration//GEN-END:variables
 }

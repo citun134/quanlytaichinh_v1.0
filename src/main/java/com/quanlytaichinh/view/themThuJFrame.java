@@ -339,6 +339,7 @@ public class themThuJFrame extends javax.swing.JFrame {
         System.out.println("loggoedInAccount id thembutton: " + loginId);
         themGD(loginId);
         homeViewPro.refreshTableThuData();
+        homeViewPro.tongThu();
     }//GEN-LAST:event_themThuTGDButtonActionPerformed
 
     private void thoatThuTGDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatThuTGDButtonActionPerformed

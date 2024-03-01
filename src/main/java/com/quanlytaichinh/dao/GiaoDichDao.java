@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class GiaoDichDao {
@@ -364,7 +365,7 @@ public class GiaoDichDao {
     public ArrayList<GiaoDichModel> searchTenGiaoDich(String ten, int accountId){
         ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "SELECT * FROM giaodichchi WHERE matHangChi LIKE ? AND account_id = ?";
+        String sql = "SELECT * FROM giaodichchi WHERE matHangChi LIKE ? AND account_id = ? ORDER BY ngayChi ASC";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -411,42 +412,52 @@ public class GiaoDichDao {
     }
     
     public ArrayList<GiaoDichModel> searchThoiGianGiaoDichThuChi(String tu, String den, int accountId) {
-        ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
-        Connection connection = JDBCConnection.getJDBCConecction();
+    ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
+    Connection connection = JDBCConnection.getJDBCConecction();
 
-        String sql = "SELECT chiId as id, ngayChi as ngay, thanhTienChi as thanhTien, matHangChi as matHang, ghiChuChi as ghiChu, hangMuc as hangMuc, account_id " +
-                     "FROM giaoDichChi " +
-                     "WHERE ngayChi BETWEEN ? AND ? AND account_id = ? " +
-                     "UNION " +
-                     "SELECT thuId as id, ngayThu as ngay, thanhTienThu as thanhTien, NULL as matHang, ghiChuThu as ghiChu, hangMucThu as hangMuc, account_id " +
-                     "FROM giaoDichThu " +
-                     "WHERE ngayThu BETWEEN ? AND ? AND account_id = ?";
+    String sql = "SELECT chiId as id, ngayChi as ngay, thanhTienChi as thanhTien, matHangChi as matHang, ghiChuChi as ghiChu, hangMuc as hangMuc, account_id " +
+                 "FROM giaoDichChi " +
+                 "WHERE ngayChi BETWEEN ? AND ? AND account_id = ? " +
+                 "UNION " +
+                 "SELECT thuId as id, ngayThu as ngay, thanhTienThu as thanhTien, NULL as matHang, ghiChuThu as ghiChu, hangMucThu as hangMuc, account_id " +
+                 "FROM giaoDichThu " +
+                 "WHERE ngayThu BETWEEN ? AND ? AND account_id = ? " +
+                 "ORDER BY ngay ASC"; // Sắp xếp theo ngày tăng dần
 
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, tu);
-            preparedStatement.setString(2, den);
-            preparedStatement.setInt(3, accountId);
-            preparedStatement.setString(4, tu);
-            preparedStatement.setString(5, den);
-            preparedStatement.setInt(6, accountId);
+    try {
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, tu);
+        preparedStatement.setString(2, den);
+        preparedStatement.setInt(3, accountId);
+        preparedStatement.setString(4, tu);
+        preparedStatement.setString(5, den);
+        preparedStatement.setInt(6, accountId);
 
-            ResultSet rs = preparedStatement.executeQuery();
-            GiaoDichModel giaoDichModel;
+        ResultSet rs = preparedStatement.executeQuery();
+        GiaoDichModel giaoDichModel;
 
-            while (rs.next()) {
-                giaoDichModel = new GiaoDichModel(rs.getInt("id"), rs.getString("ngay"),
-                    rs.getString("matHang"), rs.getDouble("thanhTien"),
-                    rs.getString("ghiChu"), rs.getString("hangMuc"));
-                giaoDichModel.setAccountId(rs.getInt("account_id"));
-                infor.add(giaoDichModel);
+        while (rs.next()) {
+            giaoDichModel = new GiaoDichModel(rs.getInt("id"), rs.getString("ngay"),
+                rs.getString("matHang"), rs.getDouble("thanhTien"),
+                rs.getString("ghiChu"), rs.getString("hangMuc"));
+            giaoDichModel.setAccountId(rs.getInt("account_id"));
+            infor.add(giaoDichModel);
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    } finally {
+        // Đóng kết nối sau khi sử dụng
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }   
-
-        return infor;
+        }
     }
+
+    return infor;
+}
 
     public List<GiaoDichModel> getAllInforUser(int accountId){
         loginModel = new LoginModel();
@@ -1134,11 +1145,371 @@ public class GiaoDichDao {
             ex.printStackTrace();
         }
     }
+    
+    
+    public double getTongChi(int accountId) {
+        double tongThanhTien = 0.0;
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT SUM(thanhTienChi) AS tongThanhTien FROM giaoDichChi WHERE account_id = ?;";
 
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, accountId);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                tongThanhTien = rs.getDouble("tongThanhTien");
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return tongThanhTien;
+    }
+    
+    public double getTongChiThangHienTai(int accountId) {
+    double tongThanhTien = 0.0;
+    Connection connection = JDBCConnection.getJDBCConecction();
+
+    // Lấy tháng và năm hiện tại
+    Calendar cal = Calendar.getInstance();
+    int currentMonth = cal.get(Calendar.MONTH) + 1; // Tháng tính từ 0 (tháng 1) đến 11 (tháng 12)
+    int currentYear = cal.get(Calendar.YEAR);
+
+    String sql = "SELECT SUM(thanhTienChi) AS tongThanhTien FROM giaoDichChi " +
+                 "WHERE account_id = ? AND MONTH(ngayChi) = ? AND YEAR(ngayChi) = ?;";
+
+    try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        preparedStatement.setInt(1, accountId);
+        preparedStatement.setInt(2, currentMonth);
+        preparedStatement.setInt(3, currentYear);
+
+        ResultSet rs = preparedStatement.executeQuery();
+
+        if (rs.next()) {
+            tongThanhTien = rs.getDouble("tongThanhTien");
+        }
+
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+
+    return tongThanhTien;
+}
+
+    public double getTongThu(int accountId) {
+        double tongThanhTien = 0.0;
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT SUM(thanhTienThu) AS tongThanhTien FROM giaoDichThu WHERE account_id = ?;";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, accountId);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                tongThanhTien = rs.getDouble("tongThanhTien");
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return tongThanhTien;
+    }
+    
+    public double getTongThuThangHienTai(int accountId) {
+    double tongThanhTien = 0.0;
+    Connection connection = JDBCConnection.getJDBCConecction();
+
+    // Lấy tháng và năm hiện tại
+    Calendar cal = Calendar.getInstance();
+    int currentMonth = cal.get(Calendar.MONTH) + 1; // Tháng tính từ 0 (tháng 1) đến 11 (tháng 12)
+    int currentYear = cal.get(Calendar.YEAR);
+
+    String sql = "SELECT SUM(thanhTienThu) AS tongThanhTien FROM giaoDichThu " +
+                 "WHERE account_id = ? AND MONTH(ngayThu) = ? AND YEAR(ngayThu) = ?;";
+
+    try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        preparedStatement.setInt(1, accountId);
+        preparedStatement.setInt(2, currentMonth);
+        preparedStatement.setInt(3, currentYear);
+
+        ResultSet rs = preparedStatement.executeQuery();
+
+        if (rs.next()) {
+            tongThanhTien = rs.getDouble("tongThanhTien");
+        }
+
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+
+    return tongThanhTien;
+}
+
+
+    public List<GiaoDichModel> getHangMucChi(int accountId, String hangMuc){
+        loginModel = new LoginModel();
+        List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+//        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
+        String sql = "SELECT * FROM giaodichchi WHERE account_id = ? AND hangMuc = ? ORDER BY ngayChi ASC";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+            preparedStatement.setString(2, hangMuc);
+            
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                GiaoDichModel giaoDichModel = new GiaoDichModel();
+                giaoDichModel.setId(rs.getInt("chiId"));
+                giaoDichModel.setDate(rs.getString("ngayChi"));
+                giaoDichModel.setMatHang(rs.getString("matHangChi"));
+                giaoDichModel.setThanhTien(rs.getDouble("thanhTienChi"));
+                giaoDichModel.setGhiChu(rs.getString("ghiChuChi"));
+                giaoDichModel.setHangMuc(rs.getString("hangMuc"));
+                giaoDichModel.setAccountId(rs.getInt("account_id"));                
+                infor.add(giaoDichModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }   
+        return infor;
+    }
+    
+     public List<GiaoDichThuModel> getHangMucThu(int accountId, String hangMuc){
+        loginModel = new LoginModel();
+        List<GiaoDichThuModel> infor = new ArrayList<GiaoDichThuModel>();
+        Connection connection = JDBCConnection.getJDBCConecction();
+//        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
+        String sql = "SELECT * FROM giaodichthu WHERE account_id = ? and hangMucThu = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+            preparedStatement.setString(2, hangMuc);
+            
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                GiaoDichThuModel giaoDichThuModel = new GiaoDichThuModel();
+                giaoDichThuModel.setId(rs.getInt("thuId"));
+                giaoDichThuModel.setDate(rs.getString("ngayThu"));
+                giaoDichThuModel.setThanhTien(rs.getDouble("thanhTienThu"));
+                giaoDichThuModel.setGhiChu(rs.getString("ghiChuThu"));
+                giaoDichThuModel.setHangMuc(rs.getString("hangMucThu"));
+                giaoDichThuModel.setAccountId(rs.getInt("account_id"));                
+                infor.add(giaoDichThuModel);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }   
+        return infor;
+    }
+     
+     public double getTongMatHangChi(int accountId, String matHangChi) {
+        double tongThanhTien = 0.0;
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT SUM(thanhTienChi) AS tongThanhTien FROM giaoDichChi WHERE account_id = ? AND matHangChi = ?;";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, accountId);
+            preparedStatement.setString(2, matHangChi);
+            
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                tongThanhTien = rs.getDouble("tongThanhTien");
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return tongThanhTien;
+    }
+     public double getTongHangMucChi(int accountId, String matHangChi) {
+        double tongThanhTien = 0.0;
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT SUM(thanhTienChi) AS tongThanhTien FROM giaoDichChi WHERE account_id = ? AND hangMuc = ?;";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, accountId);
+            preparedStatement.setString(2, matHangChi);
+            
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                tongThanhTien = rs.getDouble("tongThanhTien");
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return tongThanhTien;
+    }
+     
+     
+      public double getTongHangMucThu(int accountId, String matHangChi) {
+        double tongThanhTien = 0.0;
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT SUM(thanhTienThu) AS tongThanhTien FROM giaoDichThu WHERE account_id = ? and hangMucThu = ?;";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, accountId);
+            preparedStatement.setString(2, matHangChi);
+            
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                tongThanhTien = rs.getDouble("tongThanhTien");
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return tongThanhTien;
+    }
     
     
+     public double getTongNgayChi(int accountId, String tu, String den) {
+        double tongThanhTien = 0.0;
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT SUM(thanhTienChi) AS tongThanhTien FROM giaoDichChi WHERE account_id = ? " +
+                    "and ngayChi between ? and ?;";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, accountId);
+            preparedStatement.setString(2, tu);
+            preparedStatement.setString(3, den);
+            
+            
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                tongThanhTien = rs.getDouble("tongThanhTien");
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return tongThanhTien;
+    }
     
-    
+      public double getTongNgayThu(int accountId, String tu, String den) {
+        double tongThanhTien = 0.0;
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT SUM(thanhTienThu) AS tongThanhTien FROM giaoDichThu WHERE account_id = ? " +
+                    "and ngayThu between ? and ?;";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, accountId);
+            preparedStatement.setString(2, tu);
+            preparedStatement.setString(3, den);
+            
+            
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                tongThanhTien = rs.getDouble("tongThanhTien");
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return tongThanhTien;
+    }
+      
+        public double getTongTienLai(int accountId) {
+        double tongThanhTien = 0.0;
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT SUM(sotienlainhanduoc) AS tongThanhTien FROM sotietkiem WHERE account_id = ?;";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, accountId);
+            
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                tongThanhTien = rs.getDouble("tongThanhTien");
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return tongThanhTien;
+    }
+        
+        public double getTongSoTienGui(int accountId) {
+        double tongThanhTien = 0.0;
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT SUM(sotiengui) AS tongThanhTien FROM sotietkiem WHERE account_id = ?;";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, accountId);
+            
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                tongThanhTien = rs.getDouble("tongThanhTien");
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return tongThanhTien;
+    }
+     
+        
+     public double getTongSoTienVay(int accountId) {
+        double tongThanhTien = 0.0;
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT SUM(sotienvay) AS tongThanhTien FROM laisuatvay WHERE account_id = ?;";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, accountId);
+            
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                tongThanhTien = rs.getDouble("tongThanhTien");
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return tongThanhTien;
+    }
+     
+      public double getTongSoTienTra(int accountId) {
+        double tongThanhTien = 0.0;
+        Connection connection = JDBCConnection.getJDBCConecction();
+        String sql = "SELECT SUM(tonglaiphaitra) AS tongThanhTien FROM laisuatvay WHERE account_id = ?;";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, accountId);
+            
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                tongThanhTien = rs.getDouble("tongThanhTien");
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return tongThanhTien;
+    }
+     
+     
+     
     
 }
 

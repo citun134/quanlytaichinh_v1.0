@@ -201,4 +201,65 @@ public class HomeViewController {
         giaoDichDao.updateSTDT(giaoDichModel);
     }
 
+    public double getTongChi(int accountId){
+        return giaoDichDao.getTongChi(accountId);
+    }
+    
+    public double getTongChiThangHienTai(int accountId){
+        return giaoDichDao.getTongChiThangHienTai(accountId);
+    }
+    
+    public double getTongThu(int accountId){
+        return giaoDichDao.getTongThu(accountId);
+    }
+    
+    public double getTongThuThangHienTai(int accountId){
+        return giaoDichDao.getTongThuThangHienTai(accountId);
+    }
+    
+    public List<GiaoDichModel> getHangMucChi(int accountId, String hangMuc){
+        return giaoDichDao.getHangMucChi(accountId, hangMuc);
+    }
+    
+    public List<GiaoDichThuModel> getHangMucThu(int accountId, String hangMuc){
+        return giaoDichDao.getHangMucThu(accountId, hangMuc);
+    }
+    
+    public double getTongMatHangChi(int accountId, String matHang){
+        return giaoDichDao.getTongMatHangChi(accountId, matHang);
+    }
+    
+    public double getTongHangMucChi(int accountId, String matHang){
+        return giaoDichDao.getTongHangMucChi(accountId, matHang);
+    }
+    
+    public double getTongHangMucThu(int accountId, String matHang){
+        return giaoDichDao.getTongHangMucThu(accountId, matHang);
+    }
+    
+    public double getTongNgayChi(int accountId, String tu, String den){
+        return giaoDichDao.getTongNgayChi(accountId, tu, den);
+    }
+    
+    public double getTongNgayThu(int accountId, String tu, String den){
+        return giaoDichDao.getTongNgayThu(accountId, tu, den);
+    }
+    
+    public double getTongTienLai(int accountId){
+        return giaoDichDao.getTongTienLai(accountId);
+    }
+    
+    public double getTongSoTienGui(int accountId){
+        return giaoDichDao.getTongSoTienGui(accountId);
+    }
+    
+    public double getTongSoTienVay(int accountId){
+        return giaoDichDao.getTongSoTienVay(accountId);
+    }
+    
+    public double getTongSoTienTra(int accountId){
+        return giaoDichDao.getTongSoTienTra(accountId);
+    }
+    
+    
 }
