@@ -134,7 +134,7 @@ public class themThuJFrame extends javax.swing.JFrame {
                         } else if (choTangRadioButton.isSelected()) {
                             giaoDichThuModel.setHangMuc("Được cho/tặng");
                         } else if (khacThuRadioButton.isSelected()) {
-                            giaoDichThuModel.setHangMuc("Khác");
+                            giaoDichThuModel.setHangMuc("Tiền thu khác");
                         }
                         giaoDichThuModel.setAccountId(accountId);
 
@@ -200,9 +200,9 @@ public class themThuJFrame extends javax.swing.JFrame {
         headerThemGiaoDichPanelLayout.setHorizontalGroup(
             headerThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(headerThemGiaoDichPanelLayout.createSequentialGroup()
-                .addContainerGap(167, Short.MAX_VALUE)
+                .addContainerGap(196, Short.MAX_VALUE)
                 .addComponent(jLabel6)
-                .addContainerGap(167, Short.MAX_VALUE))
+                .addContainerGap(197, Short.MAX_VALUE))
         );
         headerThemGiaoDichPanelLayout.setVerticalGroup(
             headerThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -246,7 +246,7 @@ public class themThuJFrame extends javax.swing.JFrame {
         });
 
         hangMucButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        hangMucButton.setText("Hạng Mục");
+        hangMucButton.setText("Danh Mục");
 
         buttonGroup1.add(thuongRadioButton);
         thuongRadioButton.setText("Thưởng");
@@ -263,7 +263,7 @@ public class themThuJFrame extends javax.swing.JFrame {
         });
 
         buttonGroup1.add(khacThuRadioButton);
-        khacThuRadioButton.setText("Khác");
+        khacThuRadioButton.setText("Tiền thu khác");
 
         javax.swing.GroupLayout bodyThemGiaoDichPanelLayout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel);
         bodyThemGiaoDichPanel.setLayout(bodyThemGiaoDichPanelLayout);
@@ -289,17 +289,16 @@ public class themThuJFrame extends javax.swing.JFrame {
                                 .addComponent(choTangRadioButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(khacThuRadioButton)
-                                .addGap(0, 81, Short.MAX_VALUE))
+                                .addGap(0, 95, Short.MAX_VALUE))
                             .addComponent(thoiGianThuTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(ghiChuThuTGDTextField)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(thoatThuTGDButton)))
+                        .addComponent(themThuTGDButton)
+                        .addGap(121, 121, 121)
+                        .addComponent(thoatThuTGDButton)
+                        .addGap(8, 8, 8)))
                 .addContainerGap())
-            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                .addGap(202, 202, 202)
-                .addComponent(themThuTGDButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         bodyThemGiaoDichPanelLayout.setVerticalGroup(
             bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -323,10 +322,10 @@ public class themThuJFrame extends javax.swing.JFrame {
                     .addComponent(thuongRadioButton)
                     .addComponent(choTangRadioButton)
                     .addComponent(khacThuRadioButton))
-                .addGap(40, 40, 40)
-                .addComponent(themThuTGDButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                .addComponent(thoatThuTGDButton)
+                .addGap(58, 58, 58)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(thoatThuTGDButton)
+                    .addComponent(themThuTGDButton))
                 .addContainerGap())
         );
 

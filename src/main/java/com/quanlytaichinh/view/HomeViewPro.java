@@ -19,6 +19,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,6 +37,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -48,6 +51,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 import javax.xml.crypto.dsig.spec.XSLTTransformParameterSpec;
 import org.apache.poi.ss.usermodel.Cell;
@@ -171,6 +177,16 @@ public class HomeViewPro extends javax.swing.JFrame {
     tongChiDatejLabel.setText("0");
     tongThuDatejLabel.setText("0");
     tongTienTKjLabel.setText("0");
+    
+    Calendar calendar = Calendar.getInstance();
+    int currentMonth = calendar.get(Calendar.MONTH) + 1;
+    
+    String chilabelText = "Tổng số tiền chi của tháng " + currentMonth + ":";
+    String thulabelText = "Tổng số tiền thu của tháng " + currentMonth + ":";
+    
+    jLabel28.setText(chilabelText);
+    jLabel31.setText(thulabelText);
+    
    
     
     
@@ -198,6 +214,27 @@ public class HomeViewPro extends javax.swing.JFrame {
         }
     });
     
+    
+    showPassjCheckBox.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JCheckBox checkBox = (JCheckBox) e.getSource();
+        
+        // Kiểm tra xem showPassjCheckBox có được chọn hay không
+        if (checkBox.isSelected()) {
+            // Nếu được chọn, hiển thị mật khẩu
+            oldPassjPasswordField.setEchoChar((char) 0);
+            newPass1jPasswordField.setEchoChar((char) 0);
+            newPass2jPasswordField.setEchoChar((char) 0);
+        } else {
+            // Nếu không được chọn, ẩn mật khẩu bằng ký tự *
+            oldPassjPasswordField.setEchoChar('*');
+            newPass1jPasswordField.setEchoChar('*');
+            newPass2jPasswordField.setEchoChar('*');
+        }
+    }
+});
+
     
         
         
@@ -252,11 +289,11 @@ public class HomeViewPro extends javax.swing.JFrame {
         
 
         // Đặt giá trị vào jLabel
-        if(danhMuc.equals("Ăn Uống") || danhMuc.equals("Quần Áo") || danhMuc.equals("Dịch vụ sinh hoạt") || danhMuc.equals("Khác") ){
+        if(danhMuc.equals("Ăn Uống") || danhMuc.equals("Quần Áo") || danhMuc.equals("Dịch vụ sinh hoạt") || danhMuc.equals("Tiền chi khác") ){
             tongTienDanhMucjLabel.setText(tongChiString);
             }
         
-        if(danhMuc.equals("Lương") || danhMuc.equals("Thưởng") || danhMuc.equals("Được cho/tặng") ){
+        if(danhMuc.equals("Lương") || danhMuc.equals("Thưởng") || danhMuc.equals("Được cho/tặng") || danhMuc.equals("Tiền thu khác") ){
             tongTienDanhMucjLabel.setText(tongThuString);
             }
     }
@@ -316,7 +353,74 @@ public class HomeViewPro extends javax.swing.JFrame {
        
         }
      
-    
+     
+     public static String readNumberToText(long number) {
+    String[] units = {"", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"};
+    String[] tens = {"", "mười", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"};
+    String[] hundreds = {"", "trăm", "hai trăm", "ba trăm", "bốn trăm", "năm trăm", "sáu trăm", "bảy trăm", "tám trăm", "chín trăm"};
+    String[] thousands = {"", "ngàn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"};
+
+    StringBuilder sb = new StringBuilder();
+
+    int index = 0;
+    while (number > 0) {
+        long currentNumber = number % 1000;
+        String currentText = readThreeDigits(currentNumber, units, tens, hundreds);
+
+        if (currentNumber > 0) {
+            sb.insert(0, currentText + " " + thousands[index] + " ");
+        }
+
+        number /= 1000;
+        index++;
+    }
+
+    // Xử lý trường hợp số 0
+    if (sb.length() == 0) {
+        sb.append("không");
+    }
+
+    return sb.toString().trim();
+}
+
+private static String readThreeDigits(long number, String[] units, String[] tens, String[] hundreds) {
+    StringBuilder sb = new StringBuilder();
+
+    int hundred = (int) (number / 100);
+    int ten = (int) (number % 100 / 10);
+    int unit = (int) (number % 10);
+
+    if (hundred > 0) {
+        sb.append(hundreds[hundred] + " ");
+    }
+
+    if (ten == 1) {
+        sb.append("mười ");
+    } else if (ten > 1) {
+        sb.append(tens[ten] + " ");
+    }
+
+    if (unit > 0) {
+        sb.append(units[unit]);
+    }
+
+    return sb.toString().trim();
+}
+     
+    private void fitTableColumns(JTable table) {
+    TableColumnModel columnModel = table.getColumnModel();
+    for (int col = 0; col < table.getColumnCount(); col++) {
+        int maxWidth = 0;
+        for (int row = 0; row < table.getRowCount(); row++) {
+            TableCellRenderer cellRenderer = table.getCellRenderer(row, col);
+            Object value = table.getValueAt(row, col);
+            Component rendererComponent = cellRenderer.getTableCellRendererComponent(table, value, false, false, row, col);
+            maxWidth = Math.max(maxWidth, rendererComponent.getPreferredSize().width);
+        }
+        TableColumn column = columnModel.getColumn(col);
+        column.setPreferredWidth(maxWidth + 10); // Đặt kích thước 10px lớn hơn giá trị lớn nhất để tránh cắt chữ
+    }
+}
         
         
     
@@ -341,6 +445,12 @@ public class HomeViewPro extends javax.swing.JFrame {
         chiTable.getColumnModel().getColumn(0).setMinWidth(0);
         chiTable.getColumnModel().getColumn(0).setMaxWidth(0);
         chiTable.getColumnModel().getColumn(0).setWidth(0);
+//        
+//         chiTable.getColumnModel().getColumn(1).setPreferredWidth(55); // "Thời Gian"
+//        chiTable.getColumnModel().getColumn(2).setPreferredWidth(100); // "Mặt Hàng"
+//        chiTable.getColumnModel().getColumn(3).setPreferredWidth(100); // "Thành Tiền"
+//        chiTable.getColumnModel().getColumn(5).setPreferredWidth(100); // "Danh Mục"
+
         
         
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer() {
@@ -397,6 +507,8 @@ public class HomeViewPro extends javax.swing.JFrame {
 
         defaultTableModel.setRowCount(0);
         setTableData(homeViewController.getAllInforUser(accountId));
+//        fitTableColumns(chiTable);
+
     }
     
     public void showThuTKTableUser(int accountId){
@@ -1340,21 +1452,21 @@ DefaultTableModel defaultTableModelTen = new DefaultTableModel() {
             // Calculate totalMoney for the current quarter and year
             double totalMoney = 0.0;
 
-            // Check if the current date is after the specified date or if the quarter is in the future
-            if (isDateBeforeOrEqual(year, endQuarterMonth, currentYear, currentMonth, currentDay) || (year > currentYear || (year == currentYear && endQuarterMonth > currentMonth))) {
-                // Loop through the months within the quarter
-                for (int month = startQuarterMonth; month <= Math.min(endQuarterMonth, currentMonth); month++) {
+            // Loop through the months within the quarter
+            for (int month = startQuarterMonth; month <= endQuarterMonth; month++) {
+                // Check if the current date is after the specified date or if the quarter is in the future
+                if (isDateBeforeOrEqual(year, month, currentYear, currentMonth, currentDay) || (year > currentYear || (year == currentYear && month > currentMonth))) {
                     // Calculate totalMoney for each month within the quarter
                     totalMoney += calculateTotalMoneyByMonthAndYear(soTietKiemList, month, year, currentDay);
                 }
-
-                // Add the calculated value to the dataset
-                dataset.addValue(totalMoney, "Số tiền", key);
-                tongTienTrongKhoangThoiGian += totalMoney;
             }
+
+            // Add the calculated value to the dataset
+            dataset.addValue(totalMoney, "Số tiền", key);
+            tongTienTrongKhoangThoiGian += totalMoney;
         }
     }
-} else {
+}else {
         // Xử lý trường hợp không hợp lệ (displayMode khác "Tháng" hoặc "Quý")
         throw new IllegalArgumentException("displayMode must be either \"Tháng\" or \"Quý\"");
     }
@@ -1537,8 +1649,10 @@ public void thongKeSoTietKiem(JPanel jpanel, String tu, String den) {
     int endDay = Integer.parseInt(den.substring(8, 10));
 
     int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-    int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+    int currentMonth = Calendar.getInstance().get(Calendar.MONTH)+1;
     int currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+    
+    double tongTienTrongKhoangThoiGian = 0.0;
     
     System.out.println(currentYear);
 
@@ -1551,52 +1665,60 @@ public void thongKeSoTietKiem(JPanel jpanel, String tu, String den) {
 
     // Lặp qua tất cả các tháng trong khoảng thời gian đã chọn
     for (int year = startYear; year <= endYear; year++) {
-        for (int month = startMonth; month <= 12; month++) {
-            String key = String.format("%d/%02d", month, year);
-            double totalMoney = 0.0;
+    for (int month = startMonth; month <= 12; month++) {
+        String key = String.format("%d/%02d", month, year);
+        double totalMoney = 0.0;
 
-            // Chỉ tính totalMoney cho tháng hiện tại hoặc trước tháng hiện tại
-            if (year < endYear || (year == endYear && month <= currentMonth)) {
-                // Chỉ tính totalMoney nếu tháng và năm không lớn hơn ngày hiện tại
-                if (!(year == currentYear && month > currentMonth) || (year == currentYear && month == currentMonth && startDay <= currentDay)) {
-                    totalMoney = calculateTotalMoneyByMonthAndYear(soTietKiemList, month, year, currentDay);
-
-                    // Kiểm tra nếu thêm 1 tháng mà ngày, tháng, năm lớn hơn thời gian hiện tại, break luôn
-                    if (year == currentYear && month == currentMonth + 1 && startDay > currentDay) {
-                        break;
-                    }
-                }
-            }
-
-            monthYearData.put(key, totalMoney);
-
-            if (year == endYear && month == endMonth) {
-                break; // Dừng vòng lặp khi đã đến tháng cuối cùng
+        // Chỉ tính totalMoney cho tháng hiện tại hoặc trước tháng hiện tại
+        if (year < endYear || (year == endYear && month <= currentMonth)) {
+            // Chỉ tính totalMoney nếu tháng và năm không lớn hơn ngày hiện tại
+            if (!(year == currentYear && month > currentMonth) || (year == currentYear && month == currentMonth && 0 <= currentDay)) {
+                totalMoney = calculateTotalMoneyByMonthAndYear(soTietKiemList, month, year, 0);
+                tongTienTrongKhoangThoiGian += totalMoney;
             }
         }
-        startMonth = 1; // Đặt lại tháng bắt đầu thành 1 cho năm tiếp theo
+
+        monthYearData.put(key, totalMoney);
+
+        if (year == endYear && month == endMonth) {
+            break; // Dừng vòng lặp khi đã đến tháng cuối cùng
+        }
     }
+    startMonth = 1; // Đặt lại tháng bắt đầu thành 1 cho năm tiếp theo
+}
 
     // Add the data to the dataset
-    for (String monthYear : monthYearData.keySet()) {
-        double totalMoney = monthYearData.get(monthYear);
+    // Add the data to the dataset only if totalMoney is greater than 0
+for (String monthYear : monthYearData.keySet()) {
+    double totalMoney = monthYearData.get(monthYear);
+    
+    // Chỉ thêm vào dataset nếu totalMoney lớn hơn 0
+    if (totalMoney > 0) {
         dataset.addValue(totalMoney, "Số tiền", monthYear);
     }
+}
 
-    // Sử dụng StandardCategoryToolTipGenerator để tránh số mũ (e)
-    CategoryPlot plot = (CategoryPlot) chart.getPlot();
+
+     CategoryPlot plot = (CategoryPlot) chart.getPlot();
     
-    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 
-    // Sử dụng DecimalFormat để định dạng số
-    DecimalFormat df = new DecimalFormat("###,###,###,###");
-    yAxis.setNumberFormatOverride(df);
-    StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator(
-        StandardCategoryToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT_STRING,
-        new DecimalFormat("###,###,###,###")
-    );
-    plot.getRenderer().setBaseToolTipGenerator(toolTipGenerator);
+        // Sử dụng DecimalFormat để định dạng số
+        DecimalFormat df = new DecimalFormat("###,###,###,###");
+        yAxis.setNumberFormatOverride(df);
+        CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(
+        StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING,
+        df
+        );
+        plot.getRenderer().setBaseItemLabelGenerator(generator);
+        plot.getRenderer().setBaseItemLabelsVisible(true);
 
+        double rangeMultiplier = 1.1; // Điều chỉnh theo nhu cầu
+        double rangeLowerBound = yAxis.getRange().getLowerBound();
+        double rangeUpperBound = yAxis.getRange().getUpperBound();
+        double adjustedUpperBound = rangeUpperBound + (rangeUpperBound - rangeLowerBound) * (rangeMultiplier - 1);
+        yAxis.setRange(new Range(rangeLowerBound, adjustedUpperBound));
+        
     ChartPanel chartPanel = new ChartPanel(chart);
 
     // Thêm chartPanel vào JPanel
@@ -1604,21 +1726,16 @@ public void thongKeSoTietKiem(JPanel jpanel, String tu, String den) {
     jpanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để đặt ChartPanel
     jpanel.add(chartPanel, BorderLayout.CENTER); // Thêm ChartPanel vào JPanel ở vị trí trung tâm
     jpanel.revalidate(); // Cập nhật lại JPanel để hiển thị biểu đồ
+    
+    tongTienTKjLabel.setText(df.format(tongTienTrongKhoangThoiGian));
 }
-
-
 
 
 public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int targetMonth, int targetYear, int currentDay) {
     double totalMoney = 0;
+    Calendar currentCalendar = Calendar.getInstance(); // Calendar for current date
 
-    int nextMonth = targetMonth + 1;
-    int nextYear = targetYear;
-    if (nextMonth == 13) {
-        nextMonth = 1;
-        nextYear++;
-    }
-
+    // Loop through saving accounts
     for (SoTietKiemModel item : list) {
         int startMonth = item.getMonth();
         int startYear = item.getYear();
@@ -1626,62 +1743,37 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         double tongTienNhanDuoc = item.getSoTienLaiNhanDuoc() / kyHan;
         int itemDay = item.getDay();
 
-        // Tính số tháng tăng dần dựa trên kỳ hạn
-        int currentIncrement = 0;  // Start with an initial increment
-        boolean shouldContinue = true;
+        // Iterate through terms
+        for (int i = 1; i < kyHan; i++) {
+            Calendar termCalendar = Calendar.getInstance(); // Calendar for start date
+            termCalendar.set(startYear, startMonth - 1, itemDay); // Set to the start date of term
+            termCalendar.add(Calendar.MONTH, i); // Increase by term increment
 
-        for (int i = 1; i <= kyHan; i++) {
-            int currentMonth = startMonth + currentIncrement + i;
-            int currentYear = startYear;
+            int termYear = termCalendar.get(Calendar.YEAR);
+            int termMonth = termCalendar.get(Calendar.MONTH) + 1;
+            int termDay = termCalendar.get(Calendar.DAY_OF_MONTH);
 
-            // Nếu vượt quá 12 tháng, chuyển sang năm tiếp theo
-            while (currentMonth > 12) {
-                currentMonth -= 12;
-                currentYear++;
+            // Check if the term end date is after the current date
+            if (termCalendar.after(currentCalendar)) {
+                break; // Break the loop if the term end date goes beyond the current date
             }
 
-            // Tạo Calendar cho ngày hiện tại và ngày sau khi tăng bởi kỳ hạn
-            Calendar currentCalendar = Calendar.getInstance();
-            currentCalendar.set(currentYear, currentMonth - 1, itemDay);
-
-            int nam = Calendar.getInstance().get(Calendar.YEAR);
-            int thang = Calendar.getInstance().get(Calendar.MONTH) + 1;
-            int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-
-            Calendar targetCalendar = Calendar.getInstance();
-            targetCalendar.set(nam, thang, day);
-
-            // Kiểm tra xem ngày, tháng, năm sau khi tăng bởi kỳ hạn có vượt quá thời gian hiện tại không
-            if (currentCalendar.after(targetCalendar) || currentCalendar.equals(targetCalendar)) {
-                // Ngày sau khi tăng bởi kỳ hạn lớn hơn thời gian hiện tại, không cộng giá trị
-                System.out.println("break");
-                shouldContinue = false;
-                break;
-            }
-
-            System.out.println("Total Money: " + totalMoney);
-
-            // Kiểm tra xem có phải tháng và năm cần tính không
-            if ((currentMonth == targetMonth && currentYear == targetYear) ||
-                    (currentMonth == targetMonth && currentYear == targetYear && startMonth == currentMonth - 1) ||
-                    (currentMonth == targetMonth + 1 && currentYear == targetYear && startMonth == currentMonth - 2)) {
-
-                // Nếu tháng và năm trùng khớp, cộng giá trị
+            // If it's the target month and year, add the received interest to the total money
+            if (termMonth == targetMonth && termYear == targetYear) {
                 totalMoney += tongTienNhanDuoc;
-
-                // Kiểm tra xem có nên dừng khi đến thời gian hiện tại không
-                if (!shouldContinue || (currentYear > targetYear || (currentYear == targetYear && currentMonth > targetMonth) ||
-                        (currentYear == targetYear && currentMonth == targetMonth && itemDay > currentDay))) {
+                // If the day of the term exceeds or reaches the current day in the target month and year, stop the additions
+                if (termDay >= currentDay && termMonth == targetMonth && termYear == targetYear) {
                     break;
                 }
             }
         }
     }
 
-    System.out.println("Total Money: " + totalMoney);
-
+    // Return the total amount of money for the target month and year
     return totalMoney;
 }
+
+
 
 
 
@@ -2542,8 +2634,8 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
     DefaultTableModel model = (DefaultTableModel) inforSTKjTable.getModel();
 
     // Check if the column names already match, if not, set them
-    if (!model.getColumnName(0).equals("Số Lần") || !model.getColumnName(1).equals("Ngày Gửi") || !model.getColumnName(2).equals("Số Tiền Lãi Nhận Được")) {
-            model.setColumnIdentifiers(new Object[]{"Số Lần", "Ngày Gửi", "Số Tiền Lãi Nhận Được"}); // Set column names
+    if (!model.getColumnName(0).equals("Số Lần") || !model.getColumnName(1).equals("Ngày Nhận") || !model.getColumnName(2).equals("Số Tiền Lãi Nhận Được")) {
+            model.setColumnIdentifiers(new Object[]{"Số Lần", "Ngày Nhận", "Số Tiền Lãi Nhận Được"}); // Set column names
     }
 
     // Get the initial values
@@ -2814,6 +2906,18 @@ private double calculateTotalSoTienDaTra(JTable table) {
         suaSTDTButton = new javax.swing.JButton();
         xoaSTDTButton = new javax.swing.JButton();
         thoatSTDTButton = new javax.swing.JButton();
+        thayMKDialog = new javax.swing.JDialog();
+        jPanel22 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel40 = new javax.swing.JLabel();
+        jLabel42 = new javax.swing.JLabel();
+        jLabel44 = new javax.swing.JLabel();
+        thayDoiPassjButton = new javax.swing.JButton();
+        thoatPassjButton = new javax.swing.JButton();
+        oldPassjPasswordField = new javax.swing.JPasswordField();
+        newPass1jPasswordField = new javax.swing.JPasswordField();
+        newPass2jPasswordField = new javax.swing.JPasswordField();
+        showPassjCheckBox = new javax.swing.JCheckBox();
         headerPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -2821,6 +2925,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
         showRealTimeLabel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        thayMKButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         buttonPanel = new javax.swing.JPanel();
         giaoDichButton = new javax.swing.JButton();
@@ -2868,13 +2973,12 @@ private double calculateTotalSoTienDaTra(JTable table) {
         showTKPanel = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         tkYearTKButton = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
-        yearTKTextField = new javax.swing.JTextField();
         thangQuyComboBox = new javax.swing.JComboBox<>();
         tkTuyChonButton = new javax.swing.JButton();
         tkThangQuyComboBox = new javax.swing.JComboBox<>();
         jLabel39 = new javax.swing.JLabel();
         tongTienTKjLabel = new javax.swing.JLabel();
+        yearTKTextField = new javax.swing.JComboBox<>();
         giaoDichPanel = new javax.swing.JPanel();
         jTabbedPane4 = new javax.swing.JTabbedPane();
         jPanel15 = new javax.swing.JPanel();
@@ -3254,7 +3358,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
 
         jLabel23.setText("Đến");
 
-        tkTKDiaLogButton.setText("Tìm Kiếm");
+        tkTKDiaLogButton.setText("Thống kê");
         tkTKDiaLogButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tkTKDiaLogButtonActionPerformed(evt);
@@ -3273,43 +3377,44 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap(29, Short.MAX_VALUE)
+                .addContainerGap(46, Short.MAX_VALUE)
+                .addComponent(tkTuyChoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                        .addComponent(tkThoatTuyChonButton)
-                        .addContainerGap())
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(tkThoatTuyChonButton))
                     .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(tkTuyChoComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel9Layout.createSequentialGroup()
-                                .addComponent(jLabel22)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(tkTuyChonTuDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel23)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(tkTuyChonDenDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(32, Short.MAX_VALUE))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tkTKDiaLogButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel22)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tkTuyChonTuDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel23)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(tkTuyChonDenDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(tkTKDiaLogButton)
+                        .addGap(0, 56, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addComponent(tkTuyChoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel23)
-                    .addComponent(tkTuyChonTuDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel22)
-                    .addComponent(tkTuyChonDenDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(tkTKDiaLogButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tkThoatTuyChonButton)
+                .addContainerGap(93, Short.MAX_VALUE)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(tkTKDiaLogButton)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel23)
+                            .addComponent(tkTuyChonTuDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel22)
+                                .addComponent(tkTuyChoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tkTuyChonDenDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
+                        .addComponent(tkThoatTuyChonButton)))
                 .addContainerGap())
         );
 
@@ -3319,14 +3424,14 @@ private double calculateTotalSoTienDaTra(JTable table) {
             tkDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tkDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
+                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tkDialogLayout.setVerticalGroup(
             tkDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tkDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
+                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -3410,7 +3515,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
 
         jLabel5.setText("SỐ TIỀN ĐÃ NHẬN ĐƯỢC MỖI THÁNG");
 
-        jLabel26.setText("Tổng lãi:");
+        jLabel26.setText("Tổng số tiền lãi lãi:");
 
         tongLaiLabel.setText("jLabel27");
 
@@ -3419,16 +3524,16 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel11Layout.setHorizontalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel26)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel11Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel26)
-                        .addGap(18, 18, 18)
-                        .addComponent(tongLaiLabel))
+                        .addComponent(jLabel5)
+                        .addContainerGap(100, Short.MAX_VALUE))
                     .addGroup(jPanel11Layout.createSequentialGroup()
-                        .addGap(104, 104, 104)
-                        .addComponent(jLabel5)))
-                .addContainerGap(106, Short.MAX_VALUE))
+                        .addComponent(tongLaiLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3446,13 +3551,13 @@ private double calculateTotalSoTienDaTra(JTable table) {
 
         lsvDialog.setSize(new java.awt.Dimension(500, 500));
 
-        jLabel21.setText("Số Tiền Đã Đưa Mỗi Tháng");
+        jLabel21.setText("Số Tiền Đã Trả Mỗi Tháng");
 
-        jLabel27.setText("Số tiền trả:");
+        jLabel27.setText("Số tiền đã trả:");
 
         soTienTrajLabel.setText("jLabel28");
 
-        jLabel29.setText("Số tiền nợ:");
+        jLabel29.setText("Số tiền còn nợ:");
 
         soTienNojLabel.setText("jLabel30");
 
@@ -3467,11 +3572,11 @@ private double calculateTotalSoTienDaTra(JTable table) {
             .addGroup(jPanel12Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel27)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(soTienTrajLabel)
-                .addGap(134, 134, 134)
+                .addGap(146, 146, 146)
                 .addComponent(jLabel29)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(soTienNojLabel)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -3547,26 +3652,23 @@ private double calculateTotalSoTienDaTra(JTable table) {
             .addGroup(jPanel21Layout.createSequentialGroup()
                 .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel21Layout.createSequentialGroup()
+                        .addGap(62, 62, 62)
                         .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel21Layout.createSequentialGroup()
-                                .addGap(62, 62, 62)
-                                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel24)
-                                    .addComponent(jLabel25))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(ngaySTDTDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(soTienTraLSVTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)))
-                            .addGroup(jPanel21Layout.createSequentialGroup()
-                                .addGap(83, 83, 83)
-                                .addComponent(themSoTienTraLSVButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(suaSTDTButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(xoaSTDTButton)))
-                        .addGap(0, 121, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel21Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                            .addComponent(jLabel24)
+                            .addComponent(jLabel25))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(ngaySTDTDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(soTienTraLSVTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel21Layout.createSequentialGroup()
+                        .addGap(83, 83, 83)
+                        .addComponent(themSoTienTraLSVButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(suaSTDTButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(xoaSTDTButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(thoatSTDTButton)))
                 .addContainerGap())
         );
@@ -3587,9 +3689,9 @@ private double calculateTotalSoTienDaTra(JTable table) {
                         .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(themSoTienTraLSVButton)
                             .addComponent(suaSTDTButton)
-                            .addComponent(xoaSTDTButton))))
-                .addGap(1, 1, 1)
-                .addComponent(thoatSTDTButton))
+                            .addComponent(xoaSTDTButton)
+                            .addComponent(thoatSTDTButton))))
+                .addGap(24, 24, 24))
         );
 
         javax.swing.GroupLayout lsvDialogLayout = new javax.swing.GroupLayout(lsvDialog.getContentPane());
@@ -3610,6 +3712,105 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel4.setText("Thay đổi mật khẩu");
+
+        jLabel40.setText("Mật khẩu hiện tại:");
+
+        jLabel42.setText("Mật khẩu mới:");
+
+        jLabel44.setText("Gõ lại mật khẩu mới:");
+
+        thayDoiPassjButton.setText("Lưu thay đổi");
+        thayDoiPassjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                thayDoiPassjButtonActionPerformed(evt);
+            }
+        });
+
+        thoatPassjButton.setText("Thoát");
+        thoatPassjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                thoatPassjButtonActionPerformed(evt);
+            }
+        });
+
+        showPassjCheckBox.setText("Hiển thị mật khẩu");
+
+        javax.swing.GroupLayout jPanel22Layout = new javax.swing.GroupLayout(jPanel22);
+        jPanel22.setLayout(jPanel22Layout);
+        jPanel22Layout.setHorizontalGroup(
+            jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel22Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel22Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(thayDoiPassjButton)
+                        .addGap(56, 56, 56)
+                        .addComponent(thoatPassjButton)
+                        .addContainerGap())
+                    .addGroup(jPanel22Layout.createSequentialGroup()
+                        .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel40)
+                            .addComponent(jLabel42)
+                            .addComponent(jLabel44))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(oldPassjPasswordField)
+                            .addComponent(newPass1jPasswordField)
+                            .addComponent(newPass2jPasswordField)
+                            .addGroup(jPanel22Layout.createSequentialGroup()
+                                .addComponent(showPassjCheckBox)
+                                .addGap(0, 128, Short.MAX_VALUE))))
+                    .addGroup(jPanel22Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel4)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        );
+        jPanel22Layout.setVerticalGroup(
+            jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel22Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(jLabel4)
+                .addGap(31, 31, 31)
+                .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel40)
+                    .addComponent(oldPassjPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel42)
+                    .addComponent(newPass1jPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel44)
+                    .addComponent(newPass2jPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
+                .addComponent(showPassjCheckBox)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(thayDoiPassjButton)
+                    .addComponent(thoatPassjButton))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout thayMKDialogLayout = new javax.swing.GroupLayout(thayMKDialog.getContentPane());
+        thayMKDialog.getContentPane().setLayout(thayMKDialogLayout);
+        thayMKDialogLayout.setHorizontalGroup(
+            thayMKDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(thayMKDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        thayMKDialogLayout.setVerticalGroup(
+            thayMKDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(thayMKDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -3635,14 +3836,23 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jLabel3.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel3.setText("QUẢN LÝ TÀI CHÍNH");
 
+        thayMKButton.setText("Thay đổi mật khẩu");
+        thayMKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                thayMKButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(329, Short.MAX_VALUE)
+                .addContainerGap(302, Short.MAX_VALUE)
                 .addComponent(jLabel3)
-                .addContainerGap(329, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 222, Short.MAX_VALUE)
+                .addComponent(thayMKButton)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3650,6 +3860,10 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addContainerGap(20, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addContainerGap(20, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(thayMKButton)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout headerPanelLayout = new javax.swing.GroupLayout(headerPanel);
@@ -3783,7 +3997,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
 
         tienTKButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         tienTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
-        tienTKButton.setText("  Tìm kiếm");
+        tienTKButton.setText("Thống kê");
         tienTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tienTKButtonActionPerformed(evt);
@@ -3804,10 +4018,12 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
-        hangMucComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ăn Uống", "Quần Áo", "Dịch vụ sinh hoạt", "Lương", "Thưởng", "Được cho/tặng", "Khác" }));
+        hangMucComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ăn Uống", "Quần Áo", "Dịch vụ sinh hoạt", "Lương", "Thưởng", "Được cho/tặng", "Tiền chi khác", "Tiền thu khác" }));
 
+        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jLabel14.setText("Tổng tiền:");
 
+        tongTienDanhMucjLabel.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         tongTienDanhMucjLabel.setText("jLabel33");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -3815,44 +4031,30 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(tongTienDanhMucjLabel)
-                        .addContainerGap(679, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(hangMucComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel14)
+                .addGap(18, 18, 18)
+                .addComponent(tongTienDanhMucjLabel)
+                .addGap(18, 18, 18)
+                .addComponent(hangMucComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(tienTKButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(inTienButton)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel14)
-                    .addComponent(tongTienDanhMucjLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(hangMucComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                .addContainerGap(55, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(tongTienDanhMucjLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(hangMucComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(tienTKButton)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(inTienButton)
-                        .addContainerGap())))
+                        .addComponent(inTienButton)))
+                .addContainerGap(61, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -3870,8 +4072,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Danh Mục", jPanel4);
@@ -3903,7 +4104,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
 
         ngayTKButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         ngayTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
-        ngayTKButton.setText("  Tìm kiếm");
+        ngayTKButton.setText("Thống kê");
         ngayTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ngayTKButtonActionPerformed(evt);
@@ -3924,12 +4125,16 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
+        jLabel33.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel33.setText("Số tiền chi:");
 
+        tongChiDatejLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tongChiDatejLabel.setText("jLabel34");
 
+        jLabel34.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel34.setText("Số tiền thu:");
 
+        tongThuDatejLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tongThuDatejLabel.setText("jLabel35");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -3937,60 +4142,51 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(48, Short.MAX_VALUE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel33)
+                    .addComponent(jLabel34))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jLabel33)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tongChiDatejLabel)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jLabel34)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tongThuDatejLabel)))
-                .addGap(665, 665, 665))
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel15)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel16)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ngayTKButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(inNgayThangNamButton)))
-                .addContainerGap())
+                    .addComponent(tongChiDatejLabel)
+                    .addComponent(tongThuDatejLabel))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(ngayTKButton)
+                .addGap(18, 18, 18)
+                .addComponent(inNgayThangNamButton)
+                .addContainerGap(63, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addContainerGap(46, Short.MAX_VALUE)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(ngayTKButton)
+                            .addComponent(inNgayThangNamButton))
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(denNgayTKTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel33)
-                            .addComponent(tongChiDatejLabel))
+                            .addComponent(tongChiDatejLabel)
+                            .addComponent(jLabel33))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel34)
-                            .addComponent(tongThuDatejLabel))
-                        .addGap(4, 4, 4)
-                        .addComponent(tuNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(denNgayTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ngayTKButton)
-                    .addComponent(inNgayThangNamButton))
-                .addContainerGap())
+                            .addComponent(tongThuDatejLabel)
+                            .addComponent(jLabel34))))
+                .addGap(42, 42, 42))
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -4016,7 +4212,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel12.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel12.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
         jLabel12.setText("Mặt hàng");
 
         tenTKTextField.addActionListener(new java.awt.event.ActionListener() {
@@ -4035,7 +4231,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
 
         tenTKButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         tenTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
-        tenTKButton.setText("  Tìm kiếm");
+        tenTKButton.setText("Thống kê");
         tenTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tenTKButtonActionPerformed(evt);
@@ -4056,8 +4252,10 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
-        jLabel13.setText("Tổng tiền");
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jLabel13.setText("Tổng số tiền:");
 
+        tongMatHangChijLabel.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         tongMatHangChijLabel.setText("jLabel14");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -4065,43 +4263,32 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(tongMatHangChijLabel))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel12)
-                        .addGap(18, 18, 18)
-                        .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tongMatHangChijLabel)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel12)
+                .addGap(18, 18, 18)
+                .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(tenTKButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(inTenButton)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(55, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(tongMatHangChijLabel))
-                .addGap(5, 5, 5)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tongMatHangChijLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tenTKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12)
-                    .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(tenTKButton))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(inTenButton)))
-                .addContainerGap())
+                    .addComponent(tenTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inTenButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
 
         jScrollPane3.setBackground(new java.awt.Color(255, 255, 255));
@@ -4179,25 +4366,17 @@ private double calculateTotalSoTienDaTra(JTable table) {
         );
         showTKPanelLayout.setVerticalGroup(
             showTKPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 357, Short.MAX_VALUE)
+            .addGap(0, 377, Short.MAX_VALUE)
         );
 
         jPanel8.setBackground(new java.awt.Color(255, 255, 255));
 
         tkYearTKButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         tkYearTKButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/quanlytaichinh/images/Search.png"))); // NOI18N
-        tkYearTKButton.setText("Tìm kiếm");
+        tkYearTKButton.setText("Thống kê");
         tkYearTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tkYearTKButtonActionPerformed(evt);
-            }
-        });
-
-        jLabel4.setText("Năm");
-
-        yearTKTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yearTKTextFieldActionPerformed(evt);
             }
         });
 
@@ -4217,9 +4396,13 @@ private double calculateTotalSoTienDaTra(JTable table) {
 
         tkThangQuyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mục chi", "Mục thu", "Sổ tiết kiệm", "Lãi suất vay" }));
 
-        jLabel39.setText("Tổng tiền:");
+        jLabel39.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jLabel39.setText("Tổng số tiền:");
 
+        tongTienTKjLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tongTienTKjLabel.setText("jLabel40");
+
+        yearTKTextField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034", "2035", "2036", "2037", "2038", "2039", "2040", "2041", "2042", "2043", "2044", "2045", "2046", "2047", "2048", "2049", "2050" }));
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -4227,47 +4410,34 @@ private double calculateTotalSoTienDaTra(JTable table) {
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                        .addComponent(tkThangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)))
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tkYearTKButton)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(thangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(tkTuyChonButton))
-                    .addComponent(yearTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel39)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel39, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tongTienTKjLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tkThangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(thangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(yearTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(tkYearTKButton)
+                .addGap(18, 18, 18)
+                .addComponent(tkTuyChonButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap(62, Short.MAX_VALUE)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel39)
-                    .addComponent(tongTienTKjLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tkThangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(thangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tkTuyChonButton))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(yearTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(tkYearTKButton)
-                .addGap(12, 12, 12))
+                    .addComponent(jLabel39, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tongTienTKjLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tkThangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(thangQuyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tkYearTKButton)
+                    .addComponent(yearTKTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tkTuyChonButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout thongKePanelLayout = new javax.swing.GroupLayout(thongKePanel);
@@ -4347,28 +4517,22 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
-        jLabel28.setText("Số tiền chi của tháng:");
+        jLabel28.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel28.setText("Tổng số tiền chi của tháng:");
 
+        tongChiThangLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tongChiThangLabel.setText("jLabel30");
 
-        jLabel30.setText("Tổng chi:");
+        jLabel30.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel30.setText("Tổng số tiền chi:");
 
+        tongChijLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tongChijLabel.setText("jLabel31");
 
         javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
         jPanel17.setLayout(jPanel17Layout);
         jPanel17Layout.setHorizontalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel17Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel28)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tongChiThangLabel)
-                .addGap(154, 154, 154)
-                .addComponent(jLabel30)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tongChijLabel)
-                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel17Layout.createSequentialGroup()
                 .addContainerGap(127, Short.MAX_VALUE)
                 .addComponent(inMucChiButton)
@@ -4381,6 +4545,18 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addGap(18, 18, 18)
                 .addComponent(xoaAllChiButton)
                 .addGap(0, 180, Short.MAX_VALUE))
+            .addGroup(jPanel17Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel17Layout.createSequentialGroup()
+                        .addComponent(jLabel28)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tongChiThangLabel))
+                    .addGroup(jPanel17Layout.createSequentialGroup()
+                        .addComponent(jLabel30)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tongChijLabel)))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4388,16 +4564,18 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addContainerGap()
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel28)
-                    .addComponent(tongChiThangLabel)
-                    .addComponent(tongChijLabel)
-                    .addComponent(jLabel30))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
+                    .addComponent(tongChiThangLabel))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel30)
+                    .addComponent(tongChijLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(inMucChiButton)
                     .addComponent(themChiButton)
                     .addComponent(suaChiButton)
                     .addComponent(xoaChiButton)
-                    .addComponent(xoaAllChiButton))
+                    .addComponent(xoaAllChiButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21))
         );
 
@@ -4427,7 +4605,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel15Layout.setVerticalGroup(
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -4483,12 +4661,16 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
-        jLabel31.setText("Số tiền thu của tháng:");
+        jLabel31.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel31.setText("Tổng số tiền thu của tháng:");
 
+        tongThuThangjLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tongThuThangjLabel.setText("jLabel32");
 
-        jLabel32.setText("Tổng thu:");
+        jLabel32.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel32.setText("Tổng số tiền thu:");
 
+        tongThujLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tongThujLabel.setText("jLabel33");
 
         javax.swing.GroupLayout jPanel18Layout = new javax.swing.GroupLayout(jPanel18);
@@ -4496,7 +4678,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel18Layout.setHorizontalGroup(
             jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel18Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(156, Short.MAX_VALUE)
                 .addComponent(inMucThuButton)
                 .addGap(18, 18, 18)
                 .addComponent(themThuButton)
@@ -4506,16 +4688,18 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addComponent(xoaThuButton)
                 .addGap(18, 18, 18)
                 .addComponent(xoaAllThuButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(157, Short.MAX_VALUE))
             .addGroup(jPanel18Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel31)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tongThuThangjLabel)
-                .addGap(77, 77, 77)
-                .addComponent(jLabel32)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tongThujLabel)
+                .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel18Layout.createSequentialGroup()
+                        .addComponent(jLabel31)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tongThuThangjLabel))
+                    .addGroup(jPanel18Layout.createSequentialGroup()
+                        .addComponent(jLabel32)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tongThujLabel)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel18Layout.setVerticalGroup(
@@ -4524,17 +4708,19 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addContainerGap()
                 .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel31)
-                    .addComponent(tongThuThangjLabel)
+                    .addComponent(tongThuThangjLabel))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel32)
                     .addComponent(tongThujLabel))
-                .addGap(70, 70, 70)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themThuButton)
                     .addComponent(suaThuButton)
                     .addComponent(xoaThuButton)
-                    .addComponent(xoaAllThuButton)
+                    .addComponent(xoaAllThuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(inMucThuButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         thuTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -4565,8 +4751,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel16Layout.createSequentialGroup()
                 .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane4.addTab("Mục Thu", jPanel16);
@@ -4583,6 +4768,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
         giaoDichPanelLayout.setVerticalGroup(
             giaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, giaoDichPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jTabbedPane4)
                 .addContainerGap())
         );
@@ -4639,6 +4825,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
+        inforSTKButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         inforSTKButton.setText("Thông tin");
         inforSTKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4646,12 +4833,16 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
-        jLabel35.setText("Số tiền lãi:");
+        jLabel35.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel35.setText("Tổng số tiền lãi:");
 
+        tongTienLaijLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tongTienLaijLabel.setText("jLabel36");
 
-        jLabel36.setText("Số tiền gửi:");
+        jLabel36.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel36.setText("Tổng số tiền gửi:");
 
+        tongTienGuijLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tongTienGuijLabel.setText("jLabel37");
 
         javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
@@ -4674,13 +4865,15 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel14Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel35)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tongTienLaijLabel)
-                .addGap(90, 90, 90)
-                .addComponent(jLabel36)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tongTienGuijLabel)
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel14Layout.createSequentialGroup()
+                        .addComponent(jLabel35)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tongTienLaijLabel))
+                    .addGroup(jPanel14Layout.createSequentialGroup()
+                        .addComponent(jLabel36)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tongTienGuijLabel)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel14Layout.setVerticalGroup(
@@ -4689,18 +4882,20 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addContainerGap()
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel35)
-                    .addComponent(tongTienLaijLabel)
+                    .addComponent(tongTienLaijLabel))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel36)
                     .addComponent(tongTienGuijLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(inSTKButton)
                     .addComponent(themSTKButton)
                     .addComponent(suaSTKButton)
                     .addComponent(xoaSTKButton)
-                    .addComponent(xoaAllSTKButton)
-                    .addComponent(inSTKButton)
-                    .addComponent(inforSTKButton))
-                .addContainerGap(52, Short.MAX_VALUE))
+                    .addComponent(xoaAllSTKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inforSTKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         soTietKiemTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -4729,7 +4924,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel13Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -4792,12 +4987,16 @@ private double calculateTotalSoTienDaTra(JTable table) {
             }
         });
 
-        jLabel37.setText("Số tiền nợ:");
+        jLabel37.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel37.setText("Tổng số tiền nợ:");
 
+        tongTienNojLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tongTienNojLabel.setText("jLabel38");
 
-        jLabel38.setText("Số tiền vay:");
+        jLabel38.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel38.setText("Tổng số tiền vay:");
 
+        tongTienVayjLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tongTienVayjLabel.setText("jLabel39");
 
         javax.swing.GroupLayout jPanel20Layout = new javax.swing.GroupLayout(jPanel20);
@@ -4805,28 +5004,32 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel20Layout.setHorizontalGroup(
             jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel20Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(inLSVButton)
-                .addGap(18, 18, 18)
-                .addComponent(themLSVButton)
-                .addGap(18, 18, 18)
-                .addComponent(suaLSVButton)
-                .addGap(18, 18, 18)
-                .addComponent(xoaLSVButton)
-                .addGap(18, 18, 18)
-                .addComponent(xoaAllLSVButton)
-                .addGap(18, 18, 18)
-                .addComponent(inforLSVButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel20Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jLabel37)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tongTienNojLabel)
-                .addGap(37, 37, 37)
-                .addComponent(jLabel38)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tongTienVayjLabel)
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel20Layout.createSequentialGroup()
+                .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel20Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel38)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tongTienVayjLabel))
+                    .addGroup(jPanel20Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(inLSVButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(themLSVButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(suaLSVButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(xoaLSVButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(xoaAllLSVButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(inforLSVButton)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel20Layout.setVerticalGroup(
             jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4834,18 +5037,20 @@ private double calculateTotalSoTienDaTra(JTable table) {
                 .addContainerGap()
                 .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel37)
-                    .addComponent(tongTienNojLabel)
+                    .addComponent(tongTienNojLabel))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel38)
                     .addComponent(tongTienVayjLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(inLSVButton)
                     .addComponent(themLSVButton)
                     .addComponent(suaLSVButton)
                     .addComponent(xoaLSVButton)
                     .addComponent(xoaAllLSVButton)
-                    .addComponent(inLSVButton)
                     .addComponent(inforLSVButton))
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         laiSuatVayTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -4874,7 +5079,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
         jPanel19Layout.setVerticalGroup(
             jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel19Layout.createSequentialGroup()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -4976,13 +5181,22 @@ private double calculateTotalSoTienDaTra(JTable table) {
             
             findMoney(logId, displayMode);
             tongDanhMuc( displayMode);
-            } else if("Khác".equals(displayMode)){
+            } else if("Tiền chi khác".equals(displayMode)){
             
             findMoney(logId, displayMode);
             tongDanhMuc( displayMode);
 //            findHangMucThu(logId, displayMode);
             
-            }else if("Lương".equals(displayMode)){
+            } else if("Tiền thu khác".equals(displayMode)){
+            
+            findHangMucThu(logId, displayMode);
+            tongDanhMuc( displayMode);
+//            findHangMucThu(logId, displayMode);
+            
+            }
+            
+            
+            else if("Lương".equals(displayMode)){
             findHangMucThu(logId, displayMode);
             tongDanhMuc( displayMode);
 
@@ -5071,7 +5285,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
         
         String displayMode = (String) tkThangQuyComboBox.getSelectedItem();
         String thangQuy = (String) thangQuyComboBox.getSelectedItem();
-        String year = yearTKTextField.getText();
+        String year = (String )yearTKTextField.getSelectedItem();
         
         if (("Mục chi".equals(displayMode))) {
                 if ("Tháng".equals(thangQuy) || "Quý".equals(thangQuy)) {
@@ -5441,10 +5655,6 @@ private double calculateTotalSoTienDaTra(JTable table) {
         exportTableToExcel(soTietKiemTable);
     }//GEN-LAST:event_inSTKButtonActionPerformed
 
-    private void yearTKTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yearTKTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_yearTKTextFieldActionPerformed
-
     private void thangQuyComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thangQuyComboBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_thangQuyComboBoxActionPerformed
@@ -5452,7 +5662,7 @@ private double calculateTotalSoTienDaTra(JTable table) {
     private void tkTuyChonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkTuyChonButtonActionPerformed
         // TODO add your handling code here:
         tkDialog.setVisible(true);
-        tkDialog.setSize(500, 300);
+        tkDialog.setSize(700, 300);
         tkDialog.setLocationRelativeTo(null);
     }//GEN-LAST:event_tkTuyChonButtonActionPerformed
 
@@ -5755,6 +5965,94 @@ if (rowLSV < 0) {
         stkDialog.setVisible(false);
     }//GEN-LAST:event_thoatstkButtonActionPerformed
 
+    private void thayMKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thayMKButtonActionPerformed
+        // TODO add your handling code here:
+        thayMKDialog.setVisible(true);
+        thayMKDialog.setSize(500, 500);
+        thayMKDialog.pack();
+        thayMKDialog.setVisible(true);
+        thayMKDialog.setLocationRelativeTo(null);
+        
+        
+    }//GEN-LAST:event_thayMKButtonActionPerformed
+
+    private void thayDoiPassjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thayDoiPassjButtonActionPerformed
+        // TODO add your handling code here:
+        String oldPass = oldPassjPasswordField.getText();
+        String newPass1 = newPass1jPasswordField.getText();
+        String newPass2 = newPass2jPasswordField.getText();
+        
+        
+        // Kiểm tra newPass1 và newPass2 có giống nhau
+if (!newPass1.isEmpty() && !newPass2.isEmpty() && !oldPass.isEmpty()) {
+    // Kiểm tra xem newPass1 và newPass2 không rỗng và không chứa ký tự trắng
+    if (newPass1.equals(newPass2) && !newPass1.contains(" ")) {
+        // Kiểm tra xem oldPass có khớp với mật khẩu hiện tại hay không
+        if (md5(oldPass).equals(loginModel.getPassword())) {
+            // Thực hiện cập nhật mật khẩu mới
+            homeViewController.updatePassword(md5(newPass1), md5(oldPass));
+
+            // Hiển thị thông báo thành công
+            JOptionPane.showMessageDialog(null, "Mật khẩu đã được cập nhật thành công.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+            System.out.println("Mật khẩu đã được cập nhật thành công.");
+        } else {
+            // Hiển thị thông báo sai mật khẩu hiện tại
+            JOptionPane.showMessageDialog(null, "Sai mật khẩu hiện tại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+
+            System.out.println("Sai mật khẩu hiện tại.");
+        }
+    } else {
+        // Hiển thị thông báo gõ lại mật khẩu sai hoặc chứa ký tự trắng
+        JOptionPane.showMessageDialog(null, "Gõ lại mật khẩu sai hoặc chứa ký tự trắng.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+
+        System.out.println("Gõ lại mật khẩu sai hoặc chứa ký tự trắng.");
+    }
+} else {
+    // Hiển thị thông báo khi một trong các trường rỗng
+    JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+
+    System.out.println("Vui lòng điền đầy đủ thông tin.");
+}
+        oldPassjPasswordField.setText("");
+        newPass1jPasswordField.setText("");
+        newPass2jPasswordField.setText("");
+
+
+    }//GEN-LAST:event_thayDoiPassjButtonActionPerformed
+
+    private void thoatPassjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoatPassjButtonActionPerformed
+        // TODO add your handling code here:
+        thayMKDialog.setVisible(false);
+    }//GEN-LAST:event_thoatPassjButtonActionPerformed
+
+    
+    
+    public static String md5(String input) {
+        try {
+            // Create a MessageDigest object for MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            // input thành mảng byte 
+            md.update(input.getBytes());
+
+            // trả về một mảng byte chứa kết quả của quá trình băm
+            byte[] md5Bytes = md.digest();
+
+            //  duyệt qua từng byte trong mảng 
+            StringBuilder sb = new StringBuilder();
+            //huyển đổi byte thành chuỗi số thập lục phân, đảm bảo rằng các giá trị thấp hơn 16 sẽ có một chữ số 0 ở đầu
+            for (byte md5Byte : md5Bytes) {
+                sb.append(Integer.toString((md5Byte & 0xff) + 0x100, 16).substring(1));
+            }
+            //giá trị băm MD5 của chuỗi dữ liệu ban đầu 
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            // Handle the NoSuchAlgorithmException (shouldn't happen with "MD5" algorithm)
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     
     private void getSelectedSTDTTableRowValues() {
@@ -6041,6 +6339,9 @@ if (rowLSV < 0) {
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel40;
+    private javax.swing.JLabel jLabel42;
+    private javax.swing.JLabel jLabel44;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -6060,6 +6361,7 @@ if (rowLSV < 0) {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel20;
     private javax.swing.JPanel jPanel21;
+    private javax.swing.JPanel jPanel22;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -6087,11 +6389,15 @@ if (rowLSV < 0) {
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTextField matHangTGDTextField;
     private javax.swing.JTextField matHangTGDTextField1;
+    private javax.swing.JPasswordField newPass1jPasswordField;
+    private javax.swing.JPasswordField newPass2jPasswordField;
     private com.toedter.calendar.JDateChooser ngaySTDTDateChooser;
     private javax.swing.JButton ngayTKButton;
+    private javax.swing.JPasswordField oldPassjPasswordField;
     private javax.swing.JRadioButton quanAoRadioButton;
     private javax.swing.JRadioButton quanAoRadioButton1;
     private javax.swing.JLabel showDateLabel;
+    private javax.swing.JCheckBox showPassjCheckBox;
     private javax.swing.JLabel showRealTimeLabel;
     private javax.swing.JPanel showTKPanel;
     private javax.swing.JLabel soTienNojLabel;
@@ -6113,6 +6419,9 @@ if (rowLSV < 0) {
     private javax.swing.JComboBox<String> thangQuyComboBox;
     private javax.swing.JTextField thanhTienTGDTextField;
     private javax.swing.JTextField thanhTienTGDTextField1;
+    private javax.swing.JButton thayDoiPassjButton;
+    private javax.swing.JButton thayMKButton;
+    private javax.swing.JDialog thayMKDialog;
     private javax.swing.JButton themChiButton;
     private javax.swing.JDialog themDialog;
     private javax.swing.JButton themLSVButton;
@@ -6122,6 +6431,7 @@ if (rowLSV < 0) {
     private javax.swing.JButton themTGDButton1;
     private javax.swing.JButton themThuButton;
     private javax.swing.JButton thoatHomeButton;
+    private javax.swing.JButton thoatPassjButton;
     private javax.swing.JButton thoatSTDTButton;
     private javax.swing.JButton thoatTGDButton;
     private javax.swing.JButton thoatTGDButton1;
@@ -6169,6 +6479,6 @@ if (rowLSV < 0) {
     private javax.swing.JButton xoaSTDTButton;
     private javax.swing.JButton xoaSTKButton;
     private javax.swing.JButton xoaThuButton;
-    private javax.swing.JTextField yearTKTextField;
+    private javax.swing.JComboBox<String> yearTKTextField;
     // End of variables declaration//GEN-END:variables
 }

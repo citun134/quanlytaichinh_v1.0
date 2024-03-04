@@ -137,6 +137,7 @@ public class editLSVJFrame extends javax.swing.JFrame {
             
             soTienNojLabel.setText(df.format(tienNo));
             tongSoTienjLabel.setText(df.format(tongSoTien));
+            vbcEditLSVjLabel.setText(readNumberToText(tongSoTien) + " đồng");
         
         
         thoiGianVayLSVTGDTextField.addActionListener(new ActionListener() {
@@ -195,11 +196,13 @@ public class editLSVJFrame extends javax.swing.JFrame {
 
                 tongSoTienjLabel.setText(df.format(tongSoTienPhaiTra));
                 soTienNojLabel.setText(df.format(tienNo));
+                vbcEditLSVjLabel.setText(readNumberToText(tongSoTienPhaiTra) + " đồng");
             } else {
                 // Xử lý khi soTienGuiStr trống
 //                soLaijLabel.setText("0");
                 tongSoTienjLabel.setText("0");
                 soTienNojLabel.setText("0");
+                vbcEditLSVjLabel.setText("");
             }
         }
         });
@@ -228,11 +231,14 @@ public class editLSVJFrame extends javax.swing.JFrame {
                 tongSoTienjLabel.setText(df.format(tongSoTienPhaiTra));
                 
                 soTienNojLabel.setText(df.format(tienNo));
+                vbcEditLSVjLabel.setText(readNumberToText(tongSoTienPhaiTra) + " đồng");
+                
             } else {
                 // Xử lý khi soTienGuiStr trống
 //                soLaijLabel.setText("0");
                 tongSoTienjLabel.setText("0");
                 soTienNojLabel.setText("0");
+                vbcEditLSVjLabel.setText("");
 
             }
         }
@@ -243,6 +249,75 @@ public class editLSVJFrame extends javax.swing.JFrame {
 
 
     }
+    
+    
+    
+    public static String readNumberToText(double number) {
+    String[] units = {"", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"};
+    String[] tens = {"", "mười", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"};
+    String[] hundreds = {"", "một trăm", "hai trăm", "ba trăm", "bốn trăm", "năm trăm", "sáu trăm", "bảy trăm", "tám trăm", "chín trăm"};
+    String[] thousands = {"", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"};
+
+    StringBuilder sb = new StringBuilder();
+    boolean isFirstIteration = true;
+
+    for (int index = 0; number > 0 && index < thousands.length; index++) {
+        double currentNumber = number % 1000;
+        String currentText = readThreeDigits(currentNumber, units, tens, hundreds);
+
+        // Inside the loop where you append currentText and thousands[index]
+if (currentNumber > 0) {
+    if (!isFirstIteration) {
+        // If the number is exactly 1000, 1 million, etc., don't append currentText
+        if (!currentText.isEmpty()) {
+            sb.insert(0, currentText + " " + thousands[index] + " ");
+        }
+    } else {
+        if (!currentText.isEmpty()) {
+            sb.insert(0, currentText + " ");
+            isFirstIteration = false;
+        }
+    }
+}
+
+
+        number /= 1000;
+    }
+
+    // Xử lý trường hợp số 0
+    if (sb.length() == 0) {
+        sb.append("không");
+    }
+
+    return sb.toString().trim();
+}
+
+
+
+
+private static String readThreeDigits(double number, String[] units, String[] tens, String[] hundreds) {
+    StringBuilder sb = new StringBuilder();
+
+    int hundred = (int) (number / 100);
+    int ten = (int) (number % 100 / 10);
+    int unit = (int) (number % 10);
+
+    if (hundred > 0) {
+        sb.append(hundreds[hundred] + " ");
+    }
+
+    if (ten == 1) {
+        sb.append("mười ");
+    } else if (ten > 1) {
+        sb.append(tens[ten] + " ");
+    }
+
+    if (unit > 0) {
+        sb.append(units[unit]);
+    }
+
+    return sb.toString().trim();
+}
     
     
     
@@ -434,6 +509,8 @@ public class editLSVJFrame extends javax.swing.JFrame {
         soTienNojLabel = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         tongSoTienjLabel = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        vbcEditLSVjLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -448,9 +525,9 @@ public class editLSVJFrame extends javax.swing.JFrame {
         headerThemGiaoDichPanel1Layout.setHorizontalGroup(
             headerThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(headerThemGiaoDichPanel1Layout.createSequentialGroup()
-                .addContainerGap(171, Short.MAX_VALUE)
+                .addContainerGap(206, Short.MAX_VALUE)
                 .addComponent(jLabel7)
-                .addContainerGap(170, Short.MAX_VALUE))
+                .addContainerGap(207, Short.MAX_VALUE))
         );
         headerThemGiaoDichPanel1Layout.setVerticalGroup(
             headerThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -506,15 +583,26 @@ public class editLSVJFrame extends javax.swing.JFrame {
 
         tenNganHangLSVTGDTextField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BIDV", "Vietcombank", "Agribank", "Vietinbank", "MB", "Techcombank", "ACB", "BaoVietBank", "Sacombank", "Saigonbank", "SHB", "TPBank" }));
 
+        laiSuatVayjLabel.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         laiSuatVayjLabel.setText("jLabel1");
 
-        jLabel1.setText("Số tiền nợ:");
+        jLabel1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel1.setText("Số tiền lãi tạm tính:");
 
+        soTienNojLabel.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         soTienNojLabel.setText("jLabel5");
 
-        jLabel6.setText("Tổng số tiền:");
+        jLabel6.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel6.setText("Tổng số tiền gốc + lãi:");
 
+        tongSoTienjLabel.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         tongSoTienjLabel.setText("jLabel11");
+
+        jLabel5.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel5.setText("Viết bằng chữ:");
+
+        vbcEditLSVjLabel.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        vbcEditLSVjLabel.setText("jLabel11");
 
         javax.swing.GroupLayout bodyThemGiaoDichPanelLayout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel);
         bodyThemGiaoDichPanel.setLayout(bodyThemGiaoDichPanelLayout);
@@ -523,47 +611,44 @@ public class editLSVJFrame extends javax.swing.JFrame {
             .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(thoatTGDButton))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3))
-                        .addGap(19, 19, 19)
+                        .addGap(26, 26, 26)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(giaTriBDSLSVTGDTextField)
                             .addComponent(tenNganHangLSVTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(themTGDButton)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4))
-                        .addGap(34, 34, 34)
+                        .addGap(41, 41, 41)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(soTienVayLSVTGDTextField)
-                            .addComponent(thoiGianVayLSVTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(thoiGianVayLSVTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(soTienVayLSVTGDTextField)))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34)
-                        .addComponent(ngayGiaiNganLSVjDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE))
-                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(laiSuatVayjLabel)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(soTienNojLabel)
-                        .addGap(97, 97, 97)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(tongSoTienjLabel)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ngayGiaiNganLSVjDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                .addComponent(tongSoTienjLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
+                                .addComponent(themTGDButton)
+                                .addGap(169, 169, 169)
+                                .addComponent(thoatTGDButton))
+                            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(laiSuatVayjLabel)
+                                    .addComponent(soTienNojLabel)
+                                    .addComponent(vbcEditLSVjLabel))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         bodyThemGiaoDichPanelLayout.setVerticalGroup(
@@ -589,21 +674,31 @@ public class editLSVJFrame extends javax.swing.JFrame {
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ngayGiaiNganLSVjDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(laiSuatVayjLabel))
-                .addGap(18, 18, 18)
-                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(soTienNojLabel)
-                    .addComponent(jLabel6)
-                    .addComponent(tongSoTienjLabel))
-                .addGap(20, 20, 20)
-                .addComponent(themTGDButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
-                .addComponent(thoatTGDButton)
-                .addContainerGap())
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9)
+                            .addComponent(laiSuatVayjLabel))
+                        .addGap(18, 18, 18)
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(soTienNojLabel))
+                        .addGap(18, 18, 18)
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(tongSoTienjLabel))
+                        .addGap(18, 18, 18)
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(vbcEditLSVjLabel))
+                        .addContainerGap(59, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(themTGDButton)
+                            .addComponent(thoatTGDButton))
+                        .addContainerGap())))
         );
 
         getContentPane().add(bodyThemGiaoDichPanel, java.awt.BorderLayout.CENTER);
@@ -666,6 +761,7 @@ public class editLSVJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -679,5 +775,6 @@ public class editLSVJFrame extends javax.swing.JFrame {
     private javax.swing.JButton thoatTGDButton;
     private javax.swing.JComboBox<String> thoiGianVayLSVTGDTextField;
     private javax.swing.JLabel tongSoTienjLabel;
+    private javax.swing.JLabel vbcEditLSVjLabel;
     // End of variables declaration//GEN-END:variables
 }

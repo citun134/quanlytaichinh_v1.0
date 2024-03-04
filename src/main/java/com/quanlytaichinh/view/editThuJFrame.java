@@ -155,7 +155,7 @@ public class editThuJFrame extends javax.swing.JFrame {
                     } else if (choTangRadioButton.isSelected()) {
                         giaoDichThuModel.setHangMuc("Được cho/tặng");
                     } else if (khacThuRadioButton.isSelected()) {
-                        giaoDichThuModel.setHangMuc("Khác");
+                        giaoDichThuModel.setHangMuc("Tiền thu khác");
                     }
                     giaoDichThuModel.setId(accountId);
 
@@ -213,9 +213,9 @@ public class editThuJFrame extends javax.swing.JFrame {
         headerThemGiaoDichPanel1Layout.setHorizontalGroup(
             headerThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(headerThemGiaoDichPanel1Layout.createSequentialGroup()
-                .addContainerGap(175, Short.MAX_VALUE)
+                .addContainerGap(143, Short.MAX_VALUE)
                 .addComponent(jLabel7)
-                .addContainerGap(175, Short.MAX_VALUE))
+                .addContainerGap(144, Short.MAX_VALUE))
         );
         headerThemGiaoDichPanel1Layout.setVerticalGroup(
             headerThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -259,7 +259,7 @@ public class editThuJFrame extends javax.swing.JFrame {
         });
 
         hangMucButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        hangMucButton.setText("Hạng Mục");
+        hangMucButton.setText("Danh Mục");
 
         buttonGroup1.add(thuongRadioButton);
         thuongRadioButton.setText("Thưởng");
@@ -276,7 +276,7 @@ public class editThuJFrame extends javax.swing.JFrame {
         });
 
         buttonGroup1.add(khacThuRadioButton);
-        khacThuRadioButton.setText("Khác");
+        khacThuRadioButton.setText("Tiền thu khác");
 
         javax.swing.GroupLayout bodyThemGiaoDichPanelLayout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel);
         bodyThemGiaoDichPanel.setLayout(bodyThemGiaoDichPanelLayout);
@@ -303,15 +303,13 @@ public class editThuJFrame extends javax.swing.JFrame {
                                 .addComponent(choTangRadioButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(khacThuRadioButton)
-                                .addGap(0, 149, Short.MAX_VALUE))
+                                .addGap(0, 41, Short.MAX_VALUE))
                             .addComponent(thoiGianThuTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(thoatThuTGDButton))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(suaThuTGDButton)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(122, 122, 122)
+                        .addComponent(thoatThuTGDButton)))
                 .addContainerGap())
         );
         bodyThemGiaoDichPanelLayout.setVerticalGroup(
@@ -337,10 +335,10 @@ public class editThuJFrame extends javax.swing.JFrame {
                         .addComponent(thuongRadioButton)
                         .addComponent(choTangRadioButton)
                         .addComponent(khacThuRadioButton)))
-                .addGap(18, 18, 18)
-                .addComponent(suaThuTGDButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(thoatThuTGDButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(suaThuTGDButton)
+                    .addComponent(thoatThuTGDButton))
                 .addContainerGap())
         );
 

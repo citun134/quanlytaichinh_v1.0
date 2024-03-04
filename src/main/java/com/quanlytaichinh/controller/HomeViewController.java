@@ -2,6 +2,7 @@ package com.quanlytaichinh.controller;
 
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.dao.GiaoDichDao;
+import com.quanlytaichinh.dao.LoginDao;
 import com.quanlytaichinh.model.GiaoDichThuModel;
 import com.quanlytaichinh.model.LaiSuatVayModel;
 import com.quanlytaichinh.model.LoginModel;
@@ -15,6 +16,7 @@ public class HomeViewController {
     private LoginModel loginModel;
     private SoTietKiemModel soTietKiemModel;
     private LaiSuatVayModel laiSuatVayModel;
+    private LoginDao loginDao;
 //    private GiaoDichModel giaoDichModel;
 
     public HomeViewController() {
@@ -259,6 +261,11 @@ public class HomeViewController {
     
     public double getTongSoTienTra(int accountId){
         return giaoDichDao.getTongSoTienTra(accountId);
+    }
+    
+    
+    public void updatePassword(String newPass, String oldPass) {
+        giaoDichDao.updatePassword(newPass, oldPass);
     }
     
     

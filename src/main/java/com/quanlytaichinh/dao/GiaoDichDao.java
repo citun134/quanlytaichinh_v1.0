@@ -294,7 +294,7 @@ public class GiaoDichDao {
     public ArrayList<GiaoDichModel> searchTienGiaoDich(String tu, String den, int accountId){
         ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "SELECT * FROM giaodichchi WHERE thanhTienChi BETWEEN ? AND ? AND account_id = ?";
+        String sql = "SELECT * FROM giaodichchi WHERE thanhTienChi BETWEEN ? AND ? AND account_id = ? ORDER BY ngayChi ASC";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -390,7 +390,7 @@ public class GiaoDichDao {
         ArrayList<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
 //        String sql = "SELECT * FROM giaodichthu WHERE ngayThu BETWEEN ? AND ?";
-        String sql = "SELECT * FROM giaodichchi WHERE ngayChi BETWEEN ? AND ? AND account_id = ?";
+        String sql = "SELECT * FROM giaodichchi WHERE ngayChi BETWEEN ? AND ? AND account_id = ? ORDER BY ngayChi ASC";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -464,7 +464,7 @@ public class GiaoDichDao {
         List<GiaoDichModel> infor = new ArrayList<GiaoDichModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
 //        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
-        String sql = "SELECT * FROM giaodichchi WHERE account_id = ?";
+        String sql = "SELECT * FROM giaodichchi WHERE account_id = ? ORDER BY ngayChi ASC";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, accountId);
@@ -491,7 +491,7 @@ public class GiaoDichDao {
         List<GiaoDichThuModel> infor = new ArrayList<GiaoDichThuModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
 //        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
-        String sql = "SELECT * FROM giaodichthu WHERE account_id = ?";
+        String sql = "SELECT * FROM giaodichthu WHERE account_id = ? ORDER BY ngayThu ASC";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, accountId);
@@ -515,13 +515,23 @@ public class GiaoDichDao {
     public List<GiaoDichModel> getAllInforUserThuChi(int accountId){
         List<GiaoDichModel> infor = new ArrayList<>();
         Connection connection = JDBCConnection.getJDBCConecction();
-        String sql = "SELECT chiId as id, ngayChi as date, thanhTienChi as thanhTien, matHangChi as matHang, ghiChuChi as ghiChu, hangMuc as hangMuc, account_id " +
+//        String sql = "SELECT chiId as id, ngayChi as date, thanhTienChi as thanhTien, matHangChi as matHang, ghiChuChi as ghiChu, hangMuc as hangMuc, account_id " +
+//                     "FROM giaoDichChi " +
+//                     "WHERE account_id = ? " +
+//                     "UNION " +
+//                     "SELECT thuId as id, ngayThu as date, thanhTienThu as thanhTien, NULL as matHang, ghiChuThu as ghiChu, hangMucThu as hangMuc, account_id " +
+//                     "FROM giaoDichThu " +
+//                     "WHERE account_id = ?";
+
+String sql = "SELECT chiId as id, ngayChi as date, thanhTienChi as thanhTien, matHangChi as matHang, ghiChuChi as ghiChu, hangMuc as hangMuc, account_id " +
                      "FROM giaoDichChi " +
                      "WHERE account_id = ? " +
                      "UNION " +
                      "SELECT thuId as id, ngayThu as date, thanhTienThu as thanhTien, NULL as matHang, ghiChuThu as ghiChu, hangMucThu as hangMuc, account_id " +
                      "FROM giaoDichThu " +
-                     "WHERE account_id = ?";
+                     "WHERE account_id = ? " +
+                     "ORDER BY date ASC";
+
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, accountId);
@@ -557,7 +567,7 @@ public class GiaoDichDao {
         List<SoTietKiemModel> infor = new ArrayList<SoTietKiemModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
 //        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
-        String sql = "SELECT * FROM sotietkiem WHERE account_id = ?";
+        String sql = "SELECT * FROM sotietkiem WHERE account_id = ? ORDER BY ngayGui ASC";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, accountId);
@@ -587,7 +597,7 @@ public class GiaoDichDao {
         
         Connection connection = JDBCConnection.getJDBCConecction();
 //        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
-        String sql = "SELECT * FROM LaiSuatVay WHERE account_id = ?";
+        String sql = "SELECT * FROM LaiSuatVay WHERE account_id = ? ORDER BY ngayGiaiNgan ASC";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, accountId);
@@ -1283,7 +1293,7 @@ public class GiaoDichDao {
         List<GiaoDichThuModel> infor = new ArrayList<GiaoDichThuModel>();
         Connection connection = JDBCConnection.getJDBCConecction();
 //        String sql = "SELECT * FROM giaodichthu WHERE account_id = " + String.valueOf(loginModel.getAccount_id());
-        String sql = "SELECT * FROM giaodichthu WHERE account_id = ? and hangMucThu = ?";
+        String sql = "SELECT * FROM giaodichthu WHERE account_id = ? and hangMucThu = ? ORDER BY ngayThu ASC";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, accountId);
@@ -1507,6 +1517,37 @@ public class GiaoDichDao {
 
         return tongThanhTien;
     }
+      
+      
+      public void updatePassword(String newPassword, String oldPassword) {
+    Connection connection = JDBCConnection.getJDBCConecction();
+    String sql = "UPDATE accounts SET password = ? WHERE password = ?;";
+    
+    try {
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, newPassword);
+        preparedStatement.setString(2, oldPassword);
+        
+        int rowsAffected = preparedStatement.executeUpdate();
+
+        if (rowsAffected > 0) {
+            System.out.println("Password updated successfully.");
+        } else {
+            System.out.println("Failed to update password. Incorrect old password or no matching records.");
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    } finally {
+        // Close the connection
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
      
      
      

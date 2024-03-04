@@ -6,12 +6,15 @@ import com.quanlytaichinh.dao.LoginDao;
 import com.quanlytaichinh.model.GiaoDichModel;
 import com.quanlytaichinh.model.LoginModel;
 import com.quanlytaichinh.controller.HomeViewController;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 
 public class LoginView extends javax.swing.JFrame {
@@ -37,6 +40,47 @@ public class LoginView extends javax.swing.JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
+        
+        
+        
+    showMKDKjCheckBox.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JCheckBox checkBox = (JCheckBox) e.getSource();
+        
+        // Kiểm tra xem showPassjCheckBox có được chọn hay không
+        if (checkBox.isSelected()) {
+            // Nếu được chọn, hiển thị mật khẩu
+            passwordDangKyPasswordField.setEchoChar((char) 0);
+            conPasswordDangKyPasswordField.setEchoChar((char) 0);
+        } else {
+            // Nếu không được chọn, ẩn mật khẩu bằng ký tự *
+            passwordDangKyPasswordField.setEchoChar('*');
+            conPasswordDangKyPasswordField.setEchoChar('*');
+        }
+    }
+});
+    
+    
+    showMKDNjCheckBox.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JCheckBox checkBox = (JCheckBox) e.getSource();
+        
+        // Kiểm tra xem showPassjCheckBox có được chọn hay không
+        if (checkBox.isSelected()) {
+            // Nếu được chọn, hiển thị mật khẩu
+            passwordLoginPasswordField.setEchoChar((char) 0);
+        } else {
+            // Nếu không được chọn, ẩn mật khẩu bằng ký tự *
+            passwordLoginPasswordField.setEchoChar('*');
+        }
+    }
+});
+    
+    
+    
+    
     }
     
     public static String md5(String input) {
@@ -80,6 +124,7 @@ public class LoginView extends javax.swing.JFrame {
         conPasswordDangKyPasswordField = new javax.swing.JPasswordField();
         jButton3 = new javax.swing.JButton();
         thoatButton = new javax.swing.JButton();
+        showMKDKjCheckBox = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
@@ -90,6 +135,7 @@ public class LoginView extends javax.swing.JFrame {
         dangNhapButton = new javax.swing.JButton();
         taiKhoanMoiButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
+        showMKDNjCheckBox = new javax.swing.JCheckBox();
 
         dangKyDiaLog.setMinimumSize(new java.awt.Dimension(400, 400));
         dangKyDiaLog.setModal(true);
@@ -166,6 +212,8 @@ public class LoginView extends javax.swing.JFrame {
             }
         });
 
+        showMKDKjCheckBox.setText("Hiển thị mật khẩu");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -175,6 +223,8 @@ public class LoginView extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton3)
+                        .addGap(18, 18, 18)
                         .addComponent(thoatButton))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel5)
@@ -187,11 +237,11 @@ public class LoginView extends javax.swing.JFrame {
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addGap(12, 12, 12)
-                        .addComponent(conPasswordDangKyPasswordField))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton3)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(conPasswordDangKyPasswordField)
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(showMKDKjCheckBox)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -210,9 +260,11 @@ public class LoginView extends javax.swing.JFrame {
                     .addComponent(jLabel7)
                     .addComponent(conPasswordDangKyPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
-                .addComponent(thoatButton)
+                .addComponent(showMKDKjCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(thoatButton)
+                    .addComponent(jButton3))
                 .addContainerGap())
         );
 
@@ -231,9 +283,9 @@ public class LoginView extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(83, Short.MAX_VALUE)
+                .addContainerGap(92, Short.MAX_VALUE)
                 .addComponent(jLabel2)
-                .addContainerGap(82, Short.MAX_VALUE))
+                .addContainerGap(92, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -292,6 +344,8 @@ public class LoginView extends javax.swing.JFrame {
         jSeparator1.setBackground(new java.awt.Color(218, 221, 225));
         jSeparator1.setForeground(new java.awt.Color(218, 221, 225));
 
+        showMKDNjCheckBox.setText("Hiển thị mật khẩu");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -301,17 +355,20 @@ public class LoginView extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(taiKhoanMoiButton)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
                             .addComponent(jLabel4))
-                        .addGap(18, 18, 18)
+                        .addGap(24, 24, 24)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(userLoginTextField)
-                            .addComponent(passwordLoginPasswordField)))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 37, Short.MAX_VALUE)
-                        .addComponent(taiKhoanMoiButton)
-                        .addGap(0, 37, Short.MAX_VALUE)))
+                            .addComponent(userLoginTextField, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(passwordLoginPasswordField)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(showMKDNjCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 59, Short.MAX_VALUE)))))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -325,17 +382,19 @@ public class LoginView extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(userLoginTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel4)
                     .addComponent(passwordLoginPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(showMKDNjCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(dangNhapButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addComponent(taiKhoanMoiButton)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
@@ -475,6 +534,8 @@ public class LoginView extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPasswordField passwordDangKyPasswordField;
     private javax.swing.JPasswordField passwordLoginPasswordField;
+    private javax.swing.JCheckBox showMKDKjCheckBox;
+    private javax.swing.JCheckBox showMKDNjCheckBox;
     private javax.swing.JButton taiKhoanMoiButton;
     private javax.swing.JButton thoatButton;
     private javax.swing.JTextField userDangKyTextField;

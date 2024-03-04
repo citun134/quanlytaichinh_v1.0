@@ -105,7 +105,7 @@ public class editChiJFrame extends javax.swing.JFrame {
             quanAoRadioButton1.setSelected(true);
         } else if ("Dịch Vụ Sinh Hoạt".equals(hangMuc)) {
             dvSinhHoatRadioButton1.setSelected(true);
-        } else if ("Khác".equals(hangMuc)) {
+        } else if ("Tiền chi khác".equals(hangMuc)) {
             khacRadioButton1.setSelected(true);
         }
 //        homeViewController.updateGiaoDichChi(giaoDichModel);
@@ -250,8 +250,8 @@ public class editChiJFrame extends javax.swing.JFrame {
             }
         });
 
-        hangMucButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        hangMucButton1.setText("Hạng Mục");
+        hangMucButton1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        hangMucButton1.setText("Danh Mục");
 
         buttonGroup1.add(quanAoRadioButton1);
         quanAoRadioButton1.setText("Quần áo");
@@ -268,7 +268,7 @@ public class editChiJFrame extends javax.swing.JFrame {
         });
 
         buttonGroup1.add(khacRadioButton1);
-        khacRadioButton1.setText("Khác");
+        khacRadioButton1.setText("Tiền chi khác");
 
         javax.swing.GroupLayout bodyThemGiaoDichPanel1Layout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel1);
         bodyThemGiaoDichPanel1.setLayout(bodyThemGiaoDichPanel1Layout);
@@ -297,15 +297,13 @@ public class editChiJFrame extends javax.swing.JFrame {
                                 .addComponent(dvSinhHoatRadioButton1)
                                 .addGap(18, 18, 18)
                                 .addComponent(khacRadioButton1)
-                                .addGap(0, 122, Short.MAX_VALUE))
+                                .addGap(0, 80, Short.MAX_VALUE))
                             .addComponent(thoiGianTGDTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(thoatTGDButton1))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(themTGDButton1)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(134, 134, 134)
+                        .addComponent(thoatTGDButton1)))
                 .addContainerGap())
         );
         bodyThemGiaoDichPanel1Layout.setVerticalGroup(
@@ -335,10 +333,10 @@ public class editChiJFrame extends javax.swing.JFrame {
                         .addComponent(quanAoRadioButton1)
                         .addComponent(dvSinhHoatRadioButton1)
                         .addComponent(khacRadioButton1)))
-                .addGap(18, 18, 18)
-                .addComponent(themTGDButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(thoatTGDButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                .addGroup(bodyThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(themTGDButton1)
+                    .addComponent(thoatTGDButton1))
                 .addContainerGap())
         );
 

@@ -115,6 +115,8 @@ public class editSTKJFrame extends javax.swing.JFrame {
         interestRates.put("24", 0.05);
         interestRates.put("36", 0.05);
         
+//        vbcEditSTkjLabel.setText("");
+        
         kyHanTGDTextField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -147,6 +149,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
             
             soTienLaijLabel.setText(df.format(sotienlai));
             tongLaijLabel.setText(df.format(tongSoTien));
+            vbcEditSTkjLabel.setText(readNumberToText(tongSoTien) + " đồng");
         
         
         soTienGuiTGDTextField.getDocument().addDocumentListener(new DocumentListener() {
@@ -183,10 +186,12 @@ public class editSTKJFrame extends javax.swing.JFrame {
 
             soTienLaijLabel.setText(df.format(soTienLai));
             tongLaijLabel.setText(df.format(tongTien));
+            vbcEditSTkjLabel.setText(readNumberToText(tongTien) + " đồng");
         } else {
             // Xử lý khi soTienGuiStr trống
             soTienLaijLabel.setText("0");
             tongLaijLabel.setText("0");
+            vbcEditSTkjLabel.setText("");
         }
     }
     });
@@ -220,6 +225,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
 
             soTienLaijLabel.setText(df.format(soTienLai));
             tongLaijLabel.setText(df.format(tongTien));
+            vbcEditSTkjLabel.setText(readNumberToText(tongTien) + " đồng");
         } else {
             // Xử lý khi soTienGuiStr trống
 //            double sotienlai = soTietKiemModel.getSoTienLaiNhanDuoc();
@@ -229,6 +235,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
 //            
             soTienLaijLabel.setText(df.format("0"));
             tongLaijLabel.setText(df.format("0"));
+            vbcEditSTkjLabel.setText("");
         }
     }
     });
@@ -240,6 +247,73 @@ public class editSTKJFrame extends javax.swing.JFrame {
         
     }             
           
+    
+    public static String readNumberToText(double number) {
+    String[] units = {"", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"};
+    String[] tens = {"", "mười", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"};
+    String[] hundreds = {"", "một trăm", "hai trăm", "ba trăm", "bốn trăm", "năm trăm", "sáu trăm", "bảy trăm", "tám trăm", "chín trăm"};
+    String[] thousands = {"", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"};
+
+    StringBuilder sb = new StringBuilder();
+    boolean isFirstIteration = true;
+
+    for (int index = 0; number > 0 && index < thousands.length; index++) {
+        double currentNumber = number % 1000;
+        String currentText = readThreeDigits(currentNumber, units, tens, hundreds);
+
+        // Inside the loop where you append currentText and thousands[index]
+if (currentNumber > 0) {
+    if (!isFirstIteration) {
+        // If the number is exactly 1000, 1 million, etc., don't append currentText
+        if (!currentText.isEmpty()) {
+            sb.insert(0, currentText + " " + thousands[index] + " ");
+        }
+    } else {
+        if (!currentText.isEmpty()) {
+            sb.insert(0, currentText + " ");
+            isFirstIteration = false;
+        }
+    }
+}
+
+
+        number /= 1000;
+    }
+
+    // Xử lý trường hợp số 0
+    if (sb.length() == 0) {
+        sb.append("không");
+    }
+
+    return sb.toString().trim();
+}
+
+
+
+
+private static String readThreeDigits(double number, String[] units, String[] tens, String[] hundreds) {
+    StringBuilder sb = new StringBuilder();
+
+    int hundred = (int) (number / 100);
+    int ten = (int) (number % 100 / 10);
+    int unit = (int) (number % 10);
+
+    if (hundred > 0) {
+        sb.append(hundreds[hundred] + " ");
+    }
+
+    if (ten == 1) {
+        sb.append("mười ");
+    } else if (ten > 1) {
+        sb.append(tens[ten] + " ");
+    }
+
+    if (unit > 0) {
+        sb.append(units[unit]);
+    }
+
+    return sb.toString().trim();
+}
     
      private void updateInterestLabel() {
         // Lấy giá trị được chọn từ combobox
@@ -414,6 +488,8 @@ public class editSTKJFrame extends javax.swing.JFrame {
         soTienLaijLabel = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         tongLaijLabel = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        vbcEditSTkjLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -428,9 +504,9 @@ public class editSTKJFrame extends javax.swing.JFrame {
         headerThemGiaoDichPanel1Layout.setHorizontalGroup(
             headerThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(headerThemGiaoDichPanel1Layout.createSequentialGroup()
-                .addContainerGap(128, Short.MAX_VALUE)
+                .addContainerGap(228, Short.MAX_VALUE)
                 .addComponent(jLabel7)
-                .addContainerGap(129, Short.MAX_VALUE))
+                .addContainerGap(228, Short.MAX_VALUE))
         );
         headerThemGiaoDichPanel1Layout.setVerticalGroup(
             headerThemGiaoDichPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -494,15 +570,26 @@ public class editSTKJFrame extends javax.swing.JFrame {
             }
         });
 
+        editSoLaijLabel.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         editSoLaijLabel.setText("jLabel3");
 
-        jLabel3.setText("Số tiền lãi:");
+        jLabel3.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel3.setText("Số tiền lãi tạm tính:");
 
+        soTienLaijLabel.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         soTienLaijLabel.setText("jLabel4");
 
-        jLabel5.setText("Tổng tiền:");
+        jLabel5.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel5.setText("Tổng số tiền gốc + lãi:");
 
+        tongLaijLabel.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         tongLaijLabel.setText("jLabel6");
+
+        jLabel4.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel4.setText("Viết bằng chữ:");
+
+        vbcEditSTkjLabel.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        vbcEditSTkjLabel.setText("jLabel6");
 
         javax.swing.GroupLayout bodyThemGiaoDichPanelLayout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel);
         bodyThemGiaoDichPanel.setLayout(bodyThemGiaoDichPanelLayout);
@@ -515,40 +602,42 @@ public class editSTKJFrame extends javax.swing.JFrame {
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(31, 31, 31)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                                .addGap(18, 18, 18)
                                 .addComponent(editSoLaijLabel)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(kyHanTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(kyHanTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2)
                             .addComponent(jLabel1))
-                        .addGap(34, 34, 34)
+                        .addGap(47, 47, 47)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tenNganHangTGDTextField, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(soTienGuiTGDTextField)
-                            .addComponent(ngayGuiTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(tenNganHangTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(ngayGuiTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(themTGDButton)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(soTienLaijLabel)
-                        .addGap(75, 75, 75)
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tongLaijLabel)
-                        .addGap(0, 204, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(thoatTGDButton)))
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel3))
+                        .addGap(18, 18, 18)
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(vbcEditSTkjLabel)
+                                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                        .addGap(102, 102, 102)
+                                        .addComponent(themTGDButton)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 247, Short.MAX_VALUE)
+                                .addComponent(thoatTGDButton))
+                            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(soTienLaijLabel)
+                                    .addComponent(tongLaijLabel))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         bodyThemGiaoDichPanelLayout.setVerticalGroup(
@@ -574,17 +663,27 @@ public class editSTKJFrame extends javax.swing.JFrame {
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(editSoLaijLabel))
-                .addGap(28, 28, 28)
-                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(soTienLaijLabel)
-                    .addComponent(jLabel5)
-                    .addComponent(tongLaijLabel))
-                .addGap(52, 52, 52)
-                .addComponent(themTGDButton)
                 .addGap(18, 18, 18)
-                .addComponent(thoatTGDButton)
-                .addContainerGap())
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(soTienLaijLabel))
+                        .addGap(18, 18, 18)
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(tongLaijLabel))
+                        .addGap(18, 18, 18)
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(vbcEditSTkjLabel))
+                        .addContainerGap(64, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(themTGDButton)
+                            .addComponent(thoatTGDButton))
+                        .addContainerGap())))
         );
 
         getContentPane().add(bodyThemGiaoDichPanel, java.awt.BorderLayout.CENTER);
@@ -655,6 +754,7 @@ public class editSTKJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -667,5 +767,6 @@ public class editSTKJFrame extends javax.swing.JFrame {
     private javax.swing.JButton themTGDButton;
     private javax.swing.JButton thoatTGDButton;
     private javax.swing.JLabel tongLaijLabel;
+    private javax.swing.JLabel vbcEditSTkjLabel;
     // End of variables declaration//GEN-END:variables
 }

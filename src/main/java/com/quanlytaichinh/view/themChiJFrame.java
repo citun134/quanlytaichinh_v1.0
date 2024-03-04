@@ -149,7 +149,7 @@ public class themChiJFrame extends javax.swing.JFrame {
                         } else if (dvSinhHoatRadioButton.isSelected()) {
                             giaoDichModel.setHangMuc("Dịch Vụ Sinh Hoạt");
                         } else if (khacRadioButton.isSelected()) {
-                            giaoDichModel.setHangMuc("Khác");
+                            giaoDichModel.setHangMuc("Tiền chi khác");
                         }
                         giaoDichModel.setAccountId(accountId);
 
@@ -218,9 +218,9 @@ public class themChiJFrame extends javax.swing.JFrame {
         headerThemGiaoDichPanelLayout.setHorizontalGroup(
             headerThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(headerThemGiaoDichPanelLayout.createSequentialGroup()
-                .addContainerGap(173, Short.MAX_VALUE)
+                .addContainerGap(195, Short.MAX_VALUE)
                 .addComponent(jLabel6)
-                .addContainerGap(173, Short.MAX_VALUE))
+                .addContainerGap(195, Short.MAX_VALUE))
         );
         headerThemGiaoDichPanelLayout.setVerticalGroup(
             headerThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -266,8 +266,8 @@ public class themChiJFrame extends javax.swing.JFrame {
             }
         });
 
-        hangMucButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        hangMucButton.setText("Hạng Mục");
+        hangMucButton.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        hangMucButton.setText("Danh Mục");
 
         buttonGroup1.add(quanAoRadioButton);
         quanAoRadioButton.setText("Quần áo");
@@ -284,7 +284,7 @@ public class themChiJFrame extends javax.swing.JFrame {
         });
 
         buttonGroup1.add(khacRadioButton);
-        khacRadioButton.setText("Khác");
+        khacRadioButton.setText("Tiền chi khác");
 
         javax.swing.GroupLayout bodyThemGiaoDichPanelLayout = new javax.swing.GroupLayout(bodyThemGiaoDichPanel);
         bodyThemGiaoDichPanel.setLayout(bodyThemGiaoDichPanelLayout);
@@ -313,15 +313,13 @@ public class themChiJFrame extends javax.swing.JFrame {
                                 .addComponent(dvSinhHoatRadioButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(khacRadioButton)
-                                .addGap(0, 66, Short.MAX_VALUE))
+                                .addGap(0, 68, Short.MAX_VALUE))
                             .addComponent(thoiGianTGDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(thoatTGDButton))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(themTGDButton)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(135, 135, 135)
+                        .addComponent(thoatTGDButton)))
                 .addContainerGap())
         );
         bodyThemGiaoDichPanelLayout.setVerticalGroup(
@@ -350,10 +348,10 @@ public class themChiJFrame extends javax.swing.JFrame {
                         .addComponent(quanAoRadioButton)
                         .addComponent(dvSinhHoatRadioButton)
                         .addComponent(khacRadioButton)))
-                .addGap(18, 18, 18)
-                .addComponent(themTGDButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 133, Short.MAX_VALUE)
-                .addComponent(thoatTGDButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(themTGDButton)
+                    .addComponent(thoatTGDButton))
                 .addContainerGap())
         );
 
