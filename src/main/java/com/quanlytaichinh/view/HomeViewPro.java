@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -177,6 +178,9 @@ public class HomeViewPro extends javax.swing.JFrame {
     tongChiDatejLabel.setText("0");
     tongThuDatejLabel.setText("0");
     tongTienTKjLabel.setText("0");
+    
+    String defaultYear = "2024";
+    yearTKTextField.setSelectedItem(defaultYear);
     
     Calendar calendar = Calendar.getInstance();
     int currentMonth = calendar.get(Calendar.MONTH) + 1;
@@ -422,7 +426,51 @@ private static String readThreeDigits(long number, String[] units, String[] tens
     }
 }
         
+    
+    public void adjustColumnSizes(JTable table, List<Integer> selectedColumns) {
+    // Set autoResizeMode to off to manually control column resizing
+    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    
+    // Set the preferred width for the selected columns
+    for (int column : selectedColumns) {
+        TableColumn tableColumn = table.getColumnModel().getColumn(column);
+        int preferredWidth = 0;
+
+        for (int row = 0; row < table.getRowCount(); row++) {
+            TableCellRenderer cellRenderer = table.getCellRenderer(row, column);
+            Component c = table.prepareRenderer(cellRenderer, row, column);
+            int width = c.getPreferredSize().width + table.getIntercellSpacing().width;
+            preferredWidth = Math.max(preferredWidth, width);
+        }
+
+        // Add small gap to preferred width for better appearance
+        preferredWidth += 2;
         
+        // Set the preferred width only if it's greater than the current and doesn't exceed maxWidth
+        if (preferredWidth > tableColumn.getPreferredWidth() && preferredWidth < tableColumn.getMaxWidth()) {
+            tableColumn.setPreferredWidth(preferredWidth);
+        }
+    }
+
+    // Fill the remaining space with the rest of the columns
+    int fixedWidth = selectedColumns.stream()
+                            .mapToInt(c -> table.getColumnModel().getColumn(c).getWidth())
+                            .sum();
+    int parentWidth = table.getParent().getWidth();
+    int remainingWidth = parentWidth - fixedWidth;
+
+    // Now distribute the remainingWidth among the rest of the columns
+    for (int column = 0; column < table.getColumnCount(); column++) {
+        if (!selectedColumns.contains(column)) {
+            TableColumn tableColumn = table.getColumnModel().getColumn(column);
+            tableColumn.setPreferredWidth(remainingWidth / (table.getColumnCount() - selectedColumns.size()));
+        }
+    }
+
+    // Change the resizing behaviour of the table back to normal
+    table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+}
+
     
     public void showChiTKTableUser(int accountId){
         defaultTableModel = new DefaultTableModel(){
@@ -502,12 +550,19 @@ private static String readThreeDigits(long number, String[] units, String[] tens
         
         
 //        chiTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
-        
+        int[] preferredWidths = new int[]{50, 80, 80, 580, 70}; // Adjust these values as needed
+
+        for (int i = 1; i < chiTable.getColumnCount(); i++) {
+            TableColumn column = chiTable.getColumnModel().getColumn(i);
+            column.setPreferredWidth(preferredWidths[i - 1]);
+        }
         
 
         defaultTableModel.setRowCount(0);
         setTableData(homeViewController.getAllInforUser(accountId));
 //        fitTableColumns(chiTable);
+//        List<Integer> selectedColumns = Arrays.asList(1, 2, 3, 5);
+//        adjustColumnSizes(chiTable, selectedColumns);
 
     }
     
@@ -578,6 +633,13 @@ private static String readThreeDigits(long number, String[] units, String[] tens
         thuTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
         
 //        thuTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer()); 
+
+        int[] preferredWidths = new int[]{50, 100, 700, 70}; // Adjust these values as needed
+
+        for (int i = 1; i < thuTable.getColumnCount(); i++) {
+            TableColumn column = thuTable.getColumnModel().getColumn(i);
+            column.setPreferredWidth(preferredWidths[i - 1]);
+        }
 
         defaultTableThuModel.setRowCount(0);
         setThuTableData(homeViewController.getAllInforUserThu(accountId));
@@ -732,6 +794,13 @@ DefaultTableModel defaultTableModelTen = new DefaultTableModel() {
         tenTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
         tenTKTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
         
+        int[] preferredWidths = new int[]{50, 80, 80, 580, 70}; // Adjust these values as needed
+
+        for (int i = 1; i < tenTKTable.getColumnCount(); i++) {
+            TableColumn column = tenTKTable.getColumnModel().getColumn(i);
+            column.setPreferredWidth(preferredWidths[i - 1]);
+        }
+        
 
         // Get the data from your controller or data source
         List<GiaoDichModel> allGiaoDich = homeViewController.searchTenGiaoDich(tenTKTextField.getText(), accountId);
@@ -743,7 +812,7 @@ DefaultTableModel defaultTableModelTen = new DefaultTableModel() {
             defaultTableModelTen.addRow(new Object[]{giaoDich.getId(), giaoDich.getDate(),
                     giaoDich.getMatHang(),formattedThanhTien, giaoDich.getGhiChu(), giaoDich.getHangMuc()});
         }
-
+        
     }
     
     public final void findMoney(int accountId, String hangMuc){
@@ -832,6 +901,13 @@ DefaultTableModel defaultTableModelTen = new DefaultTableModel() {
         tienTKTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
         tienTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
         tienTKTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+        
+        int[] preferredWidths = new int[]{50, 80, 80, 580, 70}; // Adjust these values as needed
+
+        for (int i = 1; i < tienTKTable.getColumnCount(); i++) {
+            TableColumn column = tienTKTable.getColumnModel().getColumn(i);
+            column.setPreferredWidth(preferredWidths[i - 1]);
+        }
         
         
 //        tienTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
@@ -936,6 +1012,13 @@ DefaultTableModel defaultTableModelTen = new DefaultTableModel() {
         tienTKTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
         tienTKTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
         tienTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        
+        int[] preferredWidths = new int[]{50, 100, 700, 70}; // Adjust these values as needed
+
+        for (int i = 1; i < tienTKTable.getColumnCount(); i++) {
+            TableColumn column = tienTKTable.getColumnModel().getColumn(i);
+            column.setPreferredWidth(preferredWidths[i - 1]);
+        }
 
         
 //        tienTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
@@ -1056,7 +1139,12 @@ DefaultTableModel defaultTableModelTen = new DefaultTableModel() {
         thoiGianTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
         thoiGianTKTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
 //        
-    
+        int[] preferredWidths = new int[]{50, 80, 80, 580, 70}; // Adjust these values as needed
+
+        for (int i = 1; i < thoiGianTKTable.getColumnCount(); i++) {
+            TableColumn column = thoiGianTKTable.getColumnModel().getColumn(i);
+            column.setPreferredWidth(preferredWidths[i - 1]);
+        }
 //        thoiGianTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
         
         // Get the data from your controller or data source
@@ -2146,6 +2234,13 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         tenTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
         tenTKTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
         
+        int[] preferredWidths = new int[]{50, 80, 80, 580, 70}; // Adjust these values as needed
+
+        for (int i = 1; i < tenTKTable.getColumnCount(); i++) {
+            TableColumn column = tenTKTable.getColumnModel().getColumn(i);
+            column.setPreferredWidth(preferredWidths[i - 1]);
+        }
+        
 
         // Get the data from your controller or data source
         List<GiaoDichModel> allGiaoDich = homeViewController.getAllInforUserThuChi(accountId);
@@ -2229,6 +2324,12 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         tienTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
         tienTKTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
         
+        int[] preferredWidths = new int[]{50, 80, 80, 580, 70}; // Adjust these values as needed
+
+        for (int i = 1; i < tienTKTable.getColumnCount(); i++) {
+            TableColumn column = tienTKTable.getColumnModel().getColumn(i);
+            column.setPreferredWidth(preferredWidths[i - 1]);
+        }
         
 //        tienTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
         
@@ -2317,6 +2418,12 @@ public double calculateTotalMoneyByMonthAndYear(List<SoTietKiemModel> list, int 
         thoiGianTKTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
         thoiGianTKTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
 //        
+        int[] preferredWidths = new int[]{50, 80, 80, 580, 70}; // Adjust these values as needed
+
+        for (int i = 1; i < thoiGianTKTable.getColumnCount(); i++) {
+            TableColumn column = thoiGianTKTable.getColumnModel().getColumn(i);
+            column.setPreferredWidth(preferredWidths[i - 1]);
+        }
     
 //        thoiGianTKTable.getColumnModel().getColumn(1).setCellRenderer(new DateRenderer());
         

@@ -118,7 +118,7 @@ public class themSTKJFrame extends javax.swing.JFrame {
         
         soLaijLabel.setText("0");
             tongTienjLabel.setText("0");
-//            vbcThemSTKjLabel.setText("");
+            vbcThemSTKjLabel.setText("");
         
         
         soTienGuiTGDTextField.getDocument().addDocumentListener(new DocumentListener() {
@@ -160,6 +160,7 @@ public class themSTKJFrame extends javax.swing.JFrame {
                 // Xử lý khi soTienGuiStr trống
                 soLaijLabel.setText("0");
                 tongTienjLabel.setText("0");
+                 vbcThemSTKjLabel.setText("");
             }
         }
         });
@@ -192,7 +193,7 @@ public class themSTKJFrame extends javax.swing.JFrame {
                 // Xử lý khi soTienGuiStr trống
                 soLaijLabel.setText("0");
                 tongTienjLabel.setText("0");
-                
+                vbcThemSTKjLabel.setText("");
             }
         }
         });
@@ -218,21 +219,24 @@ public class themSTKJFrame extends javax.swing.JFrame {
         double currentNumber = number % 1000;
         String currentText = readThreeDigits(currentNumber, units, tens, hundreds);
 
-        // Inside the loop where you append currentText and thousands[index]
-if (currentNumber > 0) {
-    if (!isFirstIteration) {
-        // If the number is exactly 1000, 1 million, etc., don't append currentText
-        if (!currentText.isEmpty()) {
-            sb.insert(0, currentText + " " + thousands[index] + " ");
+        if (currentNumber > 0) {
+            if (!isFirstIteration) {
+                // If the number is exactly 1000, 1 million, etc., don't append currentText
+                if (!currentText.isEmpty()) {
+                    sb.insert(0, currentText + " " + thousands[index] + " ");
+                }
+            } else {
+                if (!currentText.isEmpty()) {
+                    sb.insert(0, currentText + " ");
+                    isFirstIteration = false;
+                }
+            }
         }
-    } else {
-        if (!currentText.isEmpty()) {
-            sb.insert(0, currentText + " ");
-            isFirstIteration = false;
-        }
-    }
-}
 
+        // Check if there are three trailing zeros, append "nghìn"
+        if (number >= 1000 && number % 1000 == 0) {
+            sb.insert(0, "nghìn ");
+        }
 
         number /= 1000;
     }
@@ -244,6 +248,7 @@ if (currentNumber > 0) {
 
     return sb.toString().trim();
 }
+
 
 
 

@@ -225,21 +225,24 @@ public class themLSVJFrame extends javax.swing.JFrame {
         double currentNumber = number % 1000;
         String currentText = readThreeDigits(currentNumber, units, tens, hundreds);
 
-        // Inside the loop where you append currentText and thousands[index]
-if (currentNumber > 0) {
-    if (!isFirstIteration) {
-        // If the number is exactly 1000, 1 million, etc., don't append currentText
-        if (!currentText.isEmpty()) {
-            sb.insert(0, currentText + " " + thousands[index] + " ");
+        if (currentNumber > 0) {
+            if (!isFirstIteration) {
+                // If the number is exactly 1000, 1 million, etc., don't append currentText
+                if (!currentText.isEmpty()) {
+                    sb.insert(0, currentText + " " + thousands[index] + " ");
+                }
+            } else {
+                if (!currentText.isEmpty()) {
+                    sb.insert(0, currentText + " ");
+                    isFirstIteration = false;
+                }
+            }
         }
-    } else {
-        if (!currentText.isEmpty()) {
-            sb.insert(0, currentText + " ");
-            isFirstIteration = false;
-        }
-    }
-}
 
+        // Check if there are three trailing zeros, append "nghìn"
+        if (number >= 1000 && number % 1000 == 0) {
+            sb.insert(0, "nghìn ");
+        }
 
         number /= 1000;
     }
@@ -600,7 +603,7 @@ private static String readThreeDigits(double number, String[] units, String[] te
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3))
-                        .addGap(26, 26, 26)
+                        .addGap(19, 19, 19)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(giaTriBDSLSVTGDTextField)
                             .addComponent(tenNganHangLSVTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -608,14 +611,10 @@ private static String readThreeDigits(double number, String[] units, String[] te
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4))
-                        .addGap(41, 41, 41)
+                        .addGap(34, 34, 34)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(thoiGianVayLSVTGDTextField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(soTienVayLSVTGDTextField)))
-                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(41, 41, 41)
-                        .addComponent(ngayGiaiNganLSVjDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGap(0, 234, Short.MAX_VALUE)
                         .addComponent(themTGDButton)
@@ -623,19 +622,25 @@ private static String readThreeDigits(double number, String[] units, String[] te
                         .addComponent(thoatTGDButton))
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(laiSuatVayjLabel))
                             .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
                                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel5)
                                     .addComponent(jLabel7)
                                     .addComponent(jLabel1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(soTienNojLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(vbcThemLSVjLabel)
-                                    .addComponent(tongTienNojLabel)
-                                    .addComponent(laiSuatVayjLabel))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                    .addComponent(tongTienNojLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(soTienNojLabel, javax.swing.GroupLayout.Alignment.LEADING))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34)
+                        .addComponent(ngayGiaiNganLSVjDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         bodyThemGiaoDichPanelLayout.setVerticalGroup(

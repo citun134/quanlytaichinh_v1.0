@@ -261,21 +261,24 @@ public class editSTKJFrame extends javax.swing.JFrame {
         double currentNumber = number % 1000;
         String currentText = readThreeDigits(currentNumber, units, tens, hundreds);
 
-        // Inside the loop where you append currentText and thousands[index]
-if (currentNumber > 0) {
-    if (!isFirstIteration) {
-        // If the number is exactly 1000, 1 million, etc., don't append currentText
-        if (!currentText.isEmpty()) {
-            sb.insert(0, currentText + " " + thousands[index] + " ");
+        if (currentNumber > 0) {
+            if (!isFirstIteration) {
+                // If the number is exactly 1000, 1 million, etc., don't append currentText
+                if (!currentText.isEmpty()) {
+                    sb.insert(0, currentText + " " + thousands[index] + " ");
+                }
+            } else {
+                if (!currentText.isEmpty()) {
+                    sb.insert(0, currentText + " ");
+                    isFirstIteration = false;
+                }
+            }
         }
-    } else {
-        if (!currentText.isEmpty()) {
-            sb.insert(0, currentText + " ");
-            isFirstIteration = false;
-        }
-    }
-}
 
+        // Check if there are three trailing zeros, append "nghìn"
+        if (number >= 1000 && number % 1000 == 0) {
+            sb.insert(0, "nghìn ");
+        }
 
         number /= 1000;
     }
@@ -623,20 +626,24 @@ private static String readThreeDigits(double number, String[] units, String[] te
                             .addComponent(jLabel5)
                             .addComponent(jLabel4)
                             .addComponent(jLabel3))
-                        .addGap(18, 18, 18)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
                                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(vbcEditSTkjLabel)
                                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                                        .addGap(102, 102, 102)
-                                        .addComponent(themTGDButton)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 247, Short.MAX_VALUE)
-                                .addComponent(thoatTGDButton))
+                                        .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(vbcEditSTkjLabel)
+                                            .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                                .addGap(102, 102, 102)
+                                                .addComponent(themTGDButton)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 247, Short.MAX_VALUE)
+                                        .addComponent(thoatTGDButton))
+                                    .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                                        .addComponent(tongLaijLabel)
+                                        .addGap(0, 0, Short.MAX_VALUE))))
                             .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
-                                .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(soTienLaijLabel)
-                                    .addComponent(tongLaijLabel))
+                                .addGap(18, 18, 18)
+                                .addComponent(soTienLaijLabel)
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
@@ -663,9 +670,9 @@ private static String readThreeDigits(double number, String[] units, String[] te
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(editSoLaijLabel))
-                .addGap(18, 18, 18)
                 .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(bodyThemGiaoDichPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
                             .addComponent(soTienLaijLabel))
@@ -677,13 +684,13 @@ private static String readThreeDigits(double number, String[] units, String[] te
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
                             .addComponent(vbcEditSTkjLabel))
-                        .addContainerGap(64, Short.MAX_VALUE))
+                        .addGap(0, 58, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyThemGiaoDichPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(bodyThemGiaoDichPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(themTGDButton)
-                            .addComponent(thoatTGDButton))
-                        .addContainerGap())))
+                            .addComponent(thoatTGDButton))))
+                .addContainerGap())
         );
 
         getContentPane().add(bodyThemGiaoDichPanel, java.awt.BorderLayout.CENTER);
